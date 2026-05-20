@@ -1,20 +1,57 @@
 # AgentSkills Audit Collection
 
-A task-oriented Claude Code AgentSkills collection for auditing websites, web apps, open-source projects, and AI-built products.
+AI-generated products look finished before they are actually shippable.
 
-See [REQUIREMENTS.md](REQUIREMENTS.md) for the purpose and success criteria behind the collection.
-See [PRODUCT.md](PRODUCT.md) and [DESIGN.md](DESIGN.md) for the product direction and design principles.
+This repo provides a Claude Code AgentSkills system for auditing AI-built websites, web apps, and vibe-coded products across:
+
+- live workflows
+- visual quality
+- deployment readiness
+- source vs live evidence
+- `S0-S4` issue severity
+- copyable fix prompts
+- regression checks
+
+It turns "looks done" into "tested, located, fixable, and retestable."
 
 ## Positioning
 
-AgentSkills is an acceptance and audit system for AI-generated websites and products.
-
-It turns vibe-coded results from "looks done" into engineering delivery assets that are tested step by step, reproducible, risk-aware, fixable, retestable, and reusable.
+AgentSkills is an AI delivery acceptance system.
 
 This is not a coding skill pack. It is closer to:
 
 ```text
 QA department + acceptance workflow + risk audit + retrospective memory
+```
+
+The target question is not "can AI generate this?" The target question is:
+
+```text
+Can this AI-built product be trusted, fixed, retested, and delivered?
+```
+
+See [REQUIREMENTS.md](REQUIREMENTS.md) for the purpose and success criteria behind the collection.
+See [PRODUCT.md](PRODUCT.md) and [DESIGN.md](DESIGN.md) for the product direction and design principles.
+
+## Quick Start
+
+1. Copy `.claude/skills/` into your Claude Code project.
+2. Open Claude Code in the target repo or product workspace.
+3. Ask:
+
+```text
+Use /audit to review this website before launch.
+Target: <URL or local project>
+Focus: workflows, visual QA, deployment readiness, and S0-S4 blockers.
+```
+
+For narrower checks:
+
+```text
+Use /flow-test to test every visible CTA, form, route, and failure state.
+Use /visual-qa to inspect layout, trust, mobile behavior, and AI slop.
+Use /deploy-check to find production blockers before launch.
+Use /accept-five to repeat acceptance and turn findings into reusable rules.
 ```
 
 ## Workflow
@@ -47,6 +84,18 @@ rules memory / benchmark library
 - `/deploy-check`: inspect production readiness and missing runtime dependencies.
 - `/accept-five`: run five-pass acceptance and accumulate lessons.
 - `/agent-diagnose`: adversarially diagnose AI agent and workflow failure modes.
+
+## Case Studies
+
+The repository includes validation reports that stress-test the skills against real AI-built website examples and workflow claims.
+
+Start with [CASE_STUDIES.md](CASE_STUDIES.md) for a short, readable summary of the strongest examples:
+
+- API Checker: best visible interactive workflow benchmark.
+- PhoneValidation.app: commercial micro-tool with pricing, credits, CSV upload, and data/privacy dependencies.
+- Committed Citizens: clear CMS deployment gap in a real vibe-coded consulting site.
+- impeccable.style: five-pass audit of an AI design tooling site.
+- Global 200 source pass: a 200-candidate website audit dataset with explicit caveats.
 
 ## Structure
 
@@ -122,3 +171,11 @@ Every skill should preserve this shape when applicable:
 ## Validation
 
 This repository includes completed validation runs under `validation/`, backed by a sample TODO CLI, batch case reviews for vibe-coded website examples, a global 200-site source-level audit batch, and a five-pass audit of `impeccable.style`.
+
+Run the local validation sample with:
+
+```bash
+python3 -m unittest discover -s tests
+```
+
+The TODO CLI is only a validation fixture. The skills themselves remain instruction-only and portable.
