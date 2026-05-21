@@ -78,6 +78,19 @@ Important caveat:
 This is a source-level pass. Exact button coordinates, screenshot regions, and form-submit behavior still require browser/visual automation.
 ```
 
+## 6. Vibe-Coded Site Verification Template
+
+- Type: reusable scoring table.
+- Full template: `validation/vibe-coded-site-verification-template.md`
+- Why it matters: inspiration lists can confuse a polished shell with a working product.
+- Audit value: converts "worth copying?" into a 14-point rubric covering offer clarity, CTA, real flow, business pages, backend/data signals, production signals, and reuse value.
+
+Issue lesson:
+
+```text
+A vibe-coded site should not be promoted as a reference until source evidence, live evidence, and at least one observable workflow are separated and scored.
+```
+
 ## What These Cases Prove
 
 - Source evidence and live evidence must be separate.

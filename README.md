@@ -33,6 +33,8 @@ Can this AI-built product be trusted, fixed, retested, and delivered?
 See [REQUIREMENTS.md](REQUIREMENTS.md) for the purpose and success criteria behind the collection.
 See [PRODUCT.md](PRODUCT.md) and [DESIGN.md](DESIGN.md) for the product direction and design principles.
 
+`DESIGN.md` follows the Google DESIGN.md shape: YAML design tokens for agents plus Markdown guidance for humans. Use it as the visual source of truth when generating audit workbench UI, screenshots, examples, or report surfaces.
+
 ## Quick Start
 
 1. Copy `.claude/skills/` into your Claude Code project.
@@ -49,6 +51,7 @@ For narrower checks:
 
 ```text
 Use /flow-test to test every visible CTA, form, route, and failure state.
+Use /physical-flow-test to generate executable Python Playwright tests for real-browser verification.
 Use /visual-qa to inspect layout, trust, mobile behavior, and AI slop.
 Use /deploy-check to find production blockers before launch.
 Use /accept-five to repeat acceptance and turn findings into reusable rules.
@@ -63,7 +66,7 @@ harness
     ↓
 audit
     ↓
-flow-test / visual-qa / deploy-check
+flow-test / physical-flow-test / visual-qa / deploy-check
     ↓
 accept-five
     ↓
@@ -80,6 +83,7 @@ rules memory / benchmark library
 - `/skill-study`: learn from external skills, repositories, market skill reports, and competitor workflows without turning the collection into a basic curriculum.
 - `/harness`: decompose business goals into multi-level execution steps with prompt/skill/Dify/RPA/code/human routing, checkpoints, retries, and escalation.
 - `/flow-test`: test every visible feature and user workflow.
+- `/physical-flow-test`: generate executable Python Playwright tests for real-browser workflow verification, artifacts, regression checks, and lessons.
 - `/visual-qa`: audit visual craft, product taste, layout, responsive behavior, and AI slop.
 - `/deploy-check`: inspect production readiness and missing runtime dependencies.
 - `/accept-five`: run five-pass acceptance and accumulate lessons.
@@ -118,6 +122,12 @@ Start with [CASE_STUDIES.md](CASE_STUDIES.md) for a short, readable summary of t
   harness/references/checkpoint-retry-policy.md
   harness/references/process-agent-pattern.md
   flow-test/SKILL.md
+  physical-flow-test/SKILL.md
+  physical-flow-test/references/python-playwright-template.md
+  physical-flow-test/references/artifact-schema.md
+  physical-flow-test/references/safe-execution-policy.md
+  physical-flow-test/references/locator-policy.md
+  physical-flow-test/references/regression-lessons-ledger.md
   visual-qa/SKILL.md
   deploy-check/SKILL.md
   accept-five/SKILL.md
@@ -126,8 +136,10 @@ CLAUDE.md
 PRODUCT.md
 DESIGN.md
 examples/todo_cli/       # validation sample, outside the skills payload
+examples/physical-flow-demo/ # tiny web app for physical browser verification examples
 tests/                   # validation tests
 validation/              # workflow proof artifacts
+validation/vibe-coded-site-verification-template.md # copyable scoring table for live vibe-coded website checks
 ```
 
 ## Design Principles
@@ -135,6 +147,7 @@ validation/              # workflow proof artifacts
 - Instruction-only skills: no bundled scripts.
 - `CLAUDE.md` is the governance source of truth.
 - Each skill is task-oriented, stateless, and independently callable.
+- Physical browser tests are generated into target project artifacts; the skill itself remains instruction-only.
 - Skill names describe real jobs, not basic curriculum.
 - The agent should stay skeptical of source claims, weak evidence, broken workflows, visual slop, and deployment theater.
 - External skills and trend reports are converted into audit checks, workflow triggers, benchmark labels, and guardrails, not copied as topic lists.
@@ -170,7 +183,7 @@ Every skill should preserve this shape when applicable:
 
 ## Validation
 
-This repository includes completed validation runs under `validation/`, backed by a sample TODO CLI, batch case reviews for vibe-coded website examples, a global 200-site source-level audit batch, and a five-pass audit of `impeccable.style`.
+This repository includes completed validation runs under `validation/`, backed by a sample TODO CLI, a tiny physical-flow demo web app, batch case reviews for vibe-coded website examples, a global 200-site source-level audit batch, and a five-pass audit of `impeccable.style`.
 
 Run the local validation sample with:
 

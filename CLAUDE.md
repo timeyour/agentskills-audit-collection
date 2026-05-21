@@ -8,6 +8,7 @@ This file is the source of truth for this repository. The skills in `.claude/ski
 - Use `/skill-study` when the user wants the agent to learn from external skills, open-source repos, global skill reports, course/job skill lists, competitor tools, or workflow examples.
 - Use `/harness` when the user wants to operationalize a business workflow, split work into multiple layers, choose prompt/skill/Dify/RPA/code/human execution, define checkpoints, or add retry/escalation strategy.
 - Use `/flow-test` when the user specifically wants every function, CTA, form, route, auth path, or dashboard workflow tested.
+- Use `/physical-flow-test` when `/flow-test` or `/audit` finds a critical path requiring real browser proof, when the user asks whether a live workflow actually works, or when source evidence and live evidence disagree.
 - Use `/visual-qa` when the user wants page style, layout, craft, aesthetic quality, or AI slop diagnosed.
 - Use `/deploy-check` when the user asks what is missing for production deployment.
 - Use `/accept-five` when one pass is not enough and findings need to become reusable experience.
@@ -17,7 +18,10 @@ This file is the source of truth for this repository. The skills in `.claude/ski
 
 - AgentSkills are stateless. A skill must be usable without relying on hidden session history.
 - AgentSkills must stay instruction-only unless a future ADR explicitly allows scripts.
+- Generated physical browser test scripts belong in target project artifacts, not inside `.claude/skills/`.
 - `CLAUDE.md` is the rule source for project-specific governance.
+- `DESIGN.md` is the visual source of truth for generated audit workbench UI, examples, screenshots, and report surfaces.
+- Keep `DESIGN.md` compatible with Google DESIGN.md shape: YAML design tokens first, human guidance second.
 - Reference files belong in each skill's `references/` directory and should only be loaded when needed.
 - Keep skill bodies concise; put templates and long checklists in references.
 - External skill learning must produce concrete workflow triggers, audit checks, benchmark labels, guardrails, or rejection reasons.
@@ -37,6 +41,14 @@ This file is the source of truth for this repository. The skills in `.claude/ski
 - Do not automate a messy human process before turning tacit know-how into explicit data templates, handoff rules, checkpoints, and success signals.
 
 ## ADR Log
+
+## ADR: Physical Browser Verification For Critical Flows
+
+- Date: 2026-05-21
+- Status: Accepted
+- Context: Static flow audits can miss runtime failures caused by JavaScript execution, auth boundaries, third-party scripts, network behavior, timing, and browser-only UI states.
+- Decision: Add `/physical-flow-test` as the bridge from cognitive audit to executable browser verification. It generates Python Playwright test packages for real execution, collects trace, screenshot, HAR, video, console, and result artifacts, and feeds those artifacts back into severity, reproduction, regression, and lessons.
+- Consequences: Critical workflow claims require physical evidence before being marked working. The skills remain instruction-only; generated tests and artifacts live in the target project or audit workspace.
 
 ## ADR: Process Agents Need Flow Templates And Signal Loops
 
