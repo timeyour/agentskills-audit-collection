@@ -90,17 +90,17 @@ The first static report examples live in `reports/`:
 
 ```text
 skill-study
-    ?
+    ->
 harness
-    ?
+    ->
 audit
-    ?
+    ->
 flow-test / physical-flow-test / visual-qa / deploy-check
-    ?
+    ->
 accept-five
-    ?
+    ->
 agent-diagnose
-    ?
+    ->
 rules memory / benchmark library
 ```
 
