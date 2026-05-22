@@ -57,21 +57,38 @@ Use /deploy-check to find production blockers before launch.
 Use /accept-five to repeat acceptance and turn findings into reusable rules.
 ```
 
+Long audits should emit short progress updates as each major stage completes, then collapse those updates into the final evidence report.
+
+## Public Report Surface
+
+Skills are the audit engine. Public reports are the user-facing product surface.
+
+Use `validation/public-website-audit-report-template.md` when turning an audit into a shareable website report. The report should show:
+
+```text
+problem -> evidence -> impact -> fix suggestion -> regression check
+```
+
+The first static report examples live in `reports/`:
+
+- `reports/demo-site-audit.md`
+- `reports/demo-site-audit.html`
+
 ## Workflow
 
 ```text
 skill-study
-    ↓
+    ?
 harness
-    ↓
+    ?
 audit
-    ↓
+    ?
 flow-test / physical-flow-test / visual-qa / deploy-check
-    ↓
+    ?
 accept-five
-    ↓
+    ?
 agent-diagnose
-    ↓
+    ?
 rules memory / benchmark library
 ```
 
@@ -100,6 +117,7 @@ Start with [CASE_STUDIES.md](CASE_STUDIES.md) for a short, readable summary of t
 - Committed Citizens: clear CMS deployment gap in a real vibe-coded consulting site.
 - impeccable.style: five-pass audit of an AI design tooling site.
 - Global 200 source pass: a 200-candidate website audit dataset with explicit caveats.
+- GitHub similar-projects benchmark: ecosystem positioning against agent skill libraries, audit skill marketplaces, workflow frameworks, DESIGN.md libraries, and browser automation tools.
 
 ## Structure
 
@@ -113,6 +131,7 @@ Start with [CASE_STUDIES.md](CASE_STUDIES.md) for a short, readable summary of t
   audit/references/webpage-audit-rubric.md
   audit/references/aesthetic-quality-audit.md
   audit/references/five-pass-acceptance.md
+  audit/references/progressive-reporting.md
   skill-study/SKILL.md
   skill-study/references/skill-benchmark-rubric.md
   skill-study/references/market-skill-radar.md
@@ -137,9 +156,12 @@ PRODUCT.md
 DESIGN.md
 examples/todo_cli/       # validation sample, outside the skills payload
 examples/physical-flow-demo/ # tiny web app for physical browser verification examples
+reports/                 # public-facing audit report examples
 tests/                   # validation tests
 validation/              # workflow proof artifacts
 validation/vibe-coded-site-verification-template.md # copyable scoring table for live vibe-coded website checks
+validation/github-similar-projects-benchmark-2026-05-22.md # ecosystem positioning benchmark
+validation/public-website-audit-report-template.md # public website audit report template
 ```
 
 ## Design Principles
@@ -150,8 +172,10 @@ validation/vibe-coded-site-verification-template.md # copyable scoring table for
 - Physical browser tests are generated into target project artifacts; the skill itself remains instruction-only.
 - Skill names describe real jobs, not basic curriculum.
 - The agent should stay skeptical of source claims, weak evidence, broken workflows, visual slop, and deployment theater.
+- Multi-step audits should show progress, evidence checkpoints, blockers, and next actions before the final report.
 - External skills and trend reports are converted into audit checks, workflow triggers, benchmark labels, and guardrails, not copied as topic lists.
 - Every skill must produce evidence that another person can understand, reproduce, fix, and retest.
+- The public product surface is a report page; the skill files are the internal engine behind that report.
 - If a skill only produces polished command names or vague opinions, it failed.
 - Complex workflows must be decomposed into business stages and execution units before choosing prompt, skill, Dify, RPA, code, or human intervention.
 - Automatic checkpoints, retry limits, fallbacks, and human escalation rules belong in the plan before execution starts.

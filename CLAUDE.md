@@ -28,6 +28,7 @@ This file is the source of truth for this repository. The skills in `.claude/ski
 - Do not convert broad market skills into basic courses inside this repository.
 - Maintain an adversarial stance against source claims, broken workflows, visual slop, deployment theater, and rubber-stamp reviews.
 - Do not skip verification just because implementation looks simple.
+- Multi-step audits must use progressive reporting so the user can see stage progress, evidence collected, blockers, and next actions before the final report.
 - Prefer observable acceptance criteria over intent descriptions.
 - New guardrails must be specific, triggerable, and reviewable.
 - Validation examples may exist, but they must stay outside `.claude/skills/` and must not be required for skill use.
@@ -41,6 +42,14 @@ This file is the source of truth for this repository. The skills in `.claude/ski
 - Do not automate a messy human process before turning tacit know-how into explicit data templates, handoff rules, checkpoints, and success signals.
 
 ## ADR Log
+
+## ADR: Progressive Reporting For Transparent Audits
+
+- Date: 2026-05-22
+- Status: Accepted
+- Context: Long audits can become black boxes when the agent stays silent until the final report. Users need to see what was checked, what evidence exists, which blockers appeared, and what will happen next.
+- Decision: Add `audit/references/progressive-reporting.md` and require `/audit` and `/flow-test` to emit concise progress updates during multi-step runs. Progress updates are evidence checkpoints, not final verdicts, and they must preserve safety boundaries around private, payment, destructive, and production-mutation actions.
+- Consequences: Audit runs become more observable and easier to trust. Final reports still use the shared Scope, Evidence, Findings, Severity, Reproduction, Fix Suggestion, Regression Check, Lessons shape.
 
 ## ADR: Physical Browser Verification For Critical Flows
 

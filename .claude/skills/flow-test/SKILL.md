@@ -16,10 +16,12 @@ Use this skill to walk a product like a real user.
 5. Mark unsafe/payment/private/destructive flows as `SKIPPED-SAFE`.
 6. Produce issue cards with exact live positions and copyable fix prompts.
 7. Use `S0-S4` severity and include reproduction plus regression checks.
+8. For multi-step live testing, emit progress updates after each major route, CTA group, form, auth boundary, or blocker.
 
 ## Reference
 
 Read `references/live-functional-audit.md` before running the audit.
+For long runs, also read `../audit/references/progressive-reporting.md` and use its update format.
 
 ## Output
 

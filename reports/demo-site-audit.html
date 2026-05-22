@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Demo Website Audit Report</title>
+  <style>
+    :root {
+      --bg: #f7f4ef;
+      --panel: #ffffff;
+      --text: #1d1b18;
+      --muted: #6f6a61;
+      --line: #ded7cc;
+      --accent: #0f766e;
+      --warn: #b45309;
+      --danger: #b91c1c;
+      --soft: #eef7f5;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.5;
+    }
+
+    main {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 40px 0 64px;
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 24px;
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      color: var(--accent);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 8px 0 12px;
+      font-size: clamp(34px, 5vw, 58px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 34px 0 14px;
+      font-size: 24px;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin: 0 0 12px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 12px;
+    }
+
+    .meta {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 22px;
+    }
+
+    .meta div,
+    .card,
+    .finding {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    .meta div {
+      padding: 14px;
+    }
+
+    .label {
+      color: var(--muted);
+      display: block;
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .value {
+      font-weight: 700;
+    }
+
+    .risk {
+      color: var(--warn);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card {
+      padding: 18px;
+    }
+
+    .scorecard,
+    .evidence {
+      width: 100%;
+      border-collapse: collapse;
+      overflow: hidden;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    th,
+    td {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 14px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    th {
+      background: var(--soft);
+      font-size: 13px;
+    }
+
+    .status {
+      display: inline-block;
+      min-width: 74px;
+      border-radius: 999px;
+      padding: 3px 9px;
+      font-size: 12px;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .pass {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .warn {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .unknown {
+      background: #e5e7eb;
+      color: #374151;
+    }
+
+    .finding {
+      padding: 18px;
+      margin-bottom: 14px;
+    }
+
+    .severity {
+      color: var(--danger);
+      font-weight: 800;
+    }
+
+    .fields {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 8px 14px;
+      margin-top: 12px;
+    }
+
+    .fields strong {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    pre {
+      overflow-x: auto;
+      background: #171412;
+      color: #f8f4ed;
+      border-radius: 8px;
+      padding: 16px;
+      font-size: 14px;
+    }
+
+    footer {
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      margin-top: 36px;
+      padding-top: 20px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 760px) {
+      main {
+        width: min(100% - 20px, 1080px);
+        padding-top: 24px;
+      }
+
+      .meta,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .fields {
+        grid-template-columns: 1fr;
+      }
+
+      th,
+      td {
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">Public Website Audit Report</div>
+      <h1>Demo Website Audit</h1>
+      <p>This sample page shows how AgentSkills findings should be packaged for a website owner: plain language, evidence, impact, fix suggestion, and regression check.</p>
+      <section class="meta" aria-label="Report metadata">
+        <div>
+          <span class="label">Target URL</span>
+          <span class="value">http://localhost:5000</span>
+        </div>
+        <div>
+          <span class="label">Date</span>
+          <span class="value">2026-05-22</span>
+        </div>
+        <div>
+          <span class="label">Audit Mode</span>
+          <span class="value">Mixed</span>
+        </div>
+        <div>
+          <span class="label">Overall Risk</span>
+          <span class="value risk">S2</span>
+        </div>
+      </section>
+    </header>
+
+    <section>
+      <h2>Executive Summary</h2>
+      <div class="grid">
+        <div class="card">The demo site has a clear homepage CTA, fake login flow, dashboard, task form, and failure states.</div>
+        <div class="card">The highest-value next step is adding physical browser artifacts: screenshots, trace, console log, and result JSON.</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Scorecard</h2>
+      <table class="scorecard">
+        <thead>
+          <tr>
+            <th>Area</th>
+            <th>Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Offer clarity</td><td><span class="status pass">PASS</span></td><td>Demo purpose is visible.</td></tr>
+          <tr><td>Primary CTA</td><td><span class="status pass">PASS</span></td><td>Homepage CTA points to login.</td></tr>
+          <tr><td>Core workflow</td><td><span class="status pass">PASS</span></td><td>Login and dashboard route exist.</td></tr>
+          <tr><td>Mobile layout</td><td><span class="status warn">WARN</span></td><td>Needs screenshot-backed verification.</td></tr>
+          <tr><td>Performance</td><td><span class="status unknown">UNKNOWN</span></td><td>No browser performance pass attached.</td></tr>
+          <tr><td>Evidence quality</td><td><span class="status warn">WARN</span></td><td>Source and smoke evidence exist; physical artifacts are still missing.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Top Findings</h2>
+
+      <article class="finding">
+        <h3><span class="severity">[S2]</span> Physical browser artifacts are missing</h3>
+        <div class="fields">
+          <strong>Scope</strong><span>Demo report evidence</span>
+          <strong>Evidence</strong><span>Source files and smoke checks exist, but no trace, HAR, video, or screenshots are attached.</span>
+          <strong>Impact</strong><span>A reviewer can understand the flow, but cannot independently inspect browser runtime behavior.</span>
+          <strong>Fix Suggestion</strong><span>Run /physical-flow-test against the demo app and attach redacted trace, screenshots, console log, and result JSON.</span>
+          <strong>Regression Check</strong><span>Re-open the HTML report and confirm artifact links are present and match the tested flow.</span>
+        </div>
+      </article>
+
+      <article class="finding">
+        <h3><span class="severity">[S2]</span> Report is local-only</h3>
+        <div class="fields">
+          <strong>Scope</strong><span>Public delivery</span>
+          <strong>Evidence</strong><span>Target URL is localhost, and the static report is stored locally.</span>
+          <strong>Impact</strong><span>The report is not yet shareable with an external website owner.</span>
+          <strong>Fix Suggestion</strong><span>Publish reports through GitHub Pages or a lightweight hosted site.</span>
+          <strong>Regression Check</strong><span>Open the hosted report URL in a private browser session and verify it loads without local files.</span>
+        </div>
+      </article>
+
+      <article class="finding">
+        <h3><span class="severity">[S3]</span> Visual style is serviceable but generic</h3>
+        <div class="fields">
+          <strong>Scope</strong><span>Demo app presentation</span>
+          <strong>Evidence</strong><span>The app uses simple demo layout and generic copy.</span>
+          <strong>Impact</strong><span>It proves workflow structure, but not premium report or audit workbench design.</span>
+          <strong>Fix Suggestion</strong><span>Apply DESIGN.md rules to the report surface and demo pages.</span>
+          <strong>Regression Check</strong><span>Compare before/after screenshots and confirm typography, spacing, and severity cards are consistent.</span>
+        </div>
+      </article>
+    </section>
+
+    <section>
+      <h2>Evidence</h2>
+      <table class="evidence">
+        <thead>
+          <tr>
+            <th>Evidence Type</th>
+            <th>Status</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>SOURCE</td><td>Available</td><td>Demo app files exist under examples/physical-flow-demo/.</td></tr>
+          <tr><td>LIVE</td><td>Partial</td><td>Local smoke checks passed.</td></tr>
+          <tr><td>PHYSICAL</td><td>Missing</td><td>No redacted Playwright trace, HAR, video, or screenshots attached.</td></tr>
+          <tr><td>UNKNOWN</td><td>Present</td><td>Mobile, accessibility, and performance need dedicated passes.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section>
+      <h2>Copyable Fix Prompt</h2>
+      <pre>Turn this local demo audit into a shareable public website audit report.
+
+Requirements:
+- Publish the report as a static HTML page.
+- Add links to redacted screenshots, trace, console log, and result JSON.
+- Preserve the S0-S4 severity model.
+- Keep the report readable for a non-technical website owner.
+- Include a regression check for every finding.</pre>
+    </section>
+
+    <section>
+      <h2>Regression Check</h2>
+      <pre>1. Open the hosted report URL.
+2. Confirm the target URL, date, risk level, and findings are visible.
+3. Open each evidence link.
+4. Confirm every S1/S2 issue has a fix suggestion and retest step.
+5. Re-run the audited flow after fixes and update the status.</pre>
+    </section>
+
+    <footer>
+      AgentSkills Audit Collection public report sample. The skills are the engine; this report is the product surface.
+    </footer>
+  </main>
+</body>
+</html>

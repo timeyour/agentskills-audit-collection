@@ -91,6 +91,19 @@ Issue lesson:
 A vibe-coded site should not be promoted as a reference until source evidence, live evidence, and at least one observable workflow are separated and scored.
 ```
 
+## 7. GitHub Similar Projects Benchmark
+
+- Type: ecosystem positioning benchmark.
+- Full report: `validation/github-similar-projects-benchmark-2026-05-22.md`
+- Why it matters: this repository should not be mistaken for a generic skills list, prompt pack, or browser automation wrapper.
+- Audit value: compares nearby projects such as VoltAgent agent skills, Trail of Bits security skills, HashiCorp agent skills, SuperClaude, BMAD Method, awesome-design-md, Playwright CLI/MCP, and browser-use.
+
+Positioning lesson:
+
+```text
+AgentSkills Audit Collection should own the acceptance layer between vibe-coded output and real product delivery.
+```
+
 ## What These Cases Prove
 
 - Source evidence and live evidence must be separate.
@@ -99,3 +112,4 @@ A vibe-coded site should not be promoted as a reference until source evidence, l
 - Deployment gaps deserve first-class issue cards.
 - Copyable fix prompts are part of the deliverable, not a nice extra.
 - Five-pass acceptance turns one-time review into reusable project memory.
+- Ecosystem benchmarks keep the repository narrower than a generic skills marketplace and sharper than a browser automation demo.

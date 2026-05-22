@@ -35,6 +35,7 @@ Use `/audit` when the user gives:
 - Visual scores are source-based until screenshots or browser evidence exist.
 - Tool claims require execution evidence before full acceptance.
 - Repeat important audits through five passes and record what was learned.
+- For multi-step audits, emit progressive updates so the user can see the audit trail before the final report.
 - Use the shared output shape when applicable: Scope, Evidence, Findings, Severity, Reproduction, Fix Suggestion, Regression Check, Lessons.
 - Use `S0-S4` severity for delivery impact.
 
@@ -44,11 +45,13 @@ Use `/audit` when the user gives:
    - Identify target type: URL, repo, batch list, local app, design artifact, or tool.
    - Determine safe execution level: source-only, visual, clicked public flow, authenticated flow, or local tool execution.
    - If destructive/payment/private actions appear, mark them `SKIPPED-SAFE`.
+   - For audits with more than five meaningful steps, load `references/progressive-reporting.md` and announce the planned stages.
 
 2. Source pass
    - Collect source claims, docs, gallery metadata, repo files, community posts, and product promises.
    - Record source locator and confidence.
    - Use `references/source-evidence.md`.
+   - Emit a progress update after completing the source pass when live or visual work remains.
 
 3. Feature inventory
    - List every visible or documented feature.
@@ -58,6 +61,7 @@ Use `/audit` when the user gives:
    - Execute every safe flow as far as possible.
    - Record URL, live position, locator, steps, expected result, actual result, evidence, risk, and status.
    - Use `references/live-functional-audit.md`, or invoke `/flow-test` for a dedicated pass.
+   - Emit progress updates after each major route, form, CTA group, auth boundary, or blocker.
 
 5. Visual and aesthetic audit
    - Inspect layout, hierarchy, spacing, typography, color, images, component consistency, responsiveness, trust, and AI slop signals.
@@ -74,6 +78,7 @@ Use `/audit` when the user gives:
 8. Output
    - Produce scope, evidence split, findings, severity, reproduction, fix suggestions, regression checks, lessons, feature maps, issue cards, deployment table, copyable fix pack, final verdict, and experience ledger.
    - Use `references/report-format.md`.
+   - Convert progress updates into the final report instead of pasting a raw running log.
 
 9. Learn
    - Convert repeated findings into guardrails, checklist items, better prompts, or benchmark examples.
