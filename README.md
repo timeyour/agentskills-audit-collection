@@ -7,6 +7,8 @@ This repo provides a Claude Code AgentSkills system for auditing AI-built websit
 - live workflows
 - visual quality
 - deployment readiness
+- web surface discovery
+- least-privilege live testing
 - source vs live evidence
 - `S0-S4` issue severity
 - copyable fix prompts
@@ -58,6 +60,16 @@ Use /accept-five to repeat acceptance and turn findings into reusable rules.
 ```
 
 Long audits should emit short progress updates as each major stage completes, then collapse those updates into the final evidence report.
+
+Before live clicking, the audit flow maps the website surface and permission boundary:
+
+```text
+pages + interactions + media + documents + APIs + storage + security surfaces
+    ?
+permission level + SKIPPED-SAFE boundaries
+    ?
+safe live checks / physical browser tests / final report
+```
 
 ## Public Report Surface
 
@@ -132,6 +144,8 @@ Start with [CASE_STUDIES.md](CASE_STUDIES.md) for a short, readable summary of t
   audit/references/aesthetic-quality-audit.md
   audit/references/five-pass-acceptance.md
   audit/references/progressive-reporting.md
+  audit/references/permission-model.md
+  audit/references/web-surface-discovery.md
   skill-study/SKILL.md
   skill-study/references/skill-benchmark-rubric.md
   skill-study/references/market-skill-radar.md
@@ -173,6 +187,7 @@ validation/public-website-audit-report-template.md # public website audit report
 - Skill names describe real jobs, not basic curriculum.
 - The agent should stay skeptical of source claims, weak evidence, broken workflows, visual slop, and deployment theater.
 - Multi-step audits should show progress, evidence checkpoints, blockers, and next actions before the final report.
+- Website audits should discover the web surface before detailed testing, then apply least privilege before live actions.
 - External skills and trend reports are converted into audit checks, workflow triggers, benchmark labels, and guardrails, not copied as topic lists.
 - Every skill must produce evidence that another person can understand, reproduce, fix, and retest.
 - The public product surface is a report page; the skill files are the internal engine behind that report.

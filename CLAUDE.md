@@ -29,6 +29,9 @@ This file is the source of truth for this repository. The skills in `.claude/ski
 - Maintain an adversarial stance against source claims, broken workflows, visual slop, deployment theater, and rubber-stamp reviews.
 - Do not skip verification just because implementation looks simple.
 - Multi-step audits must use progressive reporting so the user can see stage progress, evidence collected, blockers, and next actions before the final report.
+- Website and app audits must discover the visible web surface before detailed testing: pages, interactions, media, documents, network/API, storage/session, and security-sensitive entry points.
+- Live audits must follow least privilege. Use the permission model before clicking, submitting, authenticating, uploading, mutating data, or touching production.
+- When browser control, Playwright, Computer Use, Claude in Chrome, or returned execution artifacts are available, prefer real browser evidence over inferred behavior for live workflow claims.
 - Prefer observable acceptance criteria over intent descriptions.
 - New guardrails must be specific, triggerable, and reviewable.
 - Validation examples may exist, but they must stay outside `.claude/skills/` and must not be required for skill use.
@@ -42,6 +45,14 @@ This file is the source of truth for this repository. The skills in `.claude/ski
 - Do not automate a messy human process before turning tacit know-how into explicit data templates, handoff rules, checkpoints, and success signals.
 
 ## ADR Log
+
+## ADR: Surface Discovery And Permission Boundaries Before Live Testing
+
+- Date: 2026-05-23
+- Status: Accepted
+- Context: Real website audits can miss important assets and risk boundaries when the agent only tests what the user mentions. Live "click around" behavior is also unsafe without a clear permission level, especially on production websites with payment, deletion, uploads, private data, or account mutation.
+- Decision: Add `audit/references/web-surface-discovery.md` and `audit/references/permission-model.md`. `/audit`, `/flow-test`, `/visual-qa`, `/deploy-check`, and `/accept-five` must map the relevant web surface and apply least privilege before detailed live testing.
+- Consequences: Audits become more complete and safer. Agents can report what exists, what was tested, what was skipped, what needs physical proof, and what requires explicit user authorization.
 
 ## ADR: Progressive Reporting For Transparent Audits
 

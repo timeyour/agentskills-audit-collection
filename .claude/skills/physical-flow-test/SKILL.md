@@ -35,19 +35,21 @@ Prefer `/harness` first. If `/harness` is unavailable, perform a minimal harness
 4. Use `python -m pytest -q tests/`, not the Node/TypeScript Playwright runner, unless the user explicitly asks for TypeScript.
 5. Every generated test must include trace capture, screenshot on failure, HAR/network capture, video when supported, console log capture, clear assertions, and safe failure handling.
 6. Output generated packages under `./artifacts/physical-tests/{timestamp}-{flow-name}/`.
-7. Mark payment, deletion, irreversible submission, production email/SMS sending, and real purchase flows as `SKIPPED-SAFE` unless explicitly allowed.
-8. Never hardcode secrets, passwords, tokens, or cookies. Use environment variables and `.env.example` placeholders.
-9. Require artifact redaction before sharing HAR, trace, screenshots, video, or console logs.
-10. Use `S0-S4` severity and preserve the shared output shape.
+7. Use the audit permission model before generating tests for production, authenticated, payment, deletion, upload, admin, or private-data flows.
+8. Mark payment, deletion, irreversible submission, production email/SMS sending, and real purchase flows as `SKIPPED-SAFE` unless explicitly allowed.
+9. Never hardcode secrets, passwords, tokens, or cookies. Use environment variables and `.env.example` placeholders.
+10. Require artifact redaction before sharing HAR, trace, screenshots, video, or console logs.
+11. Use `S0-S4` severity and preserve the shared output shape.
 
 ## Workflow
 
 1. Intake and scope: identify flow name, URL or local command, environment, browser target, auth needs, test account, high-risk actions, expected results, and required artifacts.
-2. Harness decomposition: map business goal -> user intent -> page/route -> action -> locator -> expected result -> checkpoint -> failure signal.
-3. Generate test package: create `README.md`, `requirements.txt`, `.env.example`, `run-tests.sh`, `tests/test_{flow_name}.py`, and artifact directories.
-4. Execution instruction: provide exact commands for installing Python dependencies, installing Chromium, and running pytest.
-5. Artifact review: inspect returned trace, screenshots, HAR, console logs, video, and result JSON against expected behavior.
-6. Regression and lessons: convert findings into regression checks, locator rules, auth/session rules, network dependency rules, timeout rules, and safe-skip rules.
+2. Surface and permission check: use any available web surface map, apply the permission model, and mark unsafe units `SKIPPED-SAFE`.
+3. Harness decomposition: map business goal -> user intent -> page/route -> action -> locator -> expected result -> checkpoint -> failure signal.
+4. Generate test package: create `README.md`, `requirements.txt`, `.env.example`, `run-tests.sh`, `tests/test_{flow_name}.py`, and artifact directories.
+5. Execution instruction: provide exact commands for installing Python dependencies, installing Chromium, and running pytest.
+6. Artifact review: inspect returned trace, screenshots, HAR, console logs, video, and result JSON against expected behavior.
+7. Regression and lessons: convert findings into regression checks, locator rules, auth/session rules, network dependency rules, timeout rules, and safe-skip rules.
 
 ## References
 
@@ -56,6 +58,8 @@ Prefer `/harness` first. If `/harness` is unavailable, perform a minimal harness
 - `references/safe-execution-policy.md`
 - `references/locator-policy.md`
 - `references/regression-lessons-ledger.md`
+- `../audit/references/permission-model.md`
+- `../audit/references/web-surface-discovery.md` when a surface map is needed before test generation
 
 ## Output Format
 
