@@ -8,6 +8,7 @@ This file is the source of truth for this repository. The skills in `.claude/ski
 - Use `/skill-study` when the user wants the agent to learn from external skills, open-source repos, global skill reports, course/job skill lists, competitor tools, or workflow examples.
 - Use `/harness` when the user wants to operationalize a business workflow, split work into multiple layers, choose prompt/skill/Dify/RPA/code/human execution, define checkpoints, or add retry/escalation strategy.
 - Use `/flow-test` when the user specifically wants every function, CTA, form, route, auth path, or dashboard workflow tested.
+- Use `/physical-flow-test` when `/flow-test` or `/audit` finds a critical path requiring real browser proof, when the user asks whether a live workflow actually works, or when source evidence and live evidence disagree.
 - Use `/visual-qa` when the user wants page style, layout, craft, aesthetic quality, or AI slop diagnosed.
 - Use `/deploy-check` when the user asks what is missing for production deployment.
 - Use `/accept-five` when one pass is not enough and findings need to become reusable experience.
@@ -17,13 +18,20 @@ This file is the source of truth for this repository. The skills in `.claude/ski
 
 - AgentSkills are stateless. A skill must be usable without relying on hidden session history.
 - AgentSkills must stay instruction-only unless a future ADR explicitly allows scripts.
+- Generated physical browser test scripts belong in target project artifacts, not inside `.claude/skills/`.
 - `CLAUDE.md` is the rule source for project-specific governance.
+- `DESIGN.md` is the visual source of truth for generated audit workbench UI, examples, screenshots, and report surfaces.
+- Keep `DESIGN.md` compatible with Google DESIGN.md shape: YAML design tokens first, human guidance second.
 - Reference files belong in each skill's `references/` directory and should only be loaded when needed.
 - Keep skill bodies concise; put templates and long checklists in references.
 - External skill learning must produce concrete workflow triggers, audit checks, benchmark labels, guardrails, or rejection reasons.
 - Do not convert broad market skills into basic courses inside this repository.
 - Maintain an adversarial stance against source claims, broken workflows, visual slop, deployment theater, and rubber-stamp reviews.
 - Do not skip verification just because implementation looks simple.
+- Multi-step audits must use progressive reporting so the user can see stage progress, evidence collected, blockers, and next actions before the final report.
+- Website and app audits must discover the visible web surface before detailed testing: pages, interactions, media, documents, network/API, storage/session, and security-sensitive entry points.
+- Live audits must follow least privilege. Use the permission model before clicking, submitting, authenticating, uploading, mutating data, or touching production.
+- When browser control, Playwright, Computer Use, Claude in Chrome, or returned execution artifacts are available, prefer real browser evidence over inferred behavior for live workflow claims.
 - Prefer observable acceptance criteria over intent descriptions.
 - New guardrails must be specific, triggerable, and reviewable.
 - Validation examples may exist, but they must stay outside `.claude/skills/` and must not be required for skill use.
@@ -37,6 +45,30 @@ This file is the source of truth for this repository. The skills in `.claude/ski
 - Do not automate a messy human process before turning tacit know-how into explicit data templates, handoff rules, checkpoints, and success signals.
 
 ## ADR Log
+
+## ADR: Surface Discovery And Permission Boundaries Before Live Testing
+
+- Date: 2026-05-23
+- Status: Accepted
+- Context: Real website audits can miss important assets and risk boundaries when the agent only tests what the user mentions. Live "click around" behavior is also unsafe without a clear permission level, especially on production websites with payment, deletion, uploads, private data, or account mutation.
+- Decision: Add `audit/references/web-surface-discovery.md` and `audit/references/permission-model.md`. `/audit`, `/flow-test`, `/visual-qa`, `/deploy-check`, and `/accept-five` must map the relevant web surface and apply least privilege before detailed live testing.
+- Consequences: Audits become more complete and safer. Agents can report what exists, what was tested, what was skipped, what needs physical proof, and what requires explicit user authorization.
+
+## ADR: Progressive Reporting For Transparent Audits
+
+- Date: 2026-05-22
+- Status: Accepted
+- Context: Long audits can become black boxes when the agent stays silent until the final report. Users need to see what was checked, what evidence exists, which blockers appeared, and what will happen next.
+- Decision: Add `audit/references/progressive-reporting.md` and require `/audit` and `/flow-test` to emit concise progress updates during multi-step runs. Progress updates are evidence checkpoints, not final verdicts, and they must preserve safety boundaries around private, payment, destructive, and production-mutation actions.
+- Consequences: Audit runs become more observable and easier to trust. Final reports still use the shared Scope, Evidence, Findings, Severity, Reproduction, Fix Suggestion, Regression Check, Lessons shape.
+
+## ADR: Physical Browser Verification For Critical Flows
+
+- Date: 2026-05-21
+- Status: Accepted
+- Context: Static flow audits can miss runtime failures caused by JavaScript execution, auth boundaries, third-party scripts, network behavior, timing, and browser-only UI states.
+- Decision: Add `/physical-flow-test` as the bridge from cognitive audit to executable browser verification. It generates Python Playwright test packages for real execution, collects trace, screenshot, HAR, video, console, and result artifacts, and feeds those artifacts back into severity, reproduction, regression, and lessons.
+- Consequences: Critical workflow claims require physical evidence before being marked working. The skills remain instruction-only; generated tests and artifacts live in the target project or audit workspace.
 
 ## ADR: Process Agents Need Flow Templates And Signal Loops
 

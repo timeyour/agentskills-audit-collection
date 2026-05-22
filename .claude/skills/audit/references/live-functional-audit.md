@@ -23,20 +23,30 @@ Audit these feature types when present:
 
 ## Execution Order
 
-1. Inventory features
+1. Discover the web surface
+   - Use `web-surface-discovery.md` for websites and web apps before detailed clicking.
+   - Map pages, controls, media, documents, network/API, storage/session, and security-sensitive surfaces.
+   - Prioritize surfaces as `P0`, `P1`, `P2`, `skip-safe`, or `unknown`.
+
+2. Apply permission boundary
+   - Use `permission-model.md` before any live interaction.
+   - Record whether the run is public read-only, safe click/navigation, test account, staging authorized, or production guarded.
+   - Mark payment, deletion, private data, production mutation, or unclear high-risk actions as `SKIPPED-SAFE`.
+
+3. Inventory features
    - Crawl or inspect navigation, visible buttons, forms, routes, modals, footer links, dashboard actions, and public docs.
    - Create a feature map before clicking deeply.
 
-2. Define expected behavior
+4. Define expected behavior
    - For each feature, state what should happen.
    - Mark external, destructive, payment, or private actions as "safe boundary" before executing.
 
-3. Execute safe flows
+5. Execute safe flows
    - Use browser automation or manual browser steps when available.
    - Capture URL, viewport, page area, element label, selector/text locator, and step number.
    - Record actual result, console/network errors, visual state, and confirmation/error messages.
 
-4. Test edge states
+6. Test edge states
    - Empty form.
    - Invalid email/phone/password.
    - Duplicate submission.
@@ -46,12 +56,12 @@ Audit these feature types when present:
    - Slow/loading state if observable.
    - Auth-required route without login.
 
-5. Inspect visual quality
+7. Inspect visual quality
    - First viewport clarity.
    - Layout, spacing, alignment, typography, colors, components, images, icon style, and mobile fit.
    - Look for inconsistent sections, template-clone artifacts, broken responsive behavior, and weak trust/conversion cues.
 
-6. Inspect deployment readiness
+8. Inspect deployment readiness
    - Domain and SSL.
    - Environment variables.
    - Backend/API.
@@ -63,7 +73,7 @@ Audit these feature types when present:
    - SEO metadata, sitemap, robots, Open Graph.
    - Privacy, terms, compliance, and data export/backup when relevant.
 
-7. Produce issue cards
+9. Produce issue cards
    - Use one issue card per actionable problem.
    - Include copyable prompts for fixes.
 

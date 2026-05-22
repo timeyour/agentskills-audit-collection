@@ -11,16 +11,20 @@ Use this skill when the user wants to know whether a page feels designed, credib
 
 1. Identify product category and intended user scenario.
 2. Inspect first viewport, hierarchy, spacing, typography, color, imagery, components, and responsive behavior.
-3. Flag AI slop: generic gradients, repeated icon cards, fake proof, vague copy, mismatched components, irrelevant imagery.
-4. Separate screenshot-backed findings from source-only findings.
-5. Compare against the right product pattern: local service, SaaS, portfolio, directory, dashboard, lifestyle commerce, etc.
-6. Produce section-level issue cards and copyable design-fix prompts.
-7. Use `S0-S4` severity and include regression checks for visual fixes.
+3. Inventory visible media, document links, embeds, and product screenshots when they affect trust or layout.
+4. Flag AI slop: generic gradients, repeated icon cards, fake proof, vague copy, mismatched components, irrelevant imagery.
+5. Separate screenshot-backed findings from source-only findings.
+6. Compare against the right product pattern: local service, SaaS, portfolio, directory, dashboard, lifestyle commerce, etc.
+7. Produce section-level issue cards and copyable design-fix prompts.
+8. Use `S0-S4` severity and include regression checks for visual fixes.
+9. For multi-section reviews, emit progress updates after each major page section or viewport group.
 
 ## References
 
 - `references/aesthetic-quality-audit.md`
 - `references/webpage-audit-rubric.md`
+- `../audit/references/progressive-reporting.md` for long visual audits
+- `../audit/references/web-surface-discovery.md` when media, documents, or embeds need inventory
 
 ## Output
 
