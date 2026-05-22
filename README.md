@@ -65,9 +65,9 @@ Before live clicking, the audit flow maps the website surface and permission bou
 
 ```text
 pages + interactions + media + documents + APIs + storage + security surfaces
-    ?
+    ->
 permission level + SKIPPED-SAFE boundaries
-    ?
+    ->
 safe live checks / physical browser tests / final report
 ```
 
