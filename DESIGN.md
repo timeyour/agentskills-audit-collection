@@ -1,7 +1,11 @@
 ---
 version: alpha
 name: AgentSkills Audit Workbench
-description: A precise, calm, evidence-first design system for auditing AI-built products. The interface should feel diagnostic and trustworthy: dense enough for serious QA work, restrained enough to avoid alarm fatigue, and structured enough for agents to generate consistent audit pages.
+description: >
+  A precise, calm, evidence-first design system for auditing AI-built products.
+  The interface should feel diagnostic and trustworthy: dense enough for serious
+  QA work, restrained enough to avoid alarm fatigue, and structured enough for
+  agents to generate consistent audit pages.
 colors:
   primary: "#12324A"
   primary-active: "#0B2538"
@@ -24,7 +28,7 @@ colors:
   severity-s0: "#7A1E1E"
   severity-s1: "#B42318"
   severity-s2: "#92400E"
-  severity-s3: "#2F7D68"
+  severity-s3: "#3B5B73"
   severity-s4: "#475467"
 typography:
   display-lg:
@@ -172,7 +176,7 @@ The visual personality is evidence-first and productive. It should feel more lik
 - **Surface (#FFFFFF):** Main content surface for issue cards, reports, and forms.
 - **Ink (#17202A):** Strong text for headings and core findings.
 - **Muted (#667085):** Metadata, timestamps, labels, and secondary explanations.
-- **Severity colors:** S0/S1 use restrained reds, S2 uses a dark amber, S3 uses green, and S4 uses gray. Severity should be legible without turning the interface into an alarm wall.
+- **Severity colors:** S0/S1 use restrained reds, S2 uses a dark amber, S3 uses neutral blue-gray, and S4 uses gray. Severity should be legible without turning the interface into an alarm wall.
 
 ## Typography
 

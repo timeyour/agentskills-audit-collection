@@ -41,6 +41,7 @@ def _is_valid_item(item):
 
 
 def save_todos(path, todos):
+    """Persist TODO items as formatted JSON."""
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(todos, indent=2) + "\n", encoding="utf-8")
@@ -71,6 +72,7 @@ def mark_done(path, todo_id):
 
 
 def format_todos(todos):
+    """Format TODO items for CLI output."""
     if not todos:
         return "No TODO items."
 

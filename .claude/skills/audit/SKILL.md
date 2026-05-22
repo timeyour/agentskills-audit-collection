@@ -1,6 +1,10 @@
 ---
 name: audit
-description: End-to-end agent skill for auditing websites, web apps, open-source projects, AI-built products, and vibe-coded examples. Use when the user wants a full workflow covering source evidence, live feature testing, visual/aesthetic quality, deployment readiness, five-pass acceptance, issue cards, copyable fixes, and accumulated learning.
+description: >
+  End-to-end agent skill for auditing websites, web apps, open-source projects,
+  AI-built products, and vibe-coded examples. Use when the user wants a full workflow
+  covering source evidence, live feature testing, visual/aesthetic quality,
+  deployment readiness, five-pass acceptance, issue cards, copyable fixes, and accumulated learning.
 ---
 
 # Audit

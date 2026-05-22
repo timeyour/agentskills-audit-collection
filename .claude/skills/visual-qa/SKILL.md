@@ -1,6 +1,9 @@
 ---
 name: visual-qa
-description: Audit visual quality, aesthetic craft, UI consistency, layout, responsive behavior, typography, spacing, trust signals, and AI slop patterns in a website, app, screenshot, or generated UI.
+description: >
+  Audit visual quality, aesthetic craft, UI consistency, layout, responsive behavior,
+  typography, spacing, trust signals, and AI slop patterns in a website, app, screenshot,
+  or generated UI.
 ---
 
 # Visual QA

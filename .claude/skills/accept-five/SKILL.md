@@ -1,6 +1,9 @@
 ---
 name: accept-five
-description: Run five-pass acceptance testing on a website, app, repo, feature, or audit target: baseline, functional, edge/failure, visual/deployment, and retest/experience. Use when one inspection is not enough and repeated findings must become reusable experience.
+description: >
+  Run five-pass acceptance testing on a website, app, repo, feature, or audit target:
+  baseline, functional, edge/failure, visual/deployment, and retest/experience.
+  Use when one inspection is not enough and repeated findings must become reusable experience.
 ---
 
 # Accept Five

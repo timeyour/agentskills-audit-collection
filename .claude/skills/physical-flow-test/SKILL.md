@@ -1,6 +1,9 @@
 ---
 name: physical-flow-test
-description: Generate executable real-browser flow tests using Python Playwright from business flows. Use when cognitive audit, flow-test, audit, or accept-five needs physical browser proof for CTA, form, auth, upload, checkout, dashboard, production, staging, or local workflows.
+description: >
+  Generate executable real-browser flow tests using Python Playwright from business flows.
+  Use when cognitive audit, flow-test, audit, or accept-five needs physical browser proof
+  for CTA, form, auth, upload, checkout, dashboard, production, staging, or local workflows.
 ---
 
 # Physical Flow Test

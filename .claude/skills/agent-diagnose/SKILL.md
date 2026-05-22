@@ -1,6 +1,9 @@
 ---
 name: agent-diagnose
-description: Diagnose AI agent or workflow failure modes with adversarial checks: prompt injection, manipulation, hidden strategy drift, permission escalation, policy inconsistency, auditability failures, scope drift, weak evidence, and broken self-verification.
+description: >
+  Diagnose AI agent or workflow failure modes with adversarial checks:
+  prompt injection, manipulation, hidden strategy drift, permission escalation,
+  policy inconsistency, auditability failures, scope drift, weak evidence, and broken self-verification.
 ---
 
 # Agent Diagnose

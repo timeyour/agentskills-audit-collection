@@ -9,6 +9,7 @@ HOST = "127.0.0.1"
 PORT = 5000
 TEST_USER = "test_user"
 TEST_PASS = "test_pass"
+MAX_FORM_BYTES = 8192
 
 sessions = {}
 tasks = [
@@ -16,6 +17,14 @@ tasks = [
     {"id": 2, "title": "Verify login failure state"},
 ]
 next_task_id = 3
+
+
+class RequestError(Exception):
+    def __init__(self, status, title, message):
+        super().__init__(message)
+        self.status = status
+        self.title = title
+        self.message = message
 
 
 def page(title, body, status=200):
@@ -86,7 +95,7 @@ class DemoHandler(BaseHTTPRequestHandler):
                 return
             self.render_success()
         elif parsed.path == "/logout":
-            self.send_response_body(*redirect("/", [("Set-Cookie", "sid=; Path=/; Max-Age=0")]))
+            self.send_response_body(*redirect("/", [("Set-Cookie", "sid=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax")]))
         elif parsed.path == "/trigger-error":
             self.send_response_body(*page("Server Error", '<section class="panel"><h1>Server Error</h1><p class="error">Intentional demo failure.</p></section>', 500))
         else:
@@ -94,14 +103,21 @@ class DemoHandler(BaseHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urlparse(self.path)
-        if parsed.path == "/login":
-            self.handle_login()
-        elif parsed.path == "/add-task":
-            self.handle_add_task()
-        elif parsed.path.startswith("/delete-task/"):
-            self.handle_delete_task(parsed.path)
-        else:
-            self.send_response_body(*page("Not Found", '<section class="panel"><h1>Not Found</h1></section>', 404))
+        try:
+            if parsed.path == "/login":
+                self.handle_login()
+            elif parsed.path == "/add-task":
+                self.handle_add_task()
+            elif parsed.path.startswith("/delete-task/"):
+                self.handle_delete_task(parsed.path)
+            else:
+                self.send_response_body(*page("Not Found", '<section class="panel"><h1>Not Found</h1></section>', 404))
+        except RequestError as exc:
+            body = (
+                f'<section class="panel"><h1>{html.escape(exc.title)}</h1>'
+                f'<p class="error">{html.escape(exc.message)}</p></section>'
+            )
+            self.send_response_body(*page(exc.title, body, exc.status))
 
     def render_home(self):
         body = """
@@ -206,7 +222,17 @@ class DemoHandler(BaseHTTPRequestHandler):
         if not self.current_user():
             self.send_response_body(*redirect("/login?from=delete-task"))
             return
-        task_id = int(path.rsplit("/", 1)[-1])
+        try:
+            task_id = int(path.rsplit("/", 1)[-1])
+        except ValueError:
+            self.send_response_body(
+                *page(
+                    "Bad Request",
+                    '<section class="panel"><h1>Bad Request</h1><p class="error">Invalid task id.</p></section>',
+                    400,
+                )
+            )
+            return
         tasks[:] = [task for task in tasks if task["id"] != task_id]
         self.send_response_body(*redirect("/dashboard"))
 
@@ -219,7 +245,14 @@ class DemoHandler(BaseHTTPRequestHandler):
         return sessions.get(sid.value)
 
     def read_form(self):
-        length = int(self.headers.get("Content-Length", "0"))
+        try:
+            length = int(self.headers.get("Content-Length", "0"))
+        except ValueError as exc:
+            raise RequestError(400, "Bad Request", "Invalid Content-Length header.") from exc
+        if length < 0:
+            raise RequestError(400, "Bad Request", "Invalid Content-Length header.")
+        if length > MAX_FORM_BYTES:
+            raise RequestError(413, "Payload Too Large", "Form body is too large for this demo.")
         raw = self.rfile.read(length).decode("utf-8")
         return parse_qs(raw)
 

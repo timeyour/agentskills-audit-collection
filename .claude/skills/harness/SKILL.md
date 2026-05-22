@@ -1,6 +1,11 @@
 ---
 name: harness
-description: Build an engineering delivery harness for AI-assisted work: decompose business goals into multi-level steps, route each step to prompt, AgentSkill, Dify workflow, RPA, code, manual human intervention, or external tool, and define automatic checkpoints, retry strategy, escalation paths, evidence gates, and acceptance criteria. Use before implementing, auditing, or operationalizing a complex workflow.
+description: >
+  Build an engineering delivery harness for AI-assisted work: decompose business goals
+  into multi-level steps, route each step to prompt, AgentSkill, Dify workflow, RPA,
+  code, manual human intervention, or external tool, and define automatic checkpoints,
+  retry strategy, escalation paths, evidence gates, and acceptance criteria.
+  Use before implementing, auditing, or operationalizing a complex workflow.
 ---
 
 # Harness

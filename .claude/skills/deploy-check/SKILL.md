@@ -1,6 +1,9 @@
 ---
 name: deploy-check
-description: Check whether a website, web app, or AI-built product is actually production-ready: domain, SSL, env vars, backend/API, database, auth, email/SMS, storage, payment, CMS, analytics, monitoring, SEO, privacy, backup, and rollback.
+description: >
+  Check whether a website, web app, or AI-built product is actually production-ready:
+  domain, SSL, env vars, backend/API, database, auth, email/SMS, storage, payment,
+  CMS, analytics, monitoring, SEO, privacy, backup, and rollback.
 ---
 
 # Deploy Check
