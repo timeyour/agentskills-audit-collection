@@ -1,6 +1,11 @@
 ---
 name: skill-study
-description: Study external skill collections, open-source agent workflows, market skill reports, course/job trend lists, and competitor tools to extract reusable AgentSkills patterns, benchmark labels, validation rubrics, workflow triggers, anti-patterns, and guardrail updates. Use when the user asks the agent to learn from other skills, global skill trends, repositories, courses, reports, or examples without turning the project into a basic curriculum.
+description: >
+  Study external skill collections, open-source agent workflows, market skill reports,
+  course/job trend lists, and competitor tools to extract reusable AgentSkills patterns,
+  benchmark labels, validation rubrics, workflow triggers, anti-patterns, and guardrail updates.
+  Use when the user asks the agent to learn from other skills, global skill trends,
+  repositories, courses, reports, or examples without turning the project into a basic curriculum.
 ---
 
 # Skill Study
@@ -92,23 +97,23 @@ external source -> evidence split -> pattern extraction -> workflow upgrade -> v
 
 ## Anti-Patterns
 
-- 
+-
 
 ## Guardrail Updates
 
-- 
+-
 
 ## Regression Checks
 
-- 
+-
 
 ## Lessons
 
-- 
+-
 
 ## Copyable Update Prompts
 
-1. 
+1.
 ```
 
 ## Anti-Patterns

@@ -1,6 +1,9 @@
 ---
 name: flow-test
-description: Test every visible function and user workflow in a website, web app, or open-source project. Use for live QA: navigation, CTAs, forms, auth, search, upload, checkout, dashboards, error states, mobile behavior, expected vs actual results, and issue cards with copyable fixes.
+description: >
+  Test every visible function and user workflow in a website, web app, or open-source project.
+  Use for live QA: navigation, CTAs, forms, auth, search, upload, checkout, dashboards,
+  error states, mobile behavior, expected vs actual results, and issue cards with copyable fixes.
 ---
 
 # Flow Test

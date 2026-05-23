@@ -1,5 +1,7 @@
 # /check Validation Output: Engineering Discipline Skills
 
+Historical validation artifact. The `/spec`, `/tdd`, `/review`, `/check`, and `/learn` names below describe the validation sequence used when this report was produced; they are not part of the current shipped `.claude/skills/` set unless explicitly listed in `README.md`.
+
 ## Rules Loaded
 
 - Rule count: 9 explicit repository rules plus 2 accepted ADRs.
