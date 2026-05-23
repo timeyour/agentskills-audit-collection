@@ -19,6 +19,7 @@ Use this skill when the user wants to know whether a page feels designed, credib
 5. Use measurable aesthetic heuristics for spacing, hierarchy, color roles, visual weight, component consistency, and Figma/code fidelity when evidence exists.
 6. Separate screenshot-backed findings from source-only findings.
 7. Compare against the right product pattern: local service, SaaS, portfolio, directory, dashboard, lifestyle commerce, etc.
+   - For product-pattern questions (scenario, outcome, next-step, inspiration vs. action), invoke `/ai-product-audit` or use `../ai-product-audit/references/product-pattern-rubric.md`.
 8. Produce section-level issue cards and copyable design-fix prompts.
 9. Use `S0-S4` severity and include regression checks for visual fixes.
 10. For multi-section reviews, emit progress updates after each major page section or viewport group.

@@ -37,6 +37,7 @@ load_dotenv()
 BASE_URL = os.environ.get("TARGET_URL", "http://localhost:5000")
 HEADLESS = os.environ.get("HEADLESS", "true").lower() != "false"
 ARTIFACT_ROOT = Path(os.environ.get("ARTIFACT_ROOT", "artifacts"))
+ENVIRONMENT = os.environ.get("ENVIRONMENT", "unknown")
 
 
 def make_paths(flow_name: str) -> dict[str, Path]:
@@ -70,10 +71,16 @@ def write_console_log(path: Path, events: list[dict]) -> None:
 def test_login_flow():
     paths = make_paths("login-flow")
     console_events = []
+    started_at = datetime.now(timezone.utc).isoformat()
+    steps = []
     result = {
         "flow": "login-flow",
         "target_url": BASE_URL,
+        "environment": ENVIRONMENT,
         "status": "running",
+        "started_at": started_at,
+        "finished_at": None,
+        "steps": steps,
         "artifacts": {},
     }
 
@@ -99,20 +106,31 @@ def test_login_flow():
         )
 
         try:
+            step = {"name": "open homepage", "status": "running"}
+            steps.append(step)
             page.goto(BASE_URL, wait_until="domcontentloaded")
             expect(page.get_by_role("link", name="Get Started")).to_be_visible()
-            page.get_by_role("link", name="Get Started").click()
+            step["status"] = "passed"
 
+            step = {"name": "click Get Started", "status": "running"}
+            steps.append(step)
+            page.get_by_role("link", name="Get Started").click()
             expect(page.get_by_label("Username")).to_be_visible()
+            step["status"] = "passed"
+
+            step = {"name": "fill login form", "status": "running"}
+            steps.append(step)
             page.get_by_label("Username").fill(os.environ["TEST_USERNAME"])
             page.get_by_label("Password").fill(os.environ["TEST_PASSWORD"])
             page.get_by_role("button", name="Sign in").click()
-
             expect(page.get_by_role("heading", name="Dashboard")).to_be_visible()
             expect(page.get_by_text("Signed in as test_user")).to_be_visible()
+            step["status"] = "passed"
 
             result["status"] = "passed"
         except (AssertionError, Error) as exc:
+            if step:
+                step["status"] = "failed"
             result["status"] = "failed"
             result["error"] = str(exc)
             failure_path = paths["screenshots"] / "failure.png"
@@ -120,6 +138,7 @@ def test_login_flow():
             result["artifacts"]["failure_screenshot"] = str(failure_path)
             raise
         finally:
+            result["finished_at"] = datetime.now(timezone.utc).isoformat()
             trace_path = paths["traces"] / "trace.zip"
             console_path = paths["logs"] / "console.log"
             result_path = paths["root"] / "result.json"
@@ -148,3 +167,5 @@ def test_login_flow():
 - Close the context before expecting HAR/video files to be finalized.
 - Prefer `expect(...)` assertions over manual sleeps.
 - Use `page.wait_for_url`, `expect(locator).to_be_visible`, or response predicates instead of fixed timeouts.
+- Set `ENVIRONMENT` env var (e.g. `staging`, `production`, `local`) so `result.json` records where the test ran.
+- Append each checked step to the `steps` list with `name` and `status` (`running` / `passed` / `failed`) so the result file is actionable after a partial run.

@@ -120,6 +120,7 @@ rules memory / benchmark library
 ## Skills
 
 - `/audit`: run the end-to-end website/product audit workflow.
+- `/ai-product-audit`: audit AI-generated products for product-pattern fit, scenario clarity, and conversion readiness.
 - `/skill-study`: learn from external skills, repositories, market skill reports, and competitor workflows without turning the collection into a basic curriculum.
 - `/harness`: decompose business goals into multi-level execution steps with prompt/skill/Dify/RPA/code/human routing, checkpoints, retries, and escalation.
 - `/flow-test`: test every visible feature and user workflow.
@@ -178,6 +179,9 @@ Start with [CASE_STUDIES.md](CASE_STUDIES.md) for a short, readable summary of t
   deploy-check/SKILL.md
   accept-five/SKILL.md
   agent-diagnose/SKILL.md
+  ai-product-audit/SKILL.md
+  ai-product-audit/references/product-pattern-rubric.md
+  ai-product-audit/references/category-pattern-catalog.md
 docs/research/          # research inputs and verification status indexes
 docs/roadmap/           # future engine and self-evolution plans
 CLAUDE.md

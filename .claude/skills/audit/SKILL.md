@@ -14,7 +14,7 @@ Use this skill as the single entry point for the full audit workflow.
 The goal is to make a product or website testable, visible, and fixable:
 
 ```text
-target -> intake -> surface discovery -> permission boundary -> source pass -> live flow test -> visual/aesthetic audit -> deployment audit -> five-pass acceptance -> issue cards -> copyable fixes -> learning ledger
+target -> intake -> surface discovery -> permission boundary -> source pass -> live flow test -> visual/aesthetic audit -> product-pattern audit -> deployment audit -> five-pass acceptance -> issue cards -> copyable fixes -> learning ledger
 ```
 
 ## When To Use
@@ -81,6 +81,10 @@ Use `/audit` when the user gives:
 6. Visual and aesthetic audit
    - Inspect layout, hierarchy, spacing, typography, color, images, component consistency, responsiveness, trust, and AI slop signals.
    - Use `references/webpage-audit-rubric.md` and `references/aesthetic-quality-audit.md`, or invoke `/visual-qa` for a dedicated pass.
+
+6.5. Product-pattern audit
+   - For lifestyle, service, commerce, creator, and SaaS products, check scenario preparation, pattern fit, and conversion readiness.
+   - Use `../ai-product-audit/references/product-pattern-rubric.md`, or invoke `/ai-product-audit` for a dedicated pass.
 
 7. Deployment readiness
    - Check domain, SSL, env vars, backend/API, database, auth, email/SMS, storage, payment, CMS/admin, analytics, monitoring, SEO, privacy, backup, and rollback.

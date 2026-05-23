@@ -292,7 +292,9 @@ This tests whether the workflow is useful beyond a toy TODO CLI.
   - `/harness` for decomposing business objectives into execution units with checkpoints, retries, human intervention, and tool routing.
   - `/audit` for the full website/product audit workflow.
   - `/flow-test` for feature-by-feature live workflow testing.
+  - `/physical-flow-test` for generating executable Python Playwright tests and collecting trace, screenshot, HAR, video, console, and result artifacts for critical workflows.
   - `/visual-qa` for visual quality, style, and AI slop review.
+  - `/ai-product-audit` for product-pattern fit, scenario clarity, and conversion readiness.
   - `/deploy-check` for production readiness and dependency gaps.
   - `/accept-five` for five-pass acceptance and experience accumulation.
   - `/agent-diagnose` for adversarial agent/workflow reliability checks.
