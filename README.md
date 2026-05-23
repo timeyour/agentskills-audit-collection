@@ -37,6 +37,17 @@ See [PRODUCT.md](PRODUCT.md) and [DESIGN.md](DESIGN.md) for the product directio
 
 `DESIGN.md` follows the Google DESIGN.md shape: YAML design tokens for agents plus Markdown guidance for humans. Use it as the visual source of truth when generating audit workbench UI, screenshots, examples, or report surfaces.
 
+## Research-Backed Rules
+
+The collection now separates research input from shipped rules:
+
+- Failure mode library: `.claude/skills/audit/references/failure-modes.md`
+- Aesthetic metrics: `.claude/skills/visual-qa/references/aesthetic-metrics.md`
+- Self-evolution roadmap: `docs/roadmap/self-evolving-audit-engine.md`
+- Research source index: `docs/research/ai-product-audit-research-index.md`
+
+Unverified site lists, popularity numbers, and ecosystem claims stay as research candidates until they have evidence-backed validation reports.
+
 ## Quick Start
 
 1. Copy `.claude/skills/` into your Claude Code project.
@@ -142,6 +153,7 @@ Start with [CASE_STUDIES.md](CASE_STUDIES.md) for a short, readable summary of t
   audit/references/live-functional-audit.md
   audit/references/webpage-audit-rubric.md
   audit/references/aesthetic-quality-audit.md
+  audit/references/failure-modes.md
   audit/references/five-pass-acceptance.md
   audit/references/progressive-reporting.md
   audit/references/permission-model.md
@@ -162,9 +174,12 @@ Start with [CASE_STUDIES.md](CASE_STUDIES.md) for a short, readable summary of t
   physical-flow-test/references/locator-policy.md
   physical-flow-test/references/regression-lessons-ledger.md
   visual-qa/SKILL.md
+  visual-qa/references/aesthetic-metrics.md
   deploy-check/SKILL.md
   accept-five/SKILL.md
   agent-diagnose/SKILL.md
+docs/research/          # research inputs and verification status indexes
+docs/roadmap/           # future engine and self-evolution plans
 CLAUDE.md
 PRODUCT.md
 DESIGN.md
@@ -189,6 +204,7 @@ validation/public-website-audit-report-template.md # public website audit report
 - Multi-step audits should show progress, evidence checkpoints, blockers, and next actions before the final report.
 - Website audits should discover the web surface before detailed testing, then apply least privilege before live actions.
 - External skills and trend reports are converted into audit checks, workflow triggers, benchmark labels, and guardrails, not copied as topic lists.
+- Research materials must become evidence rules, candidate pools, or roadmap notes; unverified claims must not become case studies.
 - Every skill must produce evidence that another person can understand, reproduce, fix, and retest.
 - The public product surface is a report page; the skill files are the internal engine behind that report.
 - If a skill only produces polished command names or vague opinions, it failed.

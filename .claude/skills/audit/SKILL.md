@@ -42,6 +42,7 @@ Use `/audit` when the user gives:
 - For multi-step audits, emit progressive updates so the user can see the audit trail before the final report.
 - Discover the web surface before detailed testing: pages, interactions, media, documents, network/API, storage, and security surfaces.
 - Use the permission model before any live interaction; never perform risky production actions silently.
+- For AI-built products, generated code, and product acceptance reviews, use `references/failure-modes.md` to check common hidden failures before declaring readiness.
 - Use the shared output shape when applicable: Scope, Evidence, Findings, Severity, Reproduction, Fix Suggestion, Regression Check, Lessons.
 - Use `S0-S4` severity for delivery impact.
 
@@ -63,6 +64,7 @@ Use `/audit` when the user gives:
    - Collect source claims, docs, gallery metadata, repo files, community posts, and product promises.
    - Record source locator and confidence.
    - Use `references/source-evidence.md`.
+   - For AI-built or agent-built work, also scan for failure modes from `references/failure-modes.md`: weak validation, unsafe mutations, N+1 or unbounded loading, swallowed exceptions, hallucinated APIs, secrets, placeholders, dependency drift, and missing extreme states.
    - Emit a progress update after completing the source pass when live or visual work remains.
 
 4. Feature inventory
