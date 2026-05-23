@@ -19,11 +19,13 @@ Use this skill for important audits or releases.
 5. Retest/experience: verify blockers, detect repeated patterns, improve prompts, and propose guardrails.
 6. Classify findings with `S0-S4` severity and keep reproduction/regression evidence through all passes.
 7. Use progressive reporting after every pass, and use the permission model before any live or authenticated action.
+8. In the final pass, decide whether lessons stay in the validation report, become a skill-reference update, or deserve promotion to `CLAUDE.md`. Use `docs/roadmap/self-evolving-audit-engine.md` as the roadmap for this decision.
 
 ## Reference
 
 Read `references/five-pass-acceptance.md`.
 For website/app targets, also read `../audit/references/web-surface-discovery.md`, `../audit/references/permission-model.md`, and `../audit/references/progressive-reporting.md`.
+For repeated lessons or self-improvement proposals, consult `../../../docs/roadmap/self-evolving-audit-engine.md`.
 
 ## Output
 

@@ -16,15 +16,17 @@ Use this skill when the user wants to know whether a page feels designed, credib
 2. Inspect first viewport, hierarchy, spacing, typography, color, imagery, components, and responsive behavior.
 3. Inventory visible media, document links, embeds, and product screenshots when they affect trust or layout.
 4. Flag AI slop: generic gradients, repeated icon cards, fake proof, vague copy, mismatched components, irrelevant imagery.
-5. Separate screenshot-backed findings from source-only findings.
-6. Compare against the right product pattern: local service, SaaS, portfolio, directory, dashboard, lifestyle commerce, etc.
-7. Produce section-level issue cards and copyable design-fix prompts.
-8. Use `S0-S4` severity and include regression checks for visual fixes.
-9. For multi-section reviews, emit progress updates after each major page section or viewport group.
+5. Use measurable aesthetic heuristics for spacing, hierarchy, color roles, visual weight, component consistency, and Figma/code fidelity when evidence exists.
+6. Separate screenshot-backed findings from source-only findings.
+7. Compare against the right product pattern: local service, SaaS, portfolio, directory, dashboard, lifestyle commerce, etc.
+8. Produce section-level issue cards and copyable design-fix prompts.
+9. Use `S0-S4` severity and include regression checks for visual fixes.
+10. For multi-section reviews, emit progress updates after each major page section or viewport group.
 
 ## References
 
 - `references/aesthetic-quality-audit.md`
+- `references/aesthetic-metrics.md`
 - `references/webpage-audit-rubric.md`
 - `../audit/references/progressive-reporting.md` for long visual audits
 - `../audit/references/web-surface-discovery.md` when media, documents, or embeds need inventory
