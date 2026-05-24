@@ -31,6 +31,7 @@
     head.addEventListener("click", () => root.classList.toggle("asw-collapsed"));
 
     const body = el("div", "asw-body");
+    const stages = el("div", "asw-stages");
     const progress = el("div", "asw-progress");
     progress.appendChild(el("span"));
     const meta = el("div", "asw-meta");
@@ -39,7 +40,7 @@
     const err = el("div", "asw-err");
     err.style.display = "none";
 
-    body.append(progress, meta, annotation, findings, err);
+    body.append(stages, progress, meta, annotation, findings, err);
 
     const foot = el("div", "asw-foot");
     const btnCapture = el("button", "", "截图留证");
@@ -91,8 +92,23 @@
     root.appendChild(panel);
     document.documentElement.appendChild(root);
 
-    root._refs = { progress, meta, annotation, findings, err, progressBar: progress.firstChild };
+    root._refs = { stages, progress, meta, annotation, findings, err, progressBar: progress.firstChild };
     return root;
+  }
+
+  function renderStages(container, state) {
+    container.textContent = "";
+    const list = state?.stages || [];
+    if (!list.length) return;
+    const title = el("div", "", "阶段");
+    title.style.fontWeight = "600";
+    title.style.marginBottom = "4px";
+    container.appendChild(title);
+    list.forEach((st) => {
+      const row = el("div", "asw-stage-line" + (st.id === state.currentStageId ? " active" : ""));
+      row.textContent = (st.order ? st.order + ". " : "") + (st.label || st.id) + " · " + (st.status || "");
+      container.appendChild(row);
+    });
   }
 
   function renderFindings(container, list) {
@@ -155,6 +171,7 @@
       ].join(" ");
       r.annotation.textContent =
         state.activeAnnotation || "（Agent 未设置 activeAnnotation）";
+      renderStages(r.stages, state);
       renderFindings(r.findings, state.findingsPreview);
     });
   }

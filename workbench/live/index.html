@@ -17,10 +17,17 @@
     .asw-live header .meta { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; opacity: .92; }
     .asw-live .progress-bar { height: 6px; background: rgba(255,255,255,.2); border-radius: 99px; margin-top: 12px; overflow: hidden; }
     .asw-live .progress-fill { height: 100%; background: var(--accent); transition: width .4s ease; }
-    .asw-live main { display: grid; grid-template-columns: 220px 1fr 280px; gap: 0; min-height: calc(100vh - 120px); }
-    @media (max-width: 900px) { .asw-live main { grid-template-columns: 1fr; } }
-    .asw-live aside, .asw-live section, .asw-live .rail-right { padding: 16px; border-right: 1px solid var(--border); background: var(--surface); }
+    .asw-live main.split-main { display: grid; grid-template-columns: 240px 1fr 300px; gap: 0; min-height: calc(100vh - 220px); }
+    @media (max-width: 1100px) { .asw-live main.split-main { grid-template-columns: 1fr; } }
+    .asw-live aside, .asw-live .rail-right { padding: 16px; border-right: 1px solid var(--border); background: var(--surface); overflow-y: auto; max-height: calc(100vh - 220px); }
     .asw-live .rail-right { border-right: none; background: var(--surface-soft); }
+    .asw-live .center-site { display: flex; flex-direction: column; background: #0f1720; min-height: calc(100vh - 220px); border-right: 1px solid var(--border); position: relative; }
+    .asw-live .caption-bar { background: var(--primary); color: #fff; padding: 14px 18px; flex-shrink: 0; border-bottom: 3px solid var(--accent); }
+    .asw-live .caption-bar strong { display: block; font-size: 11px; opacity: .8; margin-bottom: 6px; text-transform: uppercase; letter-spacing: .06em; }
+    .asw-live .caption-bar .caption-text { font-size: 15px; line-height: 1.5; }
+    .asw-live .caption-bar.snapshot { border-bottom-color: #92400e; }
+    .asw-live .center-site iframe { flex: 1; width: 100%; min-height: 360px; border: 0; background: #fff; }
+    .asw-live .site-placeholder { flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px; color: #94a3b8; text-align: center; font-size: 14px; line-height: 1.6; }
     .asw-live h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 12px; }
     .asw-live .stage-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 8px; border-radius: 6px; cursor: default; border-left: 3px solid transparent; }
     .asw-live .stage-item.active { background: var(--accent-soft); border-left-color: var(--accent); }
@@ -53,12 +60,6 @@
     .asw-live .feed-status.err { background: #fef3f2; color: #7a1e1e; }
     .asw-live .quick-links a { display: block; font-size: 13px; margin-bottom: 8px; color: var(--primary); word-break: break-all; }
     .asw-live header a.target-link { color: #b8d4e8; cursor: pointer; text-decoration: underline; }
-    .asw-live .target-preview { display: none; border-top: 1px solid var(--border); background: var(--surface-soft); }
-    .asw-live .target-preview.visible { display: block; }
-    .asw-live .preview-bar { display: flex; align-items: center; gap: 12px; padding: 8px 16px; font-size: 12px; color: var(--muted); background: var(--surface); border-bottom: 1px solid var(--border); }
-    .asw-live .preview-bar strong { color: var(--ink); flex: 1; }
-    .asw-live .target-preview iframe { width: 100%; height: min(52vh, 640px); border: 0; background: #fff; display: block; }
-    .asw-live .preview-hint { padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
     .asw-live .hint-inline { font-size: 12px; color: var(--muted); margin: 0 24px 8px; }
     .asw-live .asw-btn { background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
     .asw-live .asw-btn:hover { background: var(--primary-active); }
@@ -87,13 +88,12 @@
         <input type="url" id="targetSiteUrl" placeholder="https://barrierlens.vercel.app/" />
       </label>
       <div class="toolbar-actions">
-        <button type="button" class="asw-btn" id="btnPreviewTarget">在看板内预览被审站</button>
-        <button type="button" class="asw-btn secondary" id="btnOpenTarget">新标签页打开</button>
+        <button type="button" class="asw-btn secondary" id="btnOpenTarget">新标签页打开被审站</button>
         <button type="button" class="asw-btn secondary" id="btnCopyAudit">复制 /audit 命令</button>
         <button type="button" class="asw-btn secondary" id="btnLoadBarrierlens">加载 BarrierLens 快照</button>
       </div>
     </div>
-    <p class="hint-inline">实时旁白始终在本页；「新标签页打开」会跳到别的标签，本看板请保留。</p>
+    <p class="hint-inline">三栏同屏：左=阶段 · 中=被审网站 · 右=步骤与问题。中间顶栏为<strong>实时旁白</strong>（需 Cursor 跑 /audit 并连接数据源）。快照不会自动动。</p>
     <div class="toolbar-row">
       <label>② 实时数据源（run-state.json，Agent 每秒更新）
         <input type="text" id="statePath" placeholder="data/barrierlens-run-state.json" />
@@ -108,33 +108,34 @@
       </div>
     </div>
   </div>
-  <div class="target-preview" id="targetPreviewWrap">
-    <div class="preview-bar">
-      <strong>被审站预览（本页内，不跳转看板）</strong>
-      <button type="button" class="asw-btn secondary" id="btnClosePreview">关闭预览</button>
-      <a href="#" class="asw-btn secondary" id="previewOpenExternal" target="_blank" rel="noopener noreferrer" style="text-decoration:none;padding:8px 14px;border-radius:6px">新标签页打开</a>
-    </div>
-    <iframe id="targetPreview" title="被审网站预览" hidden></iframe>
-    <div class="preview-hint" id="previewHint" hidden></div>
-  </div>
-  <main>
+  <main class="split-main">
     <aside>
-      <h2>工作流阶段</h2>
+      <h2>左 · 审计阶段</h2>
       <div id="stageRail"></div>
     </aside>
-    <section>
-      <h2 id="currentStageTitle">当前步骤</h2>
-      <div class="annotation" id="annotationBox">
-        等待加载 run-state…
-        <small>Agent 执行 /audit 时应更新 validation/artifacts/&lt;runId&gt;/run-state.json</small>
+    <div class="center-site" id="centerSite">
+      <div class="caption-bar" id="captionBar">
+        <strong>实时旁白（正在检查什么）</strong>
+        <div class="caption-text" id="captionText">连接数据源后显示；粘贴链接后中间加载被审网站</div>
+      </div>
+      <iframe id="targetPreview" title="被审网站" hidden></iframe>
+      <div class="site-placeholder" id="sitePlaceholder">
+        在上方 ① 粘贴被审网站链接，并 ② 连接 run-state<br>
+        中间将显示被审页面，顶栏显示 Agent 写的旁白
+      </div>
+    </div>
+    <div class="rail-right">
+      <h2>右 · 当前步骤</h2>
+      <h3 id="currentStageTitle" style="margin:0 0 12px;font-size:15px;color:var(--ink)">—</h3>
+      <div class="annotation" id="annotationBox" style="font-size:13px;padding:12px">
+        等待加载…
+        <small>与顶栏同步</small>
       </div>
       <div id="stepList"></div>
-    </section>
-    <div class="rail-right">
-      <h2>链接与扩展</h2>
-      <div class="quick-links" id="quickLinks"></div>
       <h2>已发现问题</h2>
       <div id="findingsList"></div>
+      <h2>链接与扩展</h2>
+      <div class="quick-links" id="quickLinks"></div>
       <h2>事件流</h2>
       <div class="event-log" id="eventLog"></div>
     </div>
@@ -190,7 +191,7 @@
       let html = '';
       if (target) {
         html += '<a href="#" id="qlOpenNewTab">↗ 新标签页打开被审网站（会离开本看板）</a>';
-        html += '<a href="#" id="qlPreviewInline">⊞ 在看板内预览被审站（推荐）</a>';
+        html += '<a href="#" id="qlPreviewInline">⊞ 刷新中间被审站预览</a>';
       }
       if (state?.reportPath) {
         const rp = state.reportPath.startsWith('http') ? state.reportPath : (origin + '/' + state.reportPath.replace(/^\//, ''));
@@ -205,7 +206,7 @@
       const qlNew = document.getElementById('qlOpenNewTab');
       const qlPrev = document.getElementById('qlPreviewInline');
       if (qlNew) qlNew.onclick = (e) => { e.preventDefault(); openInNewTab(target); };
-      if (qlPrev) qlPrev.onclick = (e) => { e.preventDefault(); showTargetPreview(); };
+      if (qlPrev) qlPrev.onclick = (e) => { e.preventDefault(); loadCenterIframe(); };
     }
 
     function openInNewTab(url) {
@@ -235,39 +236,40 @@
       openInNewTab(u);
     });
 
-    function showTargetPreview() {
+    function loadCenterIframe() {
       const u = normalizeUrl($('targetSiteUrl').value);
-      if (!u) { alert('请先粘贴被审网站链接'); return; }
-      const wrap = $('targetPreviewWrap');
       const frame = $('targetPreview');
-      const hint = $('previewHint');
-      wrap.classList.add('visible');
-      $('previewOpenExternal').href = u;
+      const ph = $('sitePlaceholder');
+      if (!u) {
+        frame.hidden = true;
+        frame.src = 'about:blank';
+        ph.hidden = false;
+        return;
+      }
+      ph.hidden = true;
       frame.hidden = false;
-      hint.hidden = true;
-      frame.removeAttribute('srcdoc');
       frame.src = u;
-      frame.onload = () => {
-        try {
-          const ok = frame.contentWindow && frame.contentDocument && frame.contentDocument.body;
-          if (!ok) {
-            hint.textContent = '网站可能禁止内嵌预览（X-Frame-Options）。请用「新标签页打开」或安装 browser-extension 在被审页看旁白。';
-            hint.hidden = false;
-          }
-        } catch (_) {
-          hint.textContent = '无法读取内嵌页面（跨域限制）。请用「新标签页打开」或 browser-extension。';
-          hint.hidden = false;
-        }
-      };
     }
 
-    $('btnPreviewTarget').onclick = () => showTargetPreview();
-    $('btnClosePreview').onclick = () => {
-      $('targetPreviewWrap').classList.remove('visible');
-      const frame = $('targetPreview');
-      frame.src = 'about:blank';
-      frame.hidden = true;
-    };
+    function updateCaption(state) {
+      const bar = $('captionBar');
+      const label = bar.querySelector('strong');
+      const text = $('captionText');
+      if (!state) {
+        text.textContent = '请先 ② 连接 run-state；① 粘贴被审链接后中间显示网站';
+        bar.classList.remove('snapshot');
+        if (label) label.textContent = '实时旁白（正在检查什么）';
+        return;
+      }
+      text.textContent = state.activeAnnotation || '（Agent 未写入 activeAnnotation）';
+      const snap = state.status === 'completed';
+      bar.classList.toggle('snapshot', snap);
+      if (label) {
+        label.textContent = snap
+          ? '旁白（快照 · 不会自动更新；要实时请在 Cursor 跑 /audit）'
+          : '实时旁白（正在检查什么）';
+      }
+    }
 
     $('btnOpenTarget').onclick = () => {
       const u = normalizeUrl($('targetSiteUrl').value);
@@ -289,7 +291,7 @@
       stopDemo();
       loadState();
       startPoll();
-      showTargetPreview();
+      loadCenterIframe();
     };
 
     function showSetupBanner(html) {
@@ -408,6 +410,8 @@
     function render(state) {
       syncTargetFromState(state);
       updateQuickLinks(state);
+      updateCaption(state);
+      loadCenterIframe();
       $('progressLabel').textContent = state.progress?.label || '—';
       $('runStatus').textContent = 'Status: ' + (state.status || '—');
       $('updatedAt').textContent = 'Updated: ' + (state.updatedAt || '—');
@@ -563,9 +567,8 @@
 
     loadState();
     startPoll();
-    if ($('targetSiteUrl').value.trim()) {
-      setTimeout(showTargetPreview, 400);
-    }
+    $('targetSiteUrl').addEventListener('change', loadCenterIframe);
+    if ($('targetSiteUrl').value.trim()) loadCenterIframe();
   </script>
 </body>
 </html>

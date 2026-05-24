@@ -20,9 +20,10 @@
   color: var(--asw-ink);
   position: fixed;
   z-index: 2147483646;
-  right: 16px;
-  bottom: 16px;
-  width: min(360px, calc(100vw - 32px));
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: min(320px, 92vw);
   pointer-events: auto;
   box-sizing: border-box;
 }
@@ -39,10 +40,32 @@
 
 #asw-audit-root .asw-panel {
   background: #fff;
-  border: 1px solid var(--asw-border);
-  border-radius: 10px;
-  box-shadow: 0 12px 40px rgba(18, 50, 74, 0.18);
+  border-right: 1px solid var(--asw-border);
+  border-radius: 0;
+  box-shadow: 4px 0 24px rgba(18, 50, 74, 0.15);
   overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#asw-audit-root .asw-stages {
+  max-height: 140px;
+  overflow-y: auto;
+  font-size: 11px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--asw-border);
+  padding-bottom: 8px;
+}
+
+#asw-audit-root .asw-stage-line {
+  padding: 4px 0;
+  color: var(--asw-body);
+}
+
+#asw-audit-root .asw-stage-line.active {
+  color: var(--asw-accent);
+  font-weight: 600;
 }
 
 #asw-audit-root .asw-head {
@@ -81,7 +104,7 @@
 
 #asw-audit-root .asw-body {
   padding: 12px;
-  max-height: 280px;
+  flex: 1;
   overflow-y: auto;
 }
 
