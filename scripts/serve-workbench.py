@@ -61,6 +61,7 @@ def main() -> None:
     print(f"Serving ROOT: {ROOT}")
     print(f"Port: {args.port}")
     print(f"Live (BarrierLens): {base}/workbench/live/?barrierlens=1")
+    print(f"Live (paste URL):   {base}/workbench/live/?url=https://barrierlens.vercel.app/")
     print(f"Also works:         {base}/agentskills-audit-collection/workbench/live/?barrierlens=1")
     print(f"Report:             {base}/reports/barrierlens-audit.html")
     print(f"Launcher:           {base}/")

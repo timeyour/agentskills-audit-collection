@@ -27,6 +27,9 @@ python3 -m http.server 8765
 | --- | --- |
 | http://localhost:8765/workbench/live/?demo=1 | 演示（`data/demo-run-state.json`） |
 | http://localhost:8765/workbench/live/?barrierlens=1 | BarrierLens 验收快照 |
+| http://localhost:8765/workbench/live/?url=https://yoursite.com | 顶部预填被审链接 |
+
+看板分两块：**① 被审网站链接**（打开新标签）+ **② run-state 数据源**（旁白/阶段/问题，需 Agent 更新或加载快照）。要在**被审页面内**看浮层旁白，另装 `browser-extension/`。
 | http://localhost:8765/workbench/live/?state=validation/artifacts/&lt;runId&gt;/run-state.json | 本地审计 run（需本机 artifacts 目录存在） |
 | http://localhost:8765/agentskills-audit-collection/workbench/live/?barrierlens=1 | workspace 在上级目录时用此路径 |
 

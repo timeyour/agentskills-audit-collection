@@ -42,8 +42,17 @@
     .asw-live .finding { padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; }
     .asw-live .event-log { font-family: ui-monospace, monospace; font-size: 11px; max-height: 200px; overflow-y: auto; color: var(--body); }
     .asw-live .event-log div { padding: 4px 0; border-bottom: 1px solid var(--border); }
-    .asw-live .toolbar { padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-    .asw-live .toolbar input[type=text] { flex: 1; min-width: 200px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; }
+    .asw-live .toolbar { padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--border); }
+    .asw-live .toolbar-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 10px; }
+    .asw-live .toolbar-row:last-child { margin-bottom: 0; }
+    .asw-live .toolbar label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 600; color: var(--muted); flex: 1; min-width: 220px; }
+    .asw-live .toolbar input[type=text] { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+    .asw-live .toolbar-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding-bottom: 2px; }
+    .asw-live .feed-status { font-size: 12px; padding: 6px 10px; border-radius: 6px; background: var(--surface-soft); color: var(--body); min-width: 140px; }
+    .asw-live .feed-status.ok { background: var(--accent-soft); color: #1a4d3e; }
+    .asw-live .feed-status.err { background: #fef3f2; color: #7a1e1e; }
+    .asw-live .quick-links a { display: block; font-size: 13px; margin-bottom: 8px; color: var(--primary); word-break: break-all; }
+    .asw-live header a.target-link { color: #b8d4e8; }
     .asw-live .asw-btn { background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
     .asw-live .asw-btn:hover { background: var(--primary-active); }
     .asw-live .asw-btn.secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--border); }
@@ -58,7 +67,7 @@
   <header>
     <h1><span class="live-dot" id="liveIndicator"></span> AgentSkills Live Audit</h1>
     <div class="meta">
-      <span id="targetUrl">—</span>
+      <span>被审站点：<a class="target-link" id="targetUrlLink" href="#" target="_blank" rel="noopener">—</a></span>
       <span id="progressLabel">—</span>
       <span id="runStatus">—</span>
       <span id="updatedAt">—</span>
@@ -66,12 +75,29 @@
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
   </header>
   <div class="toolbar">
-    <label>run-state.json 路径
-      <input type="text" id="statePath" placeholder="validation/golden/audit-run.example.json" />
-    </label>
-    <button type="button" class="asw-btn" id="btnLoad">加载 / 刷新</button>
-    <button type="button" class="asw-btn secondary" id="btnDemo">演示模式</button>
-    <label><input type="checkbox" id="pollEnabled" checked /> 自动轮询 (1s)</label>
+    <div class="toolbar-row">
+      <label>① 被审网站链接（粘贴要验收的 URL）
+        <input type="url" id="targetSiteUrl" placeholder="https://barrierlens.vercel.app/" />
+      </label>
+      <div class="toolbar-actions">
+        <button type="button" class="asw-btn" id="btnOpenTarget">打开被审网站</button>
+        <button type="button" class="asw-btn secondary" id="btnCopyAudit">复制 /audit 命令</button>
+        <button type="button" class="asw-btn secondary" id="btnLoadBarrierlens">加载 BarrierLens 快照</button>
+      </div>
+    </div>
+    <div class="toolbar-row">
+      <label>② 实时数据源（run-state.json，Agent 每秒更新）
+        <input type="text" id="statePath" placeholder="data/barrierlens-run-state.json" />
+      </label>
+      <div class="toolbar-actions">
+        <button type="button" class="asw-btn" id="btnLoad">连接 / 刷新</button>
+        <button type="button" class="asw-btn secondary" id="btnDemo">演示动画</button>
+        <label style="flex-direction:row;align-items:center;min-width:auto;font-size:13px;color:var(--body)">
+          <input type="checkbox" id="pollEnabled" checked /> 自动轮询
+        </label>
+        <span class="feed-status" id="feedStatus">未连接</span>
+      </div>
+    </div>
   </div>
   <main>
     <aside>
@@ -87,6 +113,8 @@
       <div id="stepList"></div>
     </section>
     <div class="rail-right">
+      <h2>链接与扩展</h2>
+      <div class="quick-links" id="quickLinks"></div>
       <h2>已发现问题</h2>
       <div id="findingsList"></div>
       <h2>事件流</h2>
@@ -117,6 +145,76 @@
     if (params.get('state')) $('statePath').value = decodeURIComponent(params.get('state'));
     if (params.get('demo') === '1') $('statePath').value = 'data/demo-run-state.json';
     if (params.get('barrierlens') === '1') $('statePath').value = 'data/barrierlens-run-state.json';
+    if (params.get('url')) $('targetSiteUrl').value = decodeURIComponent(params.get('url'));
+
+    function normalizeUrl(raw) {
+      const s = (raw || '').trim();
+      if (!s) return '';
+      if (/^https?:\/\//i.test(s)) return s;
+      return 'https://' + s;
+    }
+
+    function setFeedStatus(ok, text) {
+      const el = $('feedStatus');
+      el.textContent = text;
+      el.className = ok ? 'feed-status ok' : 'feed-status err';
+    }
+
+    function updateQuickLinks(state) {
+      const box = $('quickLinks');
+      const target = normalizeUrl($('targetSiteUrl').value) || state?.target?.url || '';
+      const origin = window.location.origin;
+      const statePath = $('statePath').value.trim();
+      const stateHttp = statePath ? origin + '/' + statePath.replace(/^\//, '').split('/').map(encodeURIComponent).join('/') : '';
+      // fix: encodeURIComponent per segment breaks paths - use simpler join
+      const stateHttpSimple = statePath ? (origin + '/' + statePath.replace(/^\//, '')) : '';
+
+      let html = '';
+      if (target) {
+        html += '<a href="' + escapeHtml(target) + '" target="_blank" rel="noopener">↗ 在新标签打开被审网站</a>';
+      }
+      if (state?.reportPath) {
+        const rp = state.reportPath.startsWith('http') ? state.reportPath : (origin + '/' + state.reportPath.replace(/^\//, ''));
+        html += '<a href="' + escapeHtml(rp) + '" target="_blank" rel="noopener">📄 完整验收报告</a>';
+      }
+      if (stateHttpSimple) {
+        html += '<span style="font-size:11px;color:var(--muted)">扩展旁白用 STATE_HTTP_URL：</span>';
+        html += '<code style="font-size:10px;word-break:break-all;display:block;margin:4px 0 10px">' + escapeHtml(stateHttpSimple) + '</code>';
+      }
+      html += '<span style="font-size:11px;color:var(--muted)">页内旁白需安装 browser-extension/ 并粘贴上列 URL</span>';
+      box.innerHTML = html || '<p style="color:var(--muted);font-size:12px">填写被审链接并连接数据源后显示快捷入口</p>';
+    }
+
+    function syncTargetFromState(state) {
+      if (state?.target?.url) {
+        $('targetSiteUrl').value = state.target.url;
+        const link = $('targetUrlLink');
+        link.href = state.target.url;
+        link.textContent = state.target.label || state.target.url;
+      }
+    }
+
+    $('btnOpenTarget').onclick = () => {
+      const u = normalizeUrl($('targetSiteUrl').value);
+      if (!u) { alert('请先粘贴被审网站链接'); return; }
+      window.open(u, '_blank', 'noopener');
+    };
+
+    $('btnCopyAudit').onclick = () => {
+      const u = normalizeUrl($('targetSiteUrl').value);
+      const cmd = u
+        ? 'Use /audit to review ' + u + ' before launch. Update validation/artifacts/<runId>/run-state.json after each stage (live-run-protocol).'
+        : 'Use /audit on <URL>. Run ./scripts/audit-run-init.sh "<URL>" first.';
+      navigator.clipboard.writeText(cmd).then(() => alert('已复制到剪贴板')).catch(() => prompt('复制此命令：', cmd));
+    };
+
+    $('btnLoadBarrierlens').onclick = () => {
+      $('targetSiteUrl').value = 'https://barrierlens.vercel.app/';
+      $('statePath').value = 'data/barrierlens-run-state.json';
+      stopDemo();
+      loadState();
+      startPoll();
+    };
 
     function showSetupBanner(html) {
       const b = $('setupBanner');
@@ -232,7 +330,8 @@
     }
 
     function render(state) {
-      $('targetUrl').textContent = state.target?.url || '—';
+      syncTargetFromState(state);
+      updateQuickLinks(state);
       $('progressLabel').textContent = state.progress?.label || '—';
       $('runStatus').textContent = 'Status: ' + (state.status || '—');
       $('updatedAt').textContent = 'Updated: ' + (state.updatedAt || '—');
@@ -322,6 +421,8 @@
         render(state);
         await loadEvents();
         $('liveIndicator').style.background = state.status === 'running' ? '#22c55e' : '#94a3b8';
+        const mode = state.status === 'running' ? '审计进行中' : (state.status === 'completed' ? '已完成' : state.status);
+        setFeedStatus(true, '已连接 · ' + mode + ' · ' + new Date().toLocaleTimeString());
       } catch (e) {
         const altBase = location.pathname.includes('agentskills-audit-collection')
           ? ''
@@ -337,6 +438,8 @@
         );
         $('annotationBox').innerHTML = '看板未连上数据 — 请按顶部红条说明操作，或点「演示模式」先确认页面正常。';
         $('liveIndicator').style.background = '#b42318';
+        setFeedStatus(false, '未连接 · ' + new Date().toLocaleTimeString());
+        updateQuickLinks(null);
       }
     }
 
