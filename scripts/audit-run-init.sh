@@ -54,6 +54,8 @@ echo '{"ts":"'"$(date -u +%Y-%m-%dT%H:%M:%SZ)"'","type":"run_started","runId":"'
 echo "RUN_ID=$RUN_ID"
 echo "RUN_DIR=$RUN_DIR"
 echo "STATE_URL=workbench/live/?state=validation/artifacts/$RUN_ID/run-state.json"
+echo "STATE_HTTP_URL=http://127.0.0.1:8765/validation/artifacts/$RUN_ID/run-state.json"
+echo "BROWSER_EXT=Load browser-extension/ unpacked; paste STATE_HTTP_URL in extension popup"
 echo "REPORT_PATH=validation/artifacts/$RUN_ID/audit-report.json"
 echo "Start server: python3 -m http.server 8765  # then open the STATE_URL path"
 echo "After audit: python3 scripts/audit_report_merge_run.py --run-dir validation/artifacts/$RUN_ID --merge-preview"

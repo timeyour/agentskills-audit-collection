@@ -9,7 +9,10 @@ validation/artifacts/{runId}/
   run-state.json      # overwrite atomically — UI reads this
   run-events.ndjson   # append one JSON object per line
   audit-report.json   # written at end (schema 0.1.0)
+  screenshots/        # optional — browser extension + relay (ext-*.png)
 ```
+
+Optional in-page overlay: `browser-extension/` polls the same `run-state.json`. See `browser-extension/README.md`.
 
 Initialize with host script when available:
 

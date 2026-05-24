@@ -1,0 +1,28 @@
+{
+  "manifest_version": 3,
+  "name": "AgentSkills Audit Companion",
+  "version": "0.1.0",
+  "description": "In-page narration and evidence capture for AgentSkills /audit runs. Rules stay in Skills; this extension only reads run-state and saves screenshots.",
+  "permissions": ["storage", "activeTab"],
+  "host_permissions": [
+    "http://127.0.0.1:8765/*",
+    "http://localhost:8765/*",
+    "http://127.0.0.1:8766/*",
+    "http://localhost:8766/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "AgentSkills Audit",
+    "default_popup": "popup/popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content/overlay.js"],
+      "css": ["content/overlay.css"],
+      "run_at": "document_idle"
+    }
+  ]
+}

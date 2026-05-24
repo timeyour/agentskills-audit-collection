@@ -15,6 +15,10 @@ python3 -m http.server 8765
 # Report UI:  http://localhost:8765/workbench/report/?demo=1
 # Live UI:    http://localhost:8765/workbench/live/?demo=1
 # Public report: reports/demo-site-audit.html or reports/latest-audit.html (after merge)
+
+# Browser overlay (optional): load browser-extension/ in Chrome, relay on 8766
+python3 scripts/browser-relay.py
+./scripts/audit-run-init.sh "https://example.com"   # → paste STATE_HTTP_URL in extension
 ```
 
 | Surface | What you see |

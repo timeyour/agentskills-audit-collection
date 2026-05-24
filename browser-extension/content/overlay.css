@@ -1,0 +1,194 @@
+/* Scoped overlay — does not modify host page styles outside this root */
+#asw-audit-root {
+  --asw-primary: #12324a;
+  --asw-primary-active: #0b2538;
+  --asw-accent: #2f7d68;
+  --asw-accent-soft: #ddf2ea;
+  --asw-ink: #17202a;
+  --asw-body: #344054;
+  --asw-muted: #667085;
+  --asw-border: #d8e0e7;
+  --asw-s0: #7a1e1e;
+  --asw-s1: #b42318;
+  --asw-s2: #92400e;
+  --asw-s3: #3b5b73;
+  --asw-s4: #475467;
+  all: initial;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--asw-ink);
+  position: fixed;
+  z-index: 2147483646;
+  right: 16px;
+  bottom: 16px;
+  width: min(360px, calc(100vw - 32px));
+  pointer-events: auto;
+  box-sizing: border-box;
+}
+
+#asw-audit-root *,
+#asw-audit-root *::before,
+#asw-audit-root *::after {
+  box-sizing: border-box;
+}
+
+#asw-audit-root.asw-hidden {
+  display: none;
+}
+
+#asw-audit-root .asw-panel {
+  background: #fff;
+  border: 1px solid var(--asw-border);
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(18, 50, 74, 0.18);
+  overflow: hidden;
+}
+
+#asw-audit-root .asw-head {
+  background: var(--asw-primary);
+  color: #fff;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+
+#asw-audit-root .asw-head strong {
+  font-size: 12px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+#asw-audit-root .asw-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  display: inline-block;
+  margin-right: 6px;
+  animation: asw-pulse 1.4s infinite;
+}
+
+@keyframes asw-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+#asw-audit-root .asw-body {
+  padding: 12px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+#asw-audit-root.asw-collapsed .asw-body,
+#asw-audit-root.asw-collapsed .asw-foot {
+  display: none;
+}
+
+#asw-audit-root .asw-progress {
+  height: 4px;
+  background: var(--asw-border);
+  border-radius: 99px;
+  margin-bottom: 10px;
+  overflow: hidden;
+}
+
+#asw-audit-root .asw-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--asw-accent);
+  transition: width 0.35s ease;
+}
+
+#asw-audit-root .asw-meta {
+  font-size: 11px;
+  color: var(--asw-muted);
+  margin-bottom: 8px;
+}
+
+#asw-audit-root .asw-annotation {
+  background: var(--asw-accent-soft);
+  border-left: 3px solid var(--asw-accent);
+  padding: 10px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--asw-ink);
+  margin-bottom: 10px;
+}
+
+#asw-audit-root .asw-finding {
+  font-size: 12px;
+  padding: 8px;
+  border: 1px solid var(--asw-border);
+  border-radius: 6px;
+  margin-top: 6px;
+}
+
+#asw-audit-root .asw-sev {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 99px;
+  margin-right: 6px;
+}
+
+#asw-audit-root .asw-sev-S0 {
+  background: var(--asw-s0);
+}
+#asw-audit-root .asw-sev-S1 {
+  background: var(--asw-s1);
+}
+#asw-audit-root .asw-sev-S2 {
+  background: var(--asw-s2);
+}
+#asw-audit-root .asw-sev-S3 {
+  background: var(--asw-s3);
+}
+#asw-audit-root .asw-sev-S4 {
+  background: var(--asw-s4);
+}
+
+#asw-audit-root .asw-err {
+  color: var(--asw-s1);
+  font-size: 12px;
+}
+
+#asw-audit-root .asw-foot {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 0 12px 12px;
+}
+
+#asw-audit-root button {
+  all: unset;
+  cursor: pointer;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 12px;
+  border-radius: 6px;
+  background: var(--asw-primary);
+  color: #fff;
+}
+
+#asw-audit-root button:hover {
+  background: var(--asw-primary-active);
+}
+
+#asw-audit-root button.asw-secondary {
+  background: #fff;
+  color: var(--asw-ink);
+  border: 1px solid var(--asw-border);
+}
+
+#asw-audit-root button.asw-secondary:hover {
+  background: #f6f8fa;
+}

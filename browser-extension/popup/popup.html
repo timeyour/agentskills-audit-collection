@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>AgentSkills Audit</title>
+  <style>
+    body { font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 13px; margin: 0; padding: 12px; width: 320px; color: #17202a; }
+    h1 { font-size: 14px; margin: 0 0 10px; }
+    label { display: block; font-size: 11px; font-weight: 600; color: #667085; margin: 10px 0 4px; }
+    input[type=text] { width: 100%; padding: 8px; border: 1px solid #d8e0e7; border-radius: 6px; box-sizing: border-box; }
+    .row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+    button { background: #12324a; color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 12px; }
+    button.secondary { background: #fff; color: #17202a; border: 1px solid #d8e0e7; }
+    .hint { font-size: 11px; color: #667085; margin-top: 8px; line-height: 1.45; }
+    .status { margin-top: 10px; padding: 8px; background: #eef3f7; border-radius: 6px; font-size: 12px; }
+    a { color: #12324a; }
+  </style>
+</head>
+<body>
+  <h1>AgentSkills 审计伴侣</h1>
+  <label for="stateUrl">run-state.json URL</label>
+  <input id="stateUrl" type="text" placeholder="http://127.0.0.1:8765/validation/artifacts/…/run-state.json" />
+  <label for="relayUrl">证据 relay（可选）</label>
+  <input id="relayUrl" type="text" placeholder="http://127.0.0.1:8766" />
+  <div class="row">
+    <label><input type="checkbox" id="overlayEnabled" checked /> 页面内旁白</label>
+  </div>
+  <div class="row">
+    <button type="button" id="save">保存</button>
+    <button type="button" class="secondary" id="openWorkbench">Live 看板</button>
+  </div>
+  <div class="status" id="status">—</div>
+  <p class="hint">
+    1. 仓库根目录：<code>python3 -m http.server 8765</code><br>
+    2. 可选：<code>python3 scripts/browser-relay.py</code>（8766，保存截图到 artifacts）<br>
+    3. <code>./scripts/audit-run-init.sh URL</code> 后粘贴打印的 STATE_URL<br>
+    审计规则仍在 <code>/audit</code> Skills，扩展只读旁白 + 留证。
+  </p>
+  <script src="popup.js"></script>
+</body>
+</html>

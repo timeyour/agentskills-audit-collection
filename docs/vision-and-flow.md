@@ -16,7 +16,7 @@
 | --- | --- | --- | --- |
 | 1 | **UI 审美在线** | 不像 AI 模板；层级、留白、可信度过关 | `/visual-qa`、`DESIGN.md`、`aesthetic-metrics` |
 | 2 | **功能可用** | 按钮、表单、主流程真能用 | `/flow-test`、`/physical-flow-test`、`audit_capture.py` |
-| 3 | **检测时实时提示 + 附优秀案例** | 看着进度条/旁白知道在测什么；能看到对标站 | `workbench/live/`、`validation/cases/`、**v0.2：报告内嵌 benchmark 链接** |
+| 3 | **检测时实时提示 + 附优秀案例** | 看着进度条/旁白知道在测什么；能看到对标站 | `workbench/live/`、`browser-extension/`（页内旁白）、`validation/cases/` |
 | 4 | **审计安全** | 权限边界、敏感面、常见漏洞与误操作 | `permission-model`、`web-surface-discovery`、`failure-modes`、**v0.2：安全专章/issue 类型** |
 | 5 | **全部功能与数据** | 功能不漏测；数据从哪来到哪去、是否泄露/造假 | feature inventory、deploy-check、**v0.2：data/privacy 检查清单** |
 
