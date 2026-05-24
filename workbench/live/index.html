@@ -17,7 +17,7 @@
     .asw-live header .meta { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; opacity: .92; }
     .asw-live .progress-bar { height: 6px; background: rgba(255,255,255,.2); border-radius: 99px; margin-top: 12px; overflow: hidden; }
     .asw-live .progress-fill { height: 100%; background: var(--accent); transition: width .4s ease; }
-    .asw-live main.split-main { display: grid; grid-template-columns: 240px 1fr 300px; gap: 0; min-height: calc(100vh - 220px); }
+    .asw-live main.split-main { display: grid; grid-template-columns: 268px 1fr 300px; gap: 0; min-height: calc(100vh - 220px); }
     @media (max-width: 1100px) { .asw-live main.split-main { grid-template-columns: 1fr; } }
     .asw-live aside, .asw-live .rail-right { padding: 16px; border-right: 1px solid var(--border); background: var(--surface); overflow-y: auto; max-height: calc(100vh - 220px); }
     .asw-live .rail-right { border-right: none; background: var(--surface-soft); }
@@ -29,12 +29,34 @@
     .asw-live .center-site iframe { flex: 1; width: 100%; min-height: 360px; border: 0; background: #fff; }
     .asw-live .site-placeholder { flex: 1; display: flex; align-items: center; justify-content: center; padding: 32px; color: #94a3b8; text-align: center; font-size: 14px; line-height: 1.6; }
     .asw-live h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 12px; }
-    .asw-live .stage-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 8px; border-radius: 6px; cursor: default; border-left: 3px solid transparent; }
-    .asw-live .stage-item.active { background: var(--accent-soft); border-left-color: var(--accent); }
-    .asw-live .stage-item.done .dot { background: var(--accent); }
-    .asw-live .stage-item.running .dot { background: var(--primary); animation: pulse 1.2s infinite; }
-    .asw-live .stage-item.pending { opacity: .55; }
-    .asw-live .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); margin-top: 4px; flex-shrink: 0; }
+    /* 阶段流水线：节点 + 竖向连线 */
+    .asw-live .flow-pipeline { display: flex; flex-direction: column; padding: 4px 0 12px; }
+    .asw-live .flow-step-wrap { display: flex; flex-direction: column; }
+    .asw-live .flow-node { display: flex; align-items: flex-start; gap: 10px; padding: 6px 8px; border-radius: 8px; position: relative; }
+    .asw-live .flow-node.active { background: var(--accent-soft); box-shadow: inset 0 0 0 1px rgba(47, 125, 104, 0.35); }
+    .asw-live .flow-node.pending { opacity: .58; }
+    .asw-live .flow-node .node-circle {
+      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; border: 2px solid var(--border); background: var(--surface);
+      color: var(--muted);
+    }
+    .asw-live .flow-node.done .node-circle { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .asw-live .flow-node.running .node-circle { border-color: var(--primary); background: var(--primary); color: #fff; animation: pulse 1.2s infinite; }
+    .asw-live .flow-node.skipped .node-circle { border-color: var(--s2); background: #fff8eb; color: var(--s2); }
+    .asw-live .flow-node.blocked .node-circle { border-color: var(--s1); background: #fef3f2; color: var(--s1); }
+    .asw-live .flow-node .node-label { flex: 1; min-width: 0; }
+    .asw-live .flow-node .node-label strong { display: block; font-size: 12px; line-height: 1.35; }
+    .asw-live .flow-connector {
+      width: 2px; height: 18px; margin: 2px 0 2px 21px; border-radius: 1px;
+      background: var(--border);
+    }
+    .asw-live .flow-connector.done { background: var(--accent); }
+    .asw-live .flow-connector.running {
+      background: linear-gradient(to bottom, var(--accent) 0%, var(--accent) 45%, var(--border) 100%);
+    }
+    .asw-live .flow-connector.skipped { background: repeating-linear-gradient(to bottom, var(--s2) 0 4px, transparent 4px 8px); opacity: .6; }
+    .asw-live .flow-connector.pending { background: var(--border); opacity: .5; }
     @keyframes pulse { 50% { opacity: .4; } }
     .asw-live .annotation { background: var(--primary); color: #fff; padding: 16px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; line-height: 1.55; }
     .asw-live .annotation small { display: block; margin-top: 8px; opacity: .75; font-size: 12px; }
@@ -110,8 +132,8 @@
   </div>
   <main class="split-main">
     <aside>
-      <h2>左 · 审计阶段</h2>
-      <div id="stageRail"></div>
+      <h2>左 · 审计流程</h2>
+      <div class="flow-pipeline" id="stageRail"></div>
     </aside>
     <div class="center-site" id="centerSite">
       <div class="caption-bar" id="captionBar">
@@ -397,7 +419,24 @@
 
     function stageClass(s) {
       if (s.status === 'completed') return 'done';
-      if (s.status === 'in_progress') return 'running active';
+      if (s.status === 'skipped') return 'skipped';
+      if (s.status === 'blocked') return 'blocked';
+      if (s.status === 'in_progress') return 'running';
+      return 'pending';
+    }
+
+    function stageIcon(st) {
+      if (st.status === 'completed') return '✓';
+      if (st.status === 'skipped') return '—';
+      if (st.status === 'blocked') return '!';
+      if (st.status === 'in_progress') return '●';
+      return String(st.order || '·');
+    }
+
+    function connectorClass(fromStage) {
+      if (fromStage.status === 'completed') return 'done';
+      if (fromStage.status === 'in_progress') return 'running';
+      if (fromStage.status === 'skipped') return 'skipped';
       return 'pending';
     }
 
@@ -422,11 +461,25 @@
 
       const rail = $('stageRail');
       rail.innerHTML = '';
-      (state.stages || []).forEach((st) => {
-        const el = document.createElement('div');
-        el.className = 'stage-item ' + stageClass(st) + (st.id === state.currentStageId ? ' active' : '');
-        el.innerHTML = '<span class="dot"></span><div><strong>' + st.order + '. ' + escapeHtml(st.label) + '</strong><br><span class="status-pill">' + st.status + '</span></div>';
-        rail.appendChild(el);
+      const stages = state.stages || [];
+      stages.forEach((st, i) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'flow-step-wrap';
+        const node = document.createElement('div');
+        const cls = stageClass(st);
+        node.className = 'flow-node ' + cls + (st.id === state.currentStageId ? ' active' : '');
+        node.innerHTML =
+          '<span class="node-circle" title="' + escapeHtml(st.status) + '">' + stageIcon(st) + '</span>' +
+          '<div class="node-label"><strong>' + escapeHtml(st.label) + '</strong>' +
+          '<span class="status-pill">' + escapeHtml(st.status) + '</span></div>';
+        wrap.appendChild(node);
+        if (i < stages.length - 1) {
+          const conn = document.createElement('div');
+          conn.className = 'flow-connector ' + connectorClass(st);
+          conn.setAttribute('aria-hidden', 'true');
+          wrap.appendChild(conn);
+        }
+        rail.appendChild(wrap);
       });
 
       const cur = (state.stages || []).find((s) => s.id === state.currentStageId) || state.stages?.[0];

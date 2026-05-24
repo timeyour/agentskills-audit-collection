@@ -26,7 +26,7 @@ python3 -m http.server 8765
 | URL | 说明 |
 | --- | --- |
 | http://localhost:8765/workbench/live/?demo=1 | 演示（`data/demo-run-state.json`） |
-| http://localhost:8765/workbench/live/?barrierlens=1 | BarrierLens 验收快照 |
+| http://localhost:8765/workbench/live/?barrierlens=1 | BarrierLens 验收快照（左侧为节点+连线流程图） |
 | http://localhost:8765/workbench/live/?url=https://yoursite.com | 顶部预填被审链接 |
 
 看板分两块：**① 被审网站链接**（打开新标签）+ **② run-state 数据源**（旁白/阶段/问题，需 Agent 更新或加载快照）。要在**被审页面内**看浮层旁白，另装 `browser-extension/`。

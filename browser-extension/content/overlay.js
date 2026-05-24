@@ -100,14 +100,22 @@
     container.textContent = "";
     const list = state?.stages || [];
     if (!list.length) return;
-    const title = el("div", "", "阶段");
+    const title = el("div", "", "流程");
     title.style.fontWeight = "600";
-    title.style.marginBottom = "4px";
+    title.style.marginBottom = "6px";
     container.appendChild(title);
-    list.forEach((st) => {
+    list.forEach((st, i) => {
       const row = el("div", "asw-stage-line" + (st.id === state.currentStageId ? " active" : ""));
-      row.textContent = (st.order ? st.order + ". " : "") + (st.label || st.id) + " · " + (st.status || "");
+      const mark = st.status === "completed" ? "✓" : st.status === "in_progress" ? "●" : "○";
+      row.textContent = mark + " " + (st.label || st.id);
       container.appendChild(row);
+      if (i < list.length - 1) {
+        const line = el("div", "asw-stage-connector");
+        line.textContent = "│";
+        line.style.cssText = "margin:0 0 0 6px;color:#d8e0e7;line-height:1;font-size:11px";
+        if (st.status === "completed") line.style.color = "#2f7d68";
+        container.appendChild(line);
+      }
     });
   }
 
