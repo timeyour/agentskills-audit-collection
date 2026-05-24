@@ -52,7 +52,14 @@
     .asw-live .feed-status.ok { background: var(--accent-soft); color: #1a4d3e; }
     .asw-live .feed-status.err { background: #fef3f2; color: #7a1e1e; }
     .asw-live .quick-links a { display: block; font-size: 13px; margin-bottom: 8px; color: var(--primary); word-break: break-all; }
-    .asw-live header a.target-link { color: #b8d4e8; }
+    .asw-live header a.target-link { color: #b8d4e8; cursor: pointer; text-decoration: underline; }
+    .asw-live .target-preview { display: none; border-top: 1px solid var(--border); background: var(--surface-soft); }
+    .asw-live .target-preview.visible { display: block; }
+    .asw-live .preview-bar { display: flex; align-items: center; gap: 12px; padding: 8px 16px; font-size: 12px; color: var(--muted); background: var(--surface); border-bottom: 1px solid var(--border); }
+    .asw-live .preview-bar strong { color: var(--ink); flex: 1; }
+    .asw-live .target-preview iframe { width: 100%; height: min(52vh, 640px); border: 0; background: #fff; display: block; }
+    .asw-live .preview-hint { padding: 24px; text-align: center; color: var(--muted); font-size: 13px; }
+    .asw-live .hint-inline { font-size: 12px; color: var(--muted); margin: 0 24px 8px; }
     .asw-live .asw-btn { background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
     .asw-live .asw-btn:hover { background: var(--primary-active); }
     .asw-live .asw-btn.secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--border); }
@@ -80,11 +87,13 @@
         <input type="url" id="targetSiteUrl" placeholder="https://barrierlens.vercel.app/" />
       </label>
       <div class="toolbar-actions">
-        <button type="button" class="asw-btn" id="btnOpenTarget">打开被审网站</button>
+        <button type="button" class="asw-btn" id="btnPreviewTarget">在看板内预览被审站</button>
+        <button type="button" class="asw-btn secondary" id="btnOpenTarget">新标签页打开</button>
         <button type="button" class="asw-btn secondary" id="btnCopyAudit">复制 /audit 命令</button>
         <button type="button" class="asw-btn secondary" id="btnLoadBarrierlens">加载 BarrierLens 快照</button>
       </div>
     </div>
+    <p class="hint-inline">实时旁白始终在本页；「新标签页打开」会跳到别的标签，本看板请保留。</p>
     <div class="toolbar-row">
       <label>② 实时数据源（run-state.json，Agent 每秒更新）
         <input type="text" id="statePath" placeholder="data/barrierlens-run-state.json" />
@@ -98,6 +107,15 @@
         <span class="feed-status" id="feedStatus">未连接</span>
       </div>
     </div>
+  </div>
+  <div class="target-preview" id="targetPreviewWrap">
+    <div class="preview-bar">
+      <strong>被审站预览（本页内，不跳转看板）</strong>
+      <button type="button" class="asw-btn secondary" id="btnClosePreview">关闭预览</button>
+      <a href="#" class="asw-btn secondary" id="previewOpenExternal" target="_blank" rel="noopener noreferrer" style="text-decoration:none;padding:8px 14px;border-radius:6px">新标签页打开</a>
+    </div>
+    <iframe id="targetPreview" title="被审网站预览" hidden></iframe>
+    <div class="preview-hint" id="previewHint" hidden></div>
   </div>
   <main>
     <aside>
@@ -171,7 +189,8 @@
 
       let html = '';
       if (target) {
-        html += '<a href="' + escapeHtml(target) + '" target="_blank" rel="noopener">↗ 在新标签打开被审网站</a>';
+        html += '<a href="#" id="qlOpenNewTab">↗ 新标签页打开被审网站（会离开本看板）</a>';
+        html += '<a href="#" id="qlPreviewInline">⊞ 在看板内预览被审站（推荐）</a>';
       }
       if (state?.reportPath) {
         const rp = state.reportPath.startsWith('http') ? state.reportPath : (origin + '/' + state.reportPath.replace(/^\//, ''));
@@ -183,21 +202,77 @@
       }
       html += '<span style="font-size:11px;color:var(--muted)">页内旁白需安装 browser-extension/ 并粘贴上列 URL</span>';
       box.innerHTML = html || '<p style="color:var(--muted);font-size:12px">填写被审链接并连接数据源后显示快捷入口</p>';
+      const qlNew = document.getElementById('qlOpenNewTab');
+      const qlPrev = document.getElementById('qlPreviewInline');
+      if (qlNew) qlNew.onclick = (e) => { e.preventDefault(); openInNewTab(target); };
+      if (qlPrev) qlPrev.onclick = (e) => { e.preventDefault(); showTargetPreview(); };
+    }
+
+    function openInNewTab(url) {
+      const a = document.createElement('a');
+      a.href = url;
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     }
 
     function syncTargetFromState(state) {
       if (state?.target?.url) {
         $('targetSiteUrl').value = state.target.url;
         const link = $('targetUrlLink');
-        link.href = state.target.url;
         link.textContent = state.target.label || state.target.url;
+        link.dataset.url = state.target.url;
       }
     }
+
+    $('targetUrlLink').addEventListener('click', (e) => {
+      e.preventDefault();
+      const u = normalizeUrl($('targetUrlLink').dataset.url || $('targetSiteUrl').value);
+      if (!u) return;
+      openInNewTab(u);
+    });
+
+    function showTargetPreview() {
+      const u = normalizeUrl($('targetSiteUrl').value);
+      if (!u) { alert('请先粘贴被审网站链接'); return; }
+      const wrap = $('targetPreviewWrap');
+      const frame = $('targetPreview');
+      const hint = $('previewHint');
+      wrap.classList.add('visible');
+      $('previewOpenExternal').href = u;
+      frame.hidden = false;
+      hint.hidden = true;
+      frame.removeAttribute('srcdoc');
+      frame.src = u;
+      frame.onload = () => {
+        try {
+          const ok = frame.contentWindow && frame.contentDocument && frame.contentDocument.body;
+          if (!ok) {
+            hint.textContent = '网站可能禁止内嵌预览（X-Frame-Options）。请用「新标签页打开」或安装 browser-extension 在被审页看旁白。';
+            hint.hidden = false;
+          }
+        } catch (_) {
+          hint.textContent = '无法读取内嵌页面（跨域限制）。请用「新标签页打开」或 browser-extension。';
+          hint.hidden = false;
+        }
+      };
+    }
+
+    $('btnPreviewTarget').onclick = () => showTargetPreview();
+    $('btnClosePreview').onclick = () => {
+      $('targetPreviewWrap').classList.remove('visible');
+      const frame = $('targetPreview');
+      frame.src = 'about:blank';
+      frame.hidden = true;
+    };
 
     $('btnOpenTarget').onclick = () => {
       const u = normalizeUrl($('targetSiteUrl').value);
       if (!u) { alert('请先粘贴被审网站链接'); return; }
-      window.open(u, '_blank', 'noopener');
+      openInNewTab(u);
     };
 
     $('btnCopyAudit').onclick = () => {
@@ -214,6 +289,7 @@
       stopDemo();
       loadState();
       startPoll();
+      showTargetPreview();
     };
 
     function showSetupBanner(html) {
@@ -487,6 +563,9 @@
 
     loadState();
     startPoll();
+    if ($('targetSiteUrl').value.trim()) {
+      setTimeout(showTargetPreview, 400);
+    }
   </script>
 </body>
 </html>
