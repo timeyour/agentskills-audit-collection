@@ -177,8 +177,16 @@
         state.status || "",
         hostMatch ? "· 当前页匹配审计目标" : "· 当前页非目标域（旁白仍显示）",
       ].join(" ");
-      r.annotation.textContent =
-        state.activeAnnotation || "（Agent 未设置 activeAnnotation）";
+      const caption =
+        payload.displayAnnotation ||
+        state.activeAnnotation ||
+        "（Agent 未设置 activeAnnotation）";
+      r.annotation.textContent = caption;
+      if (payload.displayAnnotationMode && payload.displayAnnotationMode !== "passthrough") {
+        r.annotation.title = `display: ${payload.displayAnnotationMode} · source: activeAnnotation`;
+      } else {
+        r.annotation.title = "";
+      }
       renderStages(r.stages, state);
       renderFindings(r.findings, state.findingsPreview);
     });

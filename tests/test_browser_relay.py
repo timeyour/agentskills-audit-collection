@@ -66,3 +66,25 @@ def test_evidence_upload(relay_server):
     assert len(pngs) == 1
     metas = list((browser_relay.ARTIFACTS / run_id / "screenshots").glob("ext-*.meta.json"))
     assert len(metas) == 1
+
+
+def test_narrate_passthrough(relay_server):
+    base_url, _browser_relay = relay_server
+    body = json.dumps(
+        {
+            "text": "Checking primary CTA",
+            "task": "translate",
+            "targetLocale": "zh",
+        }
+    ).encode("utf-8")
+    req = urllib.request.Request(
+        f"{base_url}/api/narrate",
+        data=body,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=5) as resp:
+        data = json.loads(resp.read().decode())
+    assert data["ok"] is True
+    assert data["mode"] == "passthrough"
+    assert data["text"] == "Checking primary CTA"

@@ -11,7 +11,8 @@
     "http://localhost:8766/*"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "classic"
   },
   "action": {
     "default_title": "AgentSkills Audit",

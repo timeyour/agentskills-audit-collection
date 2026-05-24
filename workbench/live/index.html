@@ -32,13 +32,13 @@
     /* 阶段流水线：节点 + 竖向连线 */
     .asw-live .flow-pipeline { display: flex; flex-direction: column; padding: 4px 0 12px; }
     .asw-live .flow-step-wrap { display: flex; flex-direction: column; }
-    .asw-live .flow-node { display: flex; align-items: flex-start; gap: 10px; padding: 6px 8px; border-radius: 8px; position: relative; }
-    .asw-live .flow-node.active { background: var(--accent-soft); box-shadow: inset 0 0 0 1px rgba(47, 125, 104, 0.35); }
-    .asw-live .flow-node.pending { opacity: .58; }
+    .asw-live .flow-node { display: flex; align-items: flex-start; gap: 10px; padding: 2px 0; background: transparent; position: relative; }
+    .asw-live .flow-node.active .node-label strong { color: var(--primary); }
+    .asw-live .flow-node.pending { opacity: .5; }
     .asw-live .flow-node .node-circle {
-      width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+      width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
       display: flex; align-items: center; justify-content: center;
-      font-size: 11px; font-weight: 700; border: 2px solid var(--border); background: var(--surface);
+      font-size: 10px; font-weight: 700; border: 2px solid var(--border); background: transparent;
       color: var(--muted);
     }
     .asw-live .flow-node.done .node-circle { border-color: var(--accent); background: var(--accent); color: #fff; }
@@ -48,9 +48,11 @@
     .asw-live .flow-node .node-label { flex: 1; min-width: 0; }
     .asw-live .flow-node .node-label strong { display: block; font-size: 12px; line-height: 1.35; }
     .asw-live .flow-connector {
-      width: 2px; height: 18px; margin: 2px 0 2px 21px; border-radius: 1px;
+      width: 2px; height: 16px; margin: 2px 0 2px 10px; border-radius: 1px;
       background: var(--border);
     }
+    .asw-live .url-toast { font-size: 12px; color: var(--accent); margin: 0 24px 8px; min-height: 18px; }
+    .asw-live .lang-toggle { margin-left: auto; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.25); color: #fff; padding: 4px 10px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600; }
     .asw-live .flow-connector.done { background: var(--accent); }
     .asw-live .flow-connector.running {
       background: linear-gradient(to bottom, var(--accent) 0%, var(--accent) 45%, var(--border) 100%);
@@ -75,7 +77,31 @@
     .asw-live .toolbar-row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 10px; }
     .asw-live .toolbar-row:last-child { margin-bottom: 0; }
     .asw-live .toolbar label { display: flex; flex-direction: column; gap: 4px; font-size: 11px; font-weight: 600; color: var(--muted); flex: 1; min-width: 220px; }
-    .asw-live .toolbar input[type=text] { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+    .asw-live .toolbar input[type=text],
+    .asw-live .toolbar input[type=url],
+    .asw-live .url-entry input[type=url] { width: 100%; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; }
+    .asw-live .url-entry {
+      padding: 16px 24px; background: var(--surface); border-bottom: 2px solid var(--accent);
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;
+    }
+    .asw-live .url-entry .url-entry-field { flex: 1; min-width: min(100%, 320px); display: flex; flex-direction: column; gap: 6px; }
+    .asw-live .url-entry .field-label { font-size: 12px; font-weight: 700; color: var(--primary); letter-spacing: .02em; }
+    .asw-live .url-entry-input {
+      width: 100%; padding: 12px 14px; font-size: 16px; line-height: 1.4;
+      border: 2px solid var(--border); border-radius: 8px; background: #fff;
+    }
+    .asw-live .url-entry-input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(18,50,74,.1); }
+    .asw-live .url-entry-actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding-bottom: 2px; }
+    .asw-live .paste-hero { max-width: 520px; margin: 0 auto; padding: 24px; text-align: center; }
+    .asw-live .paste-hero-title { font-size: 18px; font-weight: 600; color: #e2e8f0; margin: 0 0 16px; }
+    .asw-live .paste-hero-input {
+      width: 100%; padding: 14px 16px; font-size: 16px; border: 2px solid #475569; border-radius: 8px;
+      background: #1e293b; color: #f8fafc; margin-bottom: 12px;
+    }
+    .asw-live .paste-hero-input::placeholder { color: #94a3b8; }
+    .asw-live .paste-hero-input:focus { border-color: var(--accent); outline: none; }
+    .asw-live .paste-hero-btn { font-size: 15px; padding: 10px 24px; }
+    .asw-live .paste-hero-hint { font-size: 12px; color: #64748b; margin: 14px 0 0; }
     .asw-live .toolbar-actions { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; padding-bottom: 2px; }
     .asw-live .feed-status { font-size: 12px; padding: 6px 10px; border-radius: 6px; background: var(--surface-soft); color: var(--body); min-width: 140px; }
     .asw-live .feed-status.ok { background: var(--accent-soft); color: #1a4d3e; }
@@ -95,36 +121,44 @@
 <body class="asw-live">
   <div class="setup-banner" id="setupBanner"></div>
   <header>
-    <h1><span class="live-dot" id="liveIndicator"></span> AgentSkills Live Audit</h1>
+    <h1 style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <span><span class="live-dot" id="liveIndicator"></span> <span data-i18n="title">AgentSkills Live Audit</span></span>
+      <button type="button" class="lang-toggle" id="langToggle" title="Language">EN</button>
+    </h1>
     <div class="meta">
-      <span>被审站点：<a class="target-link" id="targetUrlLink" href="#" target="_blank" rel="noopener">—</a></span>
+      <span><span data-i18n="auditedSite">被审站点</span>：<a class="target-link" id="targetUrlLink" href="#" target="_blank" rel="noopener">—</a></span>
       <span id="progressLabel">—</span>
       <span id="runStatus">—</span>
       <span id="updatedAt">—</span>
     </div>
     <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
   </header>
-  <div class="toolbar">
-    <div class="toolbar-row">
-      <label>① 被审网站链接（粘贴要验收的 URL）
-        <input type="url" id="targetSiteUrl" placeholder="https://barrierlens.vercel.app/" />
-      </label>
-      <div class="toolbar-actions">
-        <button type="button" class="asw-btn secondary" id="btnOpenTarget">新标签页打开被审站</button>
-        <button type="button" class="asw-btn secondary" id="btnCopyAudit">复制 /audit 命令</button>
-        <button type="button" class="asw-btn secondary" id="btnLoadBarrierlens">加载 BarrierLens 快照</button>
-      </div>
+  <section class="url-entry" id="urlEntry" aria-label="Target URL">
+    <div class="url-entry-field">
+      <span class="field-label" data-i18n="labelUrl">① 被审网站链接</span>
+      <input type="url" id="targetSiteUrl" class="url-entry-input" data-i18n-placeholder="placeholderUrl"
+        placeholder="https://your-site.com/" autocomplete="url" inputmode="url" />
     </div>
-    <p class="hint-inline">三栏同屏：左=阶段 · 中=被审网站 · 右=步骤与问题。中间顶栏为<strong>实时旁白</strong>（需 Cursor 跑 /audit 并连接数据源）。快照不会自动动。</p>
+    <div class="url-entry-actions">
+      <button type="button" class="asw-btn" id="btnApplyUrl" data-i18n="btnApplyUrl">应用链接</button>
+      <button type="button" class="asw-btn secondary" id="btnOpenTarget" data-i18n="btnOpenTarget">新标签页打开</button>
+      <button type="button" class="asw-btn secondary" id="btnCopyAudit" data-i18n="btnCopyAudit">复制 /audit 命令</button>
+      <button type="button" class="asw-btn secondary" id="btnLoadBarrierlens" data-i18n="btnBarrierlens">BarrierLens 快照</button>
+    </div>
+  </section>
+  <p class="url-toast" id="urlToast" aria-live="polite"></p>
+  <div class="toolbar">
+    <p class="hint-inline" data-i18n="hintLayout" style="margin:0 0 10px">三栏同屏说明</p>
     <div class="toolbar-row">
-      <label>② 实时数据源（run-state.json，Agent 每秒更新）
+      <label class="field">
+        <span class="field-label" data-i18n="labelState">② 实时数据源</span>
         <input type="text" id="statePath" placeholder="data/barrierlens-run-state.json" />
       </label>
       <div class="toolbar-actions">
-        <button type="button" class="asw-btn" id="btnLoad">连接 / 刷新</button>
-        <button type="button" class="asw-btn secondary" id="btnDemo">演示动画</button>
+        <button type="button" class="asw-btn" id="btnLoad" data-i18n="btnConnect">连接 / 刷新</button>
+        <button type="button" class="asw-btn secondary" id="btnDemo" data-i18n="btnDemo">演示流程动画</button>
         <label style="flex-direction:row;align-items:center;min-width:auto;font-size:13px;color:var(--body)">
-          <input type="checkbox" id="pollEnabled" checked /> 自动轮询
+          <input type="checkbox" id="pollEnabled" checked /> <span data-i18n="poll">自动轮询</span>
         </label>
         <span class="feed-status" id="feedStatus">未连接</span>
       </div>
@@ -132,7 +166,7 @@
   </div>
   <main class="split-main">
     <aside>
-      <h2>左 · 审计流程</h2>
+      <h2 data-i18n="railFlow">审计流程</h2>
       <div class="flow-pipeline" id="stageRail"></div>
     </aside>
     <div class="center-site" id="centerSite">
@@ -142,30 +176,75 @@
       </div>
       <iframe id="targetPreview" title="被审网站" hidden></iframe>
       <div class="site-placeholder" id="sitePlaceholder">
-        在上方 ① 粘贴被审网站链接，并 ② 连接 run-state<br>
-        中间将显示被审页面，顶栏显示 Agent 写的旁白
+        <div class="paste-hero">
+          <p class="paste-hero-title" data-i18n="pasteHeroTitle">在此粘贴要验收的网站链接</p>
+          <input type="url" id="centerPasteUrl" class="paste-hero-input" data-i18n-placeholder="placeholderUrl"
+            placeholder="https://your-site.com/" autocomplete="url" inputmode="url" aria-label="Target URL" />
+          <button type="button" class="asw-btn paste-hero-btn" id="btnApplyUrlCenter" data-i18n="btnApplyUrl">应用链接</button>
+          <p class="paste-hero-hint" data-i18n="pasteHeroHint">也可在页面顶部输入框粘贴</p>
+        </div>
       </div>
     </div>
     <div class="rail-right">
-      <h2>右 · 当前步骤</h2>
+      <h2 data-i18n="railSteps">当前步骤</h2>
       <h3 id="currentStageTitle" style="margin:0 0 12px;font-size:15px;color:var(--ink)">—</h3>
       <div class="annotation" id="annotationBox" style="font-size:13px;padding:12px">
         等待加载…
         <small>与顶栏同步</small>
       </div>
       <div id="stepList"></div>
-      <h2>已发现问题</h2>
+      <h2 data-i18n="railFindings">已发现问题</h2>
       <div id="findingsList"></div>
-      <h2>链接与扩展</h2>
+      <h2 data-i18n="railLinks">链接与扩展</h2>
       <div class="quick-links" id="quickLinks"></div>
-      <h2>事件流</h2>
+      <h2 data-i18n="railEvents">事件流</h2>
       <div class="event-log" id="eventLog"></div>
     </div>
   </main>
+  <script src="i18n.js"></script>
   <script src="embedded-barrierlens-run-state.js"></script>
   <script src="embedded-demo-run-state.js"></script>
   <script>
     const $ = (id) => document.getElementById(id);
+    let lang = localStorage.getItem('asw-live-lang') || (navigator.language.startsWith('zh') ? 'zh' : 'en');
+    function t(key) { return (window.ASW_I18N[lang] && window.ASW_I18N[lang][key]) || key; }
+    function tFmt(key, vars) {
+      let s = t(key);
+      if (vars) Object.keys(vars).forEach((k) => { s = s.replace('{' + k + '}', vars[k]); });
+      return s;
+    }
+    function stageLabel(st) {
+      const m = window.ASW_I18N[lang]?.stages;
+      return (m && m[st.id]) || st.label || st.id;
+    }
+    function progressLabel(state, stage) {
+      const cur = state.progress?.current ?? 1;
+      const total = state.progress?.total ?? (state.stages?.length || 9);
+      const name = stage ? stageLabel(stage) : '';
+      return tFmt('progressOf', { cur: String(cur), total: String(total), stage: name });
+    }
+    function applyLang() {
+      document.documentElement.lang = lang === 'zh' ? 'zh-CN' : 'en';
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const k = el.getAttribute('data-i18n');
+        if (!k) return;
+        if (el.querySelector('input, textarea, select, button.asw-btn')) return;
+        el.textContent = t(k);
+      });
+      document.querySelectorAll('[data-i18n-placeholder]').forEach((el) => {
+        el.placeholder = t(el.getAttribute('data-i18n-placeholder'));
+      });
+      $('langToggle').textContent = lang === 'zh' ? 'EN' : '中文';
+    }
+    $('langToggle').onclick = () => {
+      lang = lang === 'zh' ? 'en' : 'zh';
+      localStorage.setItem('asw-live-lang', lang);
+      applyLang();
+      if (lastRenderedState) render(lastRenderedState);
+    };
+    let lastRenderedState = null;
+    let previewLocked = false;
+    applyLang();
     let pollTimer = null;
     let demoTimer = null;
     let eventsPath = null;
@@ -183,10 +262,14 @@
     };
 
     const params = new URLSearchParams(location.search);
+    if (params.get('lang') === 'en' || params.get('lang') === 'zh') {
+      lang = params.get('lang');
+      localStorage.setItem('asw-live-lang', lang);
+      applyLang();
+    }
     if (params.get('state')) $('statePath').value = decodeURIComponent(params.get('state'));
     if (params.get('demo') === '1') $('statePath').value = 'data/demo-run-state.json';
     if (params.get('barrierlens') === '1') $('statePath').value = 'data/barrierlens-run-state.json';
-    if (params.get('url')) $('targetSiteUrl').value = decodeURIComponent(params.get('url'));
 
     function normalizeUrl(raw) {
       const s = (raw || '').trim();
@@ -195,15 +278,87 @@
       return 'https://' + s;
     }
 
+    function readTargetUrlRaw() {
+      const top = ($('targetSiteUrl')?.value || '').trim();
+      const center = ($('centerPasteUrl')?.value || '').trim();
+      return top || center;
+    }
+
+    function writeTargetUrlRaw(value) {
+      const v = value || '';
+      if ($('targetSiteUrl')) $('targetSiteUrl').value = v;
+      if ($('centerPasteUrl')) $('centerPasteUrl').value = v;
+    }
+
+    function bindUrlInputs() {
+      ['targetSiteUrl', 'centerPasteUrl'].forEach((id) => {
+        const el = $(id);
+        if (!el) return;
+        el.addEventListener('input', () => writeTargetUrlRaw(el.value));
+        el.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') { e.preventDefault(); applyTargetUrl(); }
+        });
+      });
+    }
+    bindUrlInputs();
+    if (params.get('url')) writeTargetUrlRaw(decodeURIComponent(params.get('url')));
+
     function setFeedStatus(ok, text) {
       const el = $('feedStatus');
       el.textContent = text;
       el.className = ok ? 'feed-status ok' : 'feed-status err';
     }
 
+    function isPreviewState(state) {
+      return String(state?.runId || '').startsWith('preview-');
+    }
+
+    function buildPreviewState(url) {
+      const raw = window.ASW_EMBEDDED_DEMO_RUN_STATE;
+      const base = raw ? JSON.parse(JSON.stringify(raw)) : { stages: [] };
+      const u = normalizeUrl(url);
+      let label = u;
+      try { label = new URL(u).hostname; } catch (_) {}
+      base.runId = 'preview-' + Date.now();
+      base.target = { url: u, label };
+      base.status = 'running';
+      base.findingsPreview = [];
+      base.reportPath = null;
+      base.eventsPath = null;
+      base.updatedAt = new Date().toISOString();
+      base.currentStageId = 'intake';
+      base.currentStepId = 'target';
+      base.activeAnnotation = t('captionWaiting');
+      const total = base.stages?.length || 9;
+      base.progress = { current: 1, total, label: progressLabel(base, base.stages?.[0]) };
+      (base.stages || []).forEach((st, i) => {
+        st.status = i === 0 ? 'in_progress' : 'pending';
+        (st.steps || []).forEach((step, j) => {
+          step.status = i === 0 && j === 0 ? 'in_progress' : 'pending';
+        });
+      });
+      return base;
+    }
+
+    function applyTargetUrl() {
+      const u = normalizeUrl(readTargetUrlRaw());
+      if (!u) {
+        $('urlToast').textContent = t('needUrl');
+        $('targetSiteUrl')?.focus();
+        return;
+      }
+      writeTargetUrlRaw(u);
+      stopDemo();
+      previewLocked = true;
+      const preview = buildPreviewState(u);
+      lastRenderedState = preview;
+      render(preview);
+      $('urlToast').textContent = t('siteLoaded') + ' · ' + t('previewMode');
+    }
+
     function updateQuickLinks(state) {
       const box = $('quickLinks');
-      const target = normalizeUrl($('targetSiteUrl').value) || state?.target?.url || '';
+      const target = normalizeUrl(readTargetUrlRaw()) || state?.target?.url || '';
       const origin = window.location.origin;
       const statePath = $('statePath').value.trim();
       const stateHttp = statePath ? origin + '/' + statePath.replace(/^\//, '').split('/').map(encodeURIComponent).join('/') : '';
@@ -212,19 +367,19 @@
 
       let html = '';
       if (target) {
-        html += '<a href="#" id="qlOpenNewTab">↗ 新标签页打开被审网站（会离开本看板）</a>';
-        html += '<a href="#" id="qlPreviewInline">⊞ 刷新中间被审站预览</a>';
+        html += '<a href="#" id="qlOpenNewTab">' + escapeHtml(t('qlOpenNewTab')) + '</a>';
+        html += '<a href="#" id="qlPreviewInline">' + escapeHtml(t('qlPreview')) + '</a>';
       }
       if (state?.reportPath) {
         const rp = state.reportPath.startsWith('http') ? state.reportPath : (origin + '/' + state.reportPath.replace(/^\//, ''));
-        html += '<a href="' + escapeHtml(rp) + '" target="_blank" rel="noopener">📄 完整验收报告</a>';
+        html += '<a href="' + escapeHtml(rp) + '" target="_blank" rel="noopener">' + escapeHtml(t('qlReport')) + '</a>';
       }
       if (stateHttpSimple) {
-        html += '<span style="font-size:11px;color:var(--muted)">扩展旁白用 STATE_HTTP_URL：</span>';
+        html += '<span style="font-size:11px;color:var(--muted)">' + escapeHtml(t('qlStateUrl')) + ':</span>';
         html += '<code style="font-size:10px;word-break:break-all;display:block;margin:4px 0 10px">' + escapeHtml(stateHttpSimple) + '</code>';
       }
-      html += '<span style="font-size:11px;color:var(--muted)">页内旁白需安装 browser-extension/ 并粘贴上列 URL</span>';
-      box.innerHTML = html || '<p style="color:var(--muted);font-size:12px">填写被审链接并连接数据源后显示快捷入口</p>';
+      html += '<span style="font-size:11px;color:var(--muted)">' + escapeHtml(t('qlExtHint')) + '</span>';
+      box.innerHTML = html || '<p style="color:var(--muted);font-size:12px">' + escapeHtml(t('qlEmpty')) + '</p>';
       const qlNew = document.getElementById('qlOpenNewTab');
       const qlPrev = document.getElementById('qlPreviewInline');
       if (qlNew) qlNew.onclick = (e) => { e.preventDefault(); openInNewTab(target); };
@@ -244,7 +399,7 @@
 
     function syncTargetFromState(state) {
       if (state?.target?.url) {
-        $('targetSiteUrl').value = state.target.url;
+        writeTargetUrlRaw(state.target.url);
         const link = $('targetUrlLink');
         link.textContent = state.target.label || state.target.url;
         link.dataset.url = state.target.url;
@@ -253,13 +408,13 @@
 
     $('targetUrlLink').addEventListener('click', (e) => {
       e.preventDefault();
-      const u = normalizeUrl($('targetUrlLink').dataset.url || $('targetSiteUrl').value);
+      const u = normalizeUrl($('targetUrlLink').dataset.url || readTargetUrlRaw());
       if (!u) return;
       openInNewTab(u);
     });
 
     function loadCenterIframe() {
-      const u = normalizeUrl($('targetSiteUrl').value);
+      const u = normalizeUrl(readTargetUrlRaw());
       const frame = $('targetPreview');
       const ph = $('sitePlaceholder');
       if (!u) {
@@ -278,42 +433,44 @@
       const label = bar.querySelector('strong');
       const text = $('captionText');
       if (!state) {
-        text.textContent = '请先 ② 连接 run-state；① 粘贴被审链接后中间显示网站';
+        text.textContent = t('captionEmpty');
         bar.classList.remove('snapshot');
-        if (label) label.textContent = '实时旁白（正在检查什么）';
+        if (label) label.textContent = t('captionLabel');
         return;
       }
-      text.textContent = state.activeAnnotation || '（Agent 未写入 activeAnnotation）';
-      const snap = state.status === 'completed';
+      const preview = isPreviewState(state);
+      text.textContent = state.activeAnnotation || (preview ? t('captionWaiting') : t('captionEmpty'));
+      const snap = state.status === 'completed' && !preview;
       bar.classList.toggle('snapshot', snap);
       if (label) {
-        label.textContent = snap
-          ? '旁白（快照 · 不会自动更新；要实时请在 Cursor 跑 /audit）'
-          : '实时旁白（正在检查什么）';
+        label.textContent = snap ? t('captionSnapshot') : t('captionLabel') + (preview ? ' · ' + t('previewMode') : '');
       }
     }
 
+    $('btnApplyUrl').onclick = () => applyTargetUrl();
+    $('btnApplyUrlCenter').onclick = () => applyTargetUrl();
+
     $('btnOpenTarget').onclick = () => {
-      const u = normalizeUrl($('targetSiteUrl').value);
-      if (!u) { alert('请先粘贴被审网站链接'); return; }
+      const u = normalizeUrl(readTargetUrlRaw());
+      if (!u) { alert(t('needUrl')); return; }
       openInNewTab(u);
     };
 
     $('btnCopyAudit').onclick = () => {
-      const u = normalizeUrl($('targetSiteUrl').value);
+      const u = normalizeUrl(readTargetUrlRaw());
       const cmd = u
         ? 'Use /audit to review ' + u + ' before launch. Update validation/artifacts/<runId>/run-state.json after each stage (live-run-protocol).'
         : 'Use /audit on <URL>. Run ./scripts/audit-run-init.sh "<URL>" first.';
-      navigator.clipboard.writeText(cmd).then(() => alert('已复制到剪贴板')).catch(() => prompt('复制此命令：', cmd));
+      navigator.clipboard.writeText(cmd).then(() => alert(t('copied'))).catch(() => prompt(t('copied'), cmd));
     };
 
     $('btnLoadBarrierlens').onclick = () => {
-      $('targetSiteUrl').value = 'https://barrierlens.vercel.app/';
+      writeTargetUrlRaw('https://barrierlens.vercel.app/');
       $('statePath').value = 'data/barrierlens-run-state.json';
+      previewLocked = false;
       stopDemo();
       loadState();
       startPoll();
-      loadCenterIframe();
     };
 
     function showSetupBanner(html) {
@@ -447,13 +604,15 @@
     }
 
     function render(state) {
+      lastRenderedState = state;
       syncTargetFromState(state);
       updateQuickLinks(state);
       updateCaption(state);
       loadCenterIframe();
-      $('progressLabel').textContent = state.progress?.label || '—';
-      $('runStatus').textContent = 'Status: ' + (state.status || '—');
-      $('updatedAt').textContent = 'Updated: ' + (state.updatedAt || '—');
+      const curStage = (state.stages || []).find((s) => s.id === state.currentStageId);
+      $('progressLabel').textContent = state.progress?.label || (curStage ? progressLabel(state, curStage) : '—');
+      $('runStatus').textContent = t('statusPrefix') + ': ' + (state.status || '—');
+      $('updatedAt').textContent = t('updatedPrefix') + ': ' + (state.updatedAt || '—');
       const pct = state.progress ? Math.round((state.progress.current / state.progress.total) * 100) : 0;
       $('progressFill').style.width = pct + '%';
 
@@ -470,7 +629,7 @@
         node.className = 'flow-node ' + cls + (st.id === state.currentStageId ? ' active' : '');
         node.innerHTML =
           '<span class="node-circle" title="' + escapeHtml(st.status) + '">' + stageIcon(st) + '</span>' +
-          '<div class="node-label"><strong>' + escapeHtml(st.label) + '</strong>' +
+          '<div class="node-label"><strong>' + escapeHtml(stageLabel(st)) + '</strong>' +
           '<span class="status-pill">' + escapeHtml(st.status) + '</span></div>';
         wrap.appendChild(node);
         if (i < stages.length - 1) {
@@ -483,7 +642,7 @@
       });
 
       const cur = (state.stages || []).find((s) => s.id === state.currentStageId) || state.stages?.[0];
-      $('currentStageTitle').textContent = cur ? cur.label : '当前步骤';
+      $('currentStageTitle').textContent = cur ? stageLabel(cur) : '—';
       $('annotationBox').innerHTML = escapeHtml(state.activeAnnotation || '—') +
         '<small>' + (state.currentStepId ? 'step: ' + state.currentStepId : '') + '</small>';
 
@@ -502,7 +661,7 @@
       const findings = $('findingsList');
       findings.innerHTML = '';
       if (!(state.findingsPreview || []).length) {
-        findings.innerHTML = '<p style="color:var(--muted)">暂无</p>';
+        findings.innerHTML = '<p style="color:var(--muted)">' + escapeHtml(t('noFindings')) + '</p>';
       } else {
         state.findingsPreview.forEach((f) => {
           const d = document.createElement('div');
@@ -551,11 +710,26 @@
         const { state, resolvedPath } = await fetchStateJson(path);
         if (resolvedPath !== path) $('statePath').value = resolvedPath;
         hideSetupBanner();
+        const userUrl = normalizeUrl(readTargetUrlRaw());
+        const stateUrl = normalizeUrl(state.target?.url || '');
+        if (userUrl && stateUrl && userUrl !== stateUrl) {
+          $('urlToast').textContent = t('urlMismatch');
+          if (previewLocked) {
+            loadCenterIframe();
+            const mode = t('previewMode');
+            setFeedStatus(true, mode + ' · ' + new Date().toLocaleTimeString());
+            return;
+          }
+        } else {
+          previewLocked = false;
+          if (!userUrl && stateUrl) writeTargetUrlRaw(stateUrl);
+          if (!isPreviewState(state)) $('urlToast').textContent = '';
+        }
         render(state);
         await loadEvents();
         $('liveIndicator').style.background = state.status === 'running' ? '#22c55e' : '#94a3b8';
-        const mode = state.status === 'running' ? '审计进行中' : (state.status === 'completed' ? '已完成' : state.status);
-        setFeedStatus(true, '已连接 · ' + mode + ' · ' + new Date().toLocaleTimeString());
+        const mode = state.status === 'running' ? t('connectedRunning') : (state.status === 'completed' ? t('connectedDone') : state.status);
+        setFeedStatus(true, mode + ' · ' + new Date().toLocaleTimeString());
       } catch (e) {
         const altBase = location.pathname.includes('agentskills-audit-collection')
           ? ''
@@ -571,7 +745,7 @@
         );
         $('annotationBox').innerHTML = '看板未连上数据 — 请按顶部红条说明操作，或点「演示模式」先确认页面正常。';
         $('liveIndicator').style.background = '#b42318';
-        setFeedStatus(false, '未连接 · ' + new Date().toLocaleTimeString());
+        setFeedStatus(false, t('feedDisconnected') + ' · ' + new Date().toLocaleTimeString());
         updateQuickLinks(null);
       }
     }
@@ -584,33 +758,72 @@
     }
     function stopPoll() { if (pollTimer) clearInterval(pollTimer); pollTimer = null; }
 
-    // Demo: simulate step progression on golden file
     let demoState = null;
+    let demoStageIndex = 0;
+
+    function advanceDemoTick() {
+      if (!demoState?.stages?.length) return;
+      const stages = demoState.stages;
+      if (demoStageIndex >= stages.length) {
+        stopDemo();
+        demoState.status = 'completed';
+        stages.forEach((s) => { s.status = 'completed'; (s.steps || []).forEach((step) => { step.status = 'completed'; }); });
+        demoState.activeAnnotation = lang === 'zh' ? '演示完成 — 连接真实 run-state 可看快照' : 'Demo complete — connect a real run-state for snapshots';
+        demoState.progress.current = stages.length;
+        demoState.progress.label = progressLabel(demoState, stages[stages.length - 1]);
+        render(demoState);
+        return;
+      }
+      stages.forEach((s, i) => {
+        if (i < demoStageIndex) {
+          s.status = 'completed';
+          (s.steps || []).forEach((step) => { step.status = 'completed'; });
+        } else if (i === demoStageIndex) {
+          s.status = 'in_progress';
+          (s.steps || []).forEach((step, j) => { step.status = j === 0 ? 'in_progress' : 'pending'; });
+        } else {
+          s.status = 'pending';
+          (s.steps || []).forEach((step) => { step.status = 'pending'; });
+        }
+      });
+      const st = stages[demoStageIndex];
+      demoState.currentStageId = st.id;
+      demoState.currentStepId = st.steps?.[0]?.id || null;
+      demoState.progress.current = demoStageIndex + 1;
+      demoState.progress.label = progressLabel(demoState, st);
+      demoState.activeAnnotation = t('demoStage') + ': ' + stageLabel(st);
+      demoState.status = 'running';
+      demoState.updatedAt = new Date().toISOString();
+      render(demoState);
+      demoStageIndex++;
+    }
+
     async function runDemo() {
       stopDemo();
+      previewLocked = false;
       const loaded = await fetchStateJson('data/demo-run-state.json');
-      demoState = loaded.state;
+      demoState = JSON.parse(JSON.stringify(loaded.state));
       $('statePath').value = loaded.resolvedPath;
-      eventsPath = 'validation/golden/audit-run-events.example.ndjson';
-      const steps = demoState.stages.find((s) => s.id === 'live-functional')?.steps || [];
-      let si = 0;
-      render(demoState);
+      if (demoState.target?.url) writeTargetUrlRaw(demoState.target.url);
+      eventsPath = demoState.eventsPath || 'validation/golden/audit-run-events.example.ndjson';
+      demoStageIndex = 0;
+      demoState.status = 'running';
+      demoState.findingsPreview = [];
+      stagesResetForDemo();
+      advanceDemoTick();
       loadEvents();
-      demoTimer = setInterval(() => {
-        steps.forEach((s, i) => {
-          s.status = i < si ? 'completed' : i === si ? 'in_progress' : 'pending';
-        });
-        demoState.progress.current = 5;
-        demoState.activeAnnotation = steps[si]?.annotation || '演示：' + (steps[si]?.label || '');
-        demoState.currentStepId = steps[si]?.id;
-        render(demoState);
-        si++;
-        if (si > steps.length) { stopDemo(); demoState.status = 'completed'; render(demoState); }
-      }, 2200);
+      demoTimer = setInterval(advanceDemoTick, 1600);
+    }
+
+    function stagesResetForDemo() {
+      (demoState.stages || []).forEach((s) => {
+        s.status = 'pending';
+        (s.steps || []).forEach((step) => { step.status = 'pending'; });
+      });
     }
     function stopDemo() { if (demoTimer) clearInterval(demoTimer); demoTimer = null; }
 
-    $('btnLoad').onclick = () => { stopDemo(); loadState(); startPoll(); };
+    $('btnLoad').onclick = () => { stopDemo(); previewLocked = false; loadState(); startPoll(); };
     $('btnDemo').onclick = () => { stopPoll(); runDemo(); };
     $('pollEnabled').onchange = () => { stopDemo(); startPoll(); loadState(); };
 
@@ -620,8 +833,7 @@
 
     loadState();
     startPoll();
-    $('targetSiteUrl').addEventListener('change', loadCenterIframe);
-    if ($('targetSiteUrl').value.trim()) loadCenterIframe();
+    if (params.get('url')) applyTargetUrl();
   </script>
 </body>
 </html>

@@ -214,7 +214,19 @@ flowchart LR
 
 交付物仍是 **JSON + artifacts + public report**，不是「两个模型都说 OK」。
 
-### 4.4 与「做网站」工具链的关系
+### 4.4 运行时与模型（IDE / 终端 / 插件）
+
+Skills 与 schema **不绑定**某一 LLM。执行面分工见 [runtime-surfaces.md](runtime-surfaces.md)：
+
+| 表面 | 模型策略 |
+| --- | --- |
+| **IDE**（Cursor / Claude Code） | 用 IDE 里用户已选的 Agent / 模型跑 `/audit` |
+| **终端**（脚本、CI、自建 Agent） | 可用其他模型，产出须符合 `run-state` / `audit-report` schema |
+| **浏览器插件** | 可用其他模型做旁白/增强，**不**替代 `/audit` 编排 |
+
+看板 `workbench/live/` **不调用模型**，只读 JSON。
+
+### 4.5 与「做网站」工具链的关系
 
 | 环节 | 典型工具 | AgentSkills 角色 |
 | --- | --- | --- |

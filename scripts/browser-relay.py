@@ -14,7 +14,10 @@ from __future__ import annotations
 import argparse
 import base64
 import json
+import os
 import re
+import urllib.error
+import urllib.request
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -70,16 +73,19 @@ class RelayHandler(BaseHTTPRequestHandler):
 
     def do_POST(self) -> None:
         path = urlparse(self.path).path
-        if path != "/api/evidence":
-            self._json(404, {"ok": False, "error": "not found"})
-            return
-
         length = int(self.headers.get("Content-Length", "0"))
         raw = self.rfile.read(length) if length else b"{}"
         try:
             data = json.loads(raw.decode("utf-8"))
         except json.JSONDecodeError:
             self._json(400, {"ok": False, "error": "invalid JSON"})
+            return
+
+        if path == "/api/narrate":
+            self._handle_narrate(data)
+            return
+        if path != "/api/evidence":
+            self._json(404, {"ok": False, "error": "not found"})
             return
 
         run_id = str(data.get("runId") or "").strip()
@@ -137,6 +143,80 @@ class RelayHandler(BaseHTTPRequestHandler):
         self._json(
             200,
             {"ok": True, "path": repo_relative(png_path), "metaPath": repo_relative(meta_path)},
+        )
+
+    def _handle_narrate(self, data: dict) -> None:
+        text = str(data.get("text") or "").strip()
+        if not text:
+            self._json(400, {"ok": False, "error": "text required"})
+            return
+
+        endpoint = os.environ.get("ASW_NARRATE_URL", "").strip()
+        api_key = os.environ.get("ASW_NARRATE_API_KEY", "").strip()
+        model = os.environ.get("ASW_NARRATE_MODEL", "gpt-4o-mini").strip()
+        if not endpoint or not api_key:
+            self._json(
+                200,
+                {
+                    "ok": True,
+                    "mode": "passthrough",
+                    "text": text,
+                    "provider": None,
+                    "model": None,
+                },
+            )
+            return
+
+        task = str(data.get("task") or "translate")
+        target = str(data.get("targetLocale") or "zh")
+        if task == "summarize":
+            system = "Summarize this audit narration in one short sentence. Output only the summary."
+        else:
+            system = f"Translate this audit narration to {target}. Output only the translation."
+
+        payload = json.dumps(
+            {
+                "model": model,
+                "messages": [
+                    {"role": "system", "content": system},
+                    {"role": "user", "content": text},
+                ],
+                "max_tokens": 256,
+            }
+        ).encode("utf-8")
+        req = urllib.request.Request(
+            endpoint,
+            data=payload,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {api_key}",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(req, timeout=30) as resp:
+                body = json.loads(resp.read().decode("utf-8"))
+        except urllib.error.HTTPError as e:
+            detail = e.read().decode("utf-8", errors="replace")[:200]
+            self._json(502, {"ok": False, "error": f"upstream HTTP {e.code}: {detail}"})
+            return
+        except Exception as e:
+            self._json(502, {"ok": False, "error": str(e)})
+            return
+
+        out = (body.get("choices") or [{}])[0].get("message", {}).get("content", "").strip()
+        if not out:
+            self._json(502, {"ok": False, "error": "empty model response"})
+            return
+        self._json(
+            200,
+            {
+                "ok": True,
+                "mode": "llm",
+                "text": out,
+                "provider": endpoint,
+                "model": model,
+            },
         )
 
 

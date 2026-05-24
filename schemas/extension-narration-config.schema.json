@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://agentskills.dev/schemas/extension-narration-config.schema.json",
+  "title": "AgentSkills browser extension narration config",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "enabled": { "type": "boolean", "default": false },
+    "mode": {
+      "type": "string",
+      "enum": ["passthrough", "relay", "direct"],
+      "default": "passthrough"
+    },
+    "task": {
+      "type": "string",
+      "enum": ["none", "translate", "summarize"],
+      "default": "none"
+    },
+    "targetLocale": { "type": "string", "default": "zh" },
+    "sourceLocale": { "type": "string", "default": "auto" },
+    "relayUrl": { "type": "string", "format": "uri" },
+    "direct": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "endpoint": { "type": "string" },
+        "model": { "type": "string" },
+        "apiKey": { "type": "string" }
+      }
+    }
+  }
+}

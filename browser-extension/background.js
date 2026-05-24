@@ -1,7 +1,10 @@
 /**
  * Polls run-state.json and broadcasts to content scripts.
  * Optional POST of screenshots to scripts/browser-relay.py (port 8766).
+ * Optional second model for displayAnnotation only — narration/enhance.js
  */
+
+importScripts("narration/enhance.js");
 
 const DEFAULT_POLL_MS = 1000;
 const DEFAULT_RELAY = "http://127.0.0.1:8766";
@@ -16,6 +19,13 @@ async function getConfig() {
     relayUrl: DEFAULT_RELAY,
     overlayEnabled: true,
     pollMs: DEFAULT_POLL_MS,
+    narration: {
+      enabled: false,
+      mode: "passthrough",
+      task: "none",
+      targetLocale: "zh",
+      sourceLocale: "auto",
+    },
   });
 }
 
@@ -32,13 +42,38 @@ function progressPercent(state) {
   return Math.min(100, Math.round((p.current / p.total) * 100));
 }
 
+async function resolveDisplayAnnotation(state) {
+  if (!state?.activeAnnotation) {
+    return { text: "", mode: "passthrough" };
+  }
+  const cfg = await getConfig();
+  const narration = {
+    ...(cfg.narration || {}),
+    relayUrl: cfg.relayUrl || DEFAULT_RELAY,
+  };
+  return ASW_enhanceCaption(state.activeAnnotation, narration, state);
+}
+
 async function broadcastState(state, error) {
   const tabs = await chrome.tabs.query({});
+  let displayAnnotation = state?.activeAnnotation || "";
+  let displayAnnotationMode = "passthrough";
+  if (state?.activeAnnotation) {
+    try {
+      const enhanced = await resolveDisplayAnnotation(state);
+      displayAnnotation = enhanced.text;
+      displayAnnotationMode = enhanced.mode;
+    } catch {
+      displayAnnotation = state.activeAnnotation;
+    }
+  }
   const payload = {
     type: "ASW_RUN_STATE",
     state,
     error: error || null,
     percent: state ? progressPercent(state) : 0,
+    displayAnnotation,
+    displayAnnotationMode,
   };
   for (const tab of tabs) {
     if (!tab.id || !tab.url?.startsWith("http")) continue;
@@ -139,7 +174,7 @@ async function queueEvidenceFallback(body) {
 
 chrome.storage.onChanged.addListener((changes, area) => {
   if (area !== "local") return;
-  if (changes.stateUrl || changes.overlayEnabled || changes.pollMs) {
+  if (changes.stateUrl || changes.overlayEnabled || changes.pollMs || changes.narration) {
     restartPolling();
   }
 });

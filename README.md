@@ -27,6 +27,8 @@ python3 scripts/browser-relay.py
 | ![Live audit](docs/screenshots/workbench-live.svg) | Stages/steps while `/audit` runs |
 | ![Public report](docs/screenshots/public-report.svg) | Customer-facing HTML (from JSON) |
 
+**Where models run:** IDE → use your IDE’s agent; terminal & extension → may use other models; skills/schemas stay the same. See [docs/runtime-surfaces.md](docs/runtime-surfaces.md).
+
 Replace SVG wireframes with PNGs: [docs/screenshots/README.md](docs/screenshots/README.md).
 
 ---

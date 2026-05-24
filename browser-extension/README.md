@@ -70,6 +70,18 @@ Without relay, captures are queued in `chrome.storage.local.evidenceQueue` (expo
 - `activeTab` — `captureVisibleTab` on user click
 - `host_permissions` — `127.0.0.1:8765` (run-state + workbench), `8766` (relay)
 
+## Optional second model (narration only)
+
+Expand popup → **可选 · 第二模型**. Default is passthrough (shows `activeAnnotation` as-is).
+
+| mode | Use when |
+| --- | --- |
+| `passthrough` | Default — no LLM in extension |
+| `relay` | Set `ASW_NARRATE_URL` + `ASW_NARRATE_API_KEY` on terminal, run `browser-relay.py` |
+| `direct` | Paste OpenAI-compatible endpoint + key in popup (local only) |
+
+Spec: [docs/extension-optional-llm.md](../docs/extension-optional-llm.md) · schema: `schemas/extension-narration-config.schema.json`
+
 ## Not in MVP
 
 - Console / HAR export

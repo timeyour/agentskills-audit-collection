@@ -17,6 +17,13 @@ Founder goal #3: **show what is being checked while auditing**, on the site unde
 
 The extension must not redefine `S0–S4` or issue cards. Agents merge extension screenshots into `audit-report.json` evidence paths manually or in a future script.
 
+## Model policy
+
+- **IDE runs `/audit`:** use the IDE’s built-in model (Cursor / Claude Code selection).
+- **Extension:** may later call **other models** only for narration/summarization; default is to show `activeAnnotation` from `run-state.json` with no LLM.
+- Full policy: [runtime-surfaces.md](runtime-surfaces.md).
+- API sketch + relay env: [extension-optional-llm.md](extension-optional-llm.md).
+
 ## Quick start
 
 ```bash
