@@ -48,9 +48,13 @@
     .asw-live .asw-btn:hover { background: var(--primary-active); }
     .asw-live .asw-btn.secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--border); }
     .asw-live .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; display: inline-block; margin-right: 6px; animation: pulse 1.5s infinite; }
+    .asw-live .setup-banner { display: none; margin: 0; padding: 12px 24px; background: #fef3f2; border-bottom: 1px solid #fecdca; color: #7a1e1e; font-size: 13px; line-height: 1.5; }
+    .asw-live .setup-banner.visible { display: block; }
+    .asw-live .setup-banner code { background: #fff; padding: 2px 6px; border-radius: 4px; font-size: 12px; }
   </style>
 </head>
 <body class="asw-live">
+  <div class="setup-banner" id="setupBanner"></div>
   <header>
     <h1><span class="live-dot" id="liveIndicator"></span> AgentSkills Live Audit</h1>
     <div class="meta">
@@ -95,9 +99,54 @@
     let demoTimer = null;
     let eventsPath = null;
 
+    const REPO_PREFIXES = ['', 'agentskills-audit-collection/'];
+    const GOLDEN_FALLBACKS = {
+      'validation/artifacts/20260524T055013Z-9936/run-state.json':
+        'validation/golden/barrierlens-run-state.json',
+    };
+
     const params = new URLSearchParams(location.search);
-    if (params.get('state')) $('statePath').value = params.get('state');
+    if (params.get('state')) $('statePath').value = decodeURIComponent(params.get('state'));
     if (params.get('demo') === '1') $('statePath').value = 'validation/golden/audit-run.example.json';
+    if (params.get('barrierlens') === '1') {
+      $('statePath').value = 'validation/golden/barrierlens-run-state.json';
+    }
+
+    function showSetupBanner(html) {
+      const b = $('setupBanner');
+      b.innerHTML = html;
+      b.classList.add('visible');
+    }
+    function hideSetupBanner() {
+      $('setupBanner').classList.remove('visible');
+      $('setupBanner').innerHTML = '';
+    }
+
+    function statePathCandidates(path) {
+      const p = path.replace(/^\//, '');
+      const set = new Set([p]);
+      if (GOLDEN_FALLBACKS[p]) set.add(GOLDEN_FALLBACKS[p]);
+      REPO_PREFIXES.forEach((pre) => {
+        if (pre) set.add(pre + p);
+        if (GOLDEN_FALLBACKS[p]) set.add(pre + GOLDEN_FALLBACKS[p]);
+      });
+      return [...set];
+    }
+
+    async function fetchStateJson(path) {
+      const tries = statePathCandidates(path);
+      let lastErr = null;
+      for (const rel of tries) {
+        try {
+          const r = await fetch(rel + '?t=' + Date.now());
+          if (!r.ok) { lastErr = new Error(rel + ' → HTTP ' + r.status); continue; }
+          return { state: await r.json(), resolvedPath: rel };
+        } catch (e) {
+          lastErr = e;
+        }
+      }
+      throw lastErr || new Error('无法加载 run-state');
+    }
 
     function stageClass(s) {
       if (s.status === 'completed') return 'done';
@@ -188,16 +237,32 @@
 
     async function loadState() {
       const path = $('statePath').value.trim();
-      if (!path) return;
+      if (!path) {
+        showSetupBanner(
+          '未设置 run-state 路径。请先运行 <code>cd agentskills-audit-collection && python3 -m http.server 8765</code>，' +
+          '再打开 <code>http://127.0.0.1:8765/workbench/live/?demo=1</code> 或点「演示模式」。'
+        );
+        return;
+      }
       try {
-        const r = await fetch(path + '?t=' + Date.now());
-        if (!r.ok) throw new Error(r.status);
-        const state = await r.json();
+        const { state, resolvedPath } = await fetchStateJson(path);
+        if (resolvedPath !== path) $('statePath').value = resolvedPath;
+        hideSetupBanner();
         render(state);
         await loadEvents();
         $('liveIndicator').style.background = state.status === 'running' ? '#22c55e' : '#94a3b8';
       } catch (e) {
-        $('annotationBox').innerHTML = '无法加载 <code>' + escapeHtml(path) + '</code>。请在本仓库根目录运行：<br><code>python3 -m http.server 8765</code><br>然后打开此页面。 (' + e.message + ')';
+        const cwdHint = location.pathname.includes('agentskills-audit-collection')
+          ? '当前 URL 含子目录前缀；请确认 http.server 在 <strong>agentskills-audit-collection</strong> 根目录启动。'
+          : '请在 <strong>agentskills-audit-collection</strong> 目录执行 <code>python3 -m http.server 8765</code>（不要在上级 cursorskils 根目录）。';
+        showSetupBanner(
+          '无法加载 <code>' + escapeHtml(path) + '</code>（' + escapeHtml(String(e.message || e)) + '）。' +
+          cwdHint +
+          ' 先试 <code>?demo=1</code> 或 <code>?barrierlens=1</code>（golden 已入库，不依赖 artifacts 目录）。' +
+          ' 本地 run 消失时请重新 <code>./scripts/audit-run-init.sh URL</code>。'
+        );
+        $('annotationBox').innerHTML = '看板未连上数据 — 请按顶部红条说明操作，或点「演示模式」先确认页面正常。';
+        $('liveIndicator').style.background = '#b42318';
       }
     }
 
@@ -238,6 +303,11 @@
     $('btnLoad').onclick = () => { stopDemo(); loadState(); startPoll(); };
     $('btnDemo').onclick = () => { stopPoll(); runDemo(); };
     $('pollEnabled').onchange = () => { stopDemo(); startPoll(); loadState(); };
+
+    if (!params.get('state') && params.get('demo') !== '1' && !$('statePath').value.trim()) {
+      $('statePath').value = 'validation/golden/audit-run.example.json';
+      showSetupBanner('已自动加载演示数据。真实审计请用 <code>./scripts/open-live-workbench.sh</code> 或粘贴 <code>audit-run-init.sh</code> 输出的 STATE_HTTP_URL。');
+    }
 
     loadState();
     startPoll();

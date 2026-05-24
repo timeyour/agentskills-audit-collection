@@ -35,4 +35,11 @@ Naming follows `.claude/skills/physical-flow-test/references/artifact-schema.md`
 
 ## Git
 
-This folder may stay empty in the repo; use `.gitkeep` per audit folder when needed. Do not commit secrets.
+**`validation/artifacts/*` run folders are gitignored** — they exist only on the machine that ran the audit. To view BarrierLens (or any past run) on another clone, use the checked-in golden snapshot:
+
+- Live workbench: `http://127.0.0.1:8765/workbench/live/?barrierlens=1`
+- File: `validation/golden/barrierlens-run-state.json`
+
+Re-create a local run: `./scripts/audit-run-init.sh "https://yoursite.com"`.
+
+Do not commit secrets inside artifact folders.
