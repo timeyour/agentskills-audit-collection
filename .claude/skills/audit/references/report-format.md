@@ -23,7 +23,7 @@ Use this format for full audit outputs.
 | `S0` | Blocks launch or delivery; core workflow unavailable, data/security risk, or production dependency missing. |
 | `S1` | Seriously hurts conversion, trust, correctness, privacy, or operational reliability. |
 | `S2` | Noticeable UX, workflow, visual, accessibility, or deployment issue; temporary launch possible with known risk. |
-| `S3` | Polish, copy, layout, or minor interaction improvement. |
+| `S3` | Refinement (打磨/润色): copy, layout, or minor interaction. See `docs/severity-standard.md`. |
 | `S4` | Future enhancement or benchmark idea. |
 
 ## Evidence Split

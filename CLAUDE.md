@@ -36,7 +36,7 @@ This file is the source of truth for this repository. The skills in `.claude/ski
 - New guardrails must be specific, triggerable, and reviewable.
 - Validation examples may exist, but they must stay outside `.claude/skills/` and must not be required for skill use.
 - Every skill should preserve the shared report shape when applicable: Scope, Evidence, Findings, Severity, Reproduction, Fix Suggestion, Regression Check, Lessons.
-- Use `S0-S4` severity for delivery impact: `S0` blocks launch, `S1` serious conversion/trust/security/reliability risk, `S2` noticeable issue with temporary launch possible, `S3` polish, `S4` future enhancement.
+- Use `S0-S4` severity for delivery impact per `docs/severity-standard.md`: `S0` blocks launch, `S1` serious risk, `S2` major with known risk, `S3` refinement (打磨/润色, not “Polish” language), `S4` future enhancement.
 - If a finding cannot be reproduced, located, fixed, or retested, mark the evidence gap explicitly.
 - A skill that only produces a polished command name or vague opinion has failed.
 - For complex workflows, use a harness before execution: stage tree, execution matrix, checkpoints, retry/escalation, and human-intervention map.

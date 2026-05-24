@@ -121,7 +121,7 @@ Severity:
 - `S0`: blocks launch or delivery because visual/interaction trust failure prevents safe use.
 - `S1`: seriously hurts conversion, trust, accessibility, or product credibility.
 - `S2`: noticeable craft, responsive, hierarchy, or workflow issue; temporary launch possible with known risk.
-- `S3`: polish, copy, layout, or minor interaction improvement.
+- `S3`: refinement (打磨/润色) — copy, layout, or minor interaction. See `docs/severity-standard.md`.
 - `S4`: future enhancement or benchmark idea.
 
 ## Copy Prompt Examples

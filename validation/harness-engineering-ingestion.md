@@ -2,7 +2,7 @@
 
 Date: 2026-05-19
 
-Source: `/Users/liuxin/Desktop/SS-lec3 FDE课程资料.pdf`
+Source: `SS-lec3 FDE course materials (local PDF, not in repo)`
 
 Note: The WeType cache image paths supplied in the message were unavailable in this environment, so this pass used the user's text plus PDF text extraction.
 

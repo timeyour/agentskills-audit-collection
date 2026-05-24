@@ -93,7 +93,7 @@ Separate evidence types clearly:
 | P0 | Fix S0 blockers | Site cannot be delivered safely. |
 | P1 | Fix S1 trust/conversion/workflow risks | Core business result is at risk. |
 | P2 | Fix S2 usability/performance issues | Launch may be possible with known risk. |
-| P3 | Polish S3/S4 items | Improve quality after core risks are handled. |
+| P3 | Address S3/S4 refinements | Improve copy, layout, and minor interaction after core risks are handled (S3 = 打磨/润色, not 波兰语). |
 
 ## Copyable Fix Prompt
 

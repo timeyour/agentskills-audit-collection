@@ -58,7 +58,7 @@
 
 1. Add physical browser evidence (ISSUE-001)
 2. Publish shareable report URL (ISSUE-002)
-3. Visual polish (S3)
+3. Visual refinement (S3) — copy, layout, minor interaction
 
 ## Copyable Fix Prompt
 

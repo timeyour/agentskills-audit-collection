@@ -2,7 +2,7 @@
 
 Date: 2026-05-20
 
-Source: `/Users/liuxin/Downloads/Untitled.pdf`
+Source: `Untitled.pdf (local research note, not in repo)`
 
 ## Scope
 

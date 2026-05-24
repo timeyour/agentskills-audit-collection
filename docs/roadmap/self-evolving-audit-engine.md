@@ -58,7 +58,7 @@ Gate rule:
 - `S0` blocks release.
 - `S1` requires explicit risk acceptance or fix before release.
 - `S2` can ship only with a regression plan.
-- `S3-S4` become backlog or polish.
+- `S3-S4` become backlog: S3 = refinement (打磨/润色), S4 = future enhancement.
 
 ## Lessons Ledger
 

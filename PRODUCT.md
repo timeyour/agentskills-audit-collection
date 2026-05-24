@@ -118,7 +118,7 @@ Use `S0-S4` to keep product reports tied to delivery risk:
 - `S0`: do not launch or deliver.
 - `S1`: serious trust, conversion, correctness, privacy, or reliability risk.
 - `S2`: launch is possible only with a known risk note.
-- `S3`: polish issue.
+- `S3`: refinement issue (copy, layout, minor interaction).
 - `S4`: future enhancement.
 
 ## Differentiation

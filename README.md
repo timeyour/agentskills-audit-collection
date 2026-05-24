@@ -317,13 +317,13 @@ Every skill should preserve this shape when applicable:
 
 Canonical definition: [docs/severity-standard.md](docs/severity-standard.md).
 
-| Level | Meaning |
+| Level | Meaning (see [docs/severity-standard.md](docs/severity-standard.md)) |
 | --- | --- |
-| `S0` | Blocks launch or delivery |
-| `S1` | Seriously hurts conversion, trust, correctness, privacy, or ops |
-| `S2` | Noticeable issue; launch possible with known risk |
-| `S3` | Polish / minor interaction |
-| `S4` | Future enhancement |
+| `S0` | Blocks launch or delivery — 阻断上线或交付 |
+| `S1` | Seriously hurts conversion, trust, correctness, privacy, or ops — 严重 |
+| `S2` | Noticeable issue; launch possible with known risk — 重要 |
+| `S3` | Refinement: copy, layout, minor interaction — 次要（打磨/润色，**非**波兰语） |
+| `S4` | Future enhancement — 未来增强 |
 
 ## Validation
 

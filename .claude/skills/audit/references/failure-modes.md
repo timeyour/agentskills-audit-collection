@@ -24,7 +24,7 @@ Do not promote a failure mode into a finding unless it has source, live, or exec
 | `S0` | Core workflow blocked, data loss risk, serious security exposure, destructive production risk, hardcoded production secrets, missing backend dependency for launch-critical flow. |
 | `S1` | Major correctness, privacy, trust, auth, payment, reliability, or conversion risk. |
 | `S2` | Noticeable functional, UX, performance, validation, accessibility, or deployment issue that can launch only with known risk. |
-| `S3` | Minor polish, copy, layout, maintainability, or small edge-case gap. |
+| `S3` | Refinement (打磨/润色): copy, layout, maintainability, or small edge-case gap. |
 | `S4` | Future hardening, benchmark idea, or non-blocking improvement. |
 
 ## Core AI Delivery Failure Modes
