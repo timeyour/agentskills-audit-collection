@@ -93,24 +93,30 @@
       <div class="event-log" id="eventLog"></div>
     </div>
   </main>
+  <script src="embedded-barrierlens-run-state.js"></script>
+  <script src="embedded-demo-run-state.js"></script>
   <script>
     const $ = (id) => document.getElementById(id);
     let pollTimer = null;
     let demoTimer = null;
     let eventsPath = null;
+    let detectedDataBase = null;
 
     const REPO_PREFIXES = ['', 'agentskills-audit-collection/'];
     const GOLDEN_FALLBACKS = {
-      'validation/artifacts/20260524T055013Z-9936/run-state.json':
-        'validation/golden/barrierlens-run-state.json',
+      'validation/artifacts/20260524T055013Z-9936/run-state.json': 'data/barrierlens-run-state.json',
+      'validation/golden/barrierlens-run-state.json': 'data/barrierlens-run-state.json',
+      'validation/golden/audit-run.example.json': 'data/demo-run-state.json',
+    };
+    const EMBEDDED_BY_PATH = {
+      'data/barrierlens-run-state.json': () => window.ASW_EMBEDDED_BARRIERLENS_RUN_STATE,
+      'data/demo-run-state.json': () => window.ASW_EMBEDDED_DEMO_RUN_STATE,
     };
 
     const params = new URLSearchParams(location.search);
     if (params.get('state')) $('statePath').value = decodeURIComponent(params.get('state'));
-    if (params.get('demo') === '1') $('statePath').value = 'validation/golden/audit-run.example.json';
-    if (params.get('barrierlens') === '1') {
-      $('statePath').value = 'validation/golden/barrierlens-run-state.json';
-    }
+    if (params.get('demo') === '1') $('statePath').value = 'data/demo-run-state.json';
+    if (params.get('barrierlens') === '1') $('statePath').value = 'data/barrierlens-run-state.json';
 
     function showSetupBanner(html) {
       const b = $('setupBanner');
@@ -122,29 +128,94 @@
       $('setupBanner').innerHTML = '';
     }
 
+    function pageRelativeUrl(rel) {
+      return new URL(rel.replace(/^\//, ''), new URL('.', window.location.href)).href;
+    }
+
     function statePathCandidates(path) {
       const p = path.replace(/^\//, '');
-      const set = new Set([p]);
-      if (GOLDEN_FALLBACKS[p]) set.add(GOLDEN_FALLBACKS[p]);
+      const set = new Set();
+      const add = (x) => { if (x) set.add(x.replace(/^\//, '')); };
+
+      add(p);
+      if (GOLDEN_FALLBACKS[p]) add(GOLDEN_FALLBACKS[p]);
+      if (p.startsWith('validation/')) add('data/' + (p.includes('barrierlens') ? 'barrierlens-run-state.json' : p.includes('audit-run') ? 'demo-run-state.json' : ''));
+
+      add('data/barrierlens-run-state.json');
+      add('data/demo-run-state.json');
+
       REPO_PREFIXES.forEach((pre) => {
-        if (pre) set.add(pre + p);
-        if (GOLDEN_FALLBACKS[p]) set.add(pre + GOLDEN_FALLBACKS[p]);
+        [...set].forEach((item) => add(pre + item));
+        add(pre + 'workbench/live/data/barrierlens-run-state.json');
+        add(pre + 'validation/golden/barrierlens-run-state.json');
       });
-      return [...set];
+
+      return [...set].filter(Boolean);
+    }
+
+    async function probeUrl(url) {
+      try {
+        const r = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now());
+        return r.ok;
+      } catch {
+        return false;
+      }
+    }
+
+    async function detectDataBase() {
+      if (detectedDataBase !== null) return detectedDataBase;
+      const rel = pageRelativeUrl('data/barrierlens-run-state.json');
+      if (await probeUrl(rel)) {
+        detectedDataBase = 'page-relative';
+        return detectedDataBase;
+      }
+      for (const pre of REPO_PREFIXES) {
+        const u = pageRelativeUrl(pre + 'workbench/live/data/barrierlens-run-state.json');
+        if (await probeUrl(u)) {
+          detectedDataBase = pre;
+          return detectedDataBase;
+        }
+      }
+      detectedDataBase = '';
+      return detectedDataBase;
+    }
+
+    function embeddedState(path) {
+      const key = path.replace(/^\//, '');
+      const fn = EMBEDDED_BY_PATH[key];
+      if (!fn) return null;
+      const state = fn();
+      return state && typeof state === 'object' ? state : null;
     }
 
     async function fetchStateJson(path) {
       const tries = statePathCandidates(path);
+      const seen = new Set();
       let lastErr = null;
-      for (const rel of tries) {
-        try {
-          const r = await fetch(rel + '?t=' + Date.now());
-          if (!r.ok) { lastErr = new Error(rel + ' → HTTP ' + r.status); continue; }
-          return { state: await r.json(), resolvedPath: rel };
-        } catch (e) {
-          lastErr = e;
+
+      await detectDataBase();
+
+      for (let rel of tries) {
+        const urls = [rel];
+        if (!rel.startsWith('http')) urls.unshift(pageRelativeUrl(rel));
+        for (const url of urls) {
+          if (seen.has(url)) continue;
+          seen.add(url);
+          try {
+            const r = await fetch(url + (url.includes('?') ? '&' : '?') + 't=' + Date.now());
+            if (!r.ok) { lastErr = new Error(url + ' → HTTP ' + r.status); continue; }
+            return { state: await r.json(), resolvedPath: rel };
+          } catch (e) {
+            lastErr = e;
+          }
         }
       }
+
+      const emb = embeddedState(path) || embeddedState(GOLDEN_FALLBACKS[path.replace(/^\//, '')] || '');
+      if (emb) {
+        return { state: emb, resolvedPath: path + ' (embedded)' };
+      }
+
       throw lastErr || new Error('无法加载 run-state');
     }
 
@@ -252,14 +323,17 @@
         await loadEvents();
         $('liveIndicator').style.background = state.status === 'running' ? '#22c55e' : '#94a3b8';
       } catch (e) {
-        const cwdHint = location.pathname.includes('agentskills-audit-collection')
-          ? '当前 URL 含子目录前缀；请确认 http.server 在 <strong>agentskills-audit-collection</strong> 根目录启动。'
-          : '请在 <strong>agentskills-audit-collection</strong> 目录执行 <code>python3 -m http.server 8765</code>（不要在上级 cursorskils 根目录）。';
+        const altBase = location.pathname.includes('agentskills-audit-collection')
+          ? ''
+          : '/agentskills-audit-collection';
+        const altLive = altBase + '/workbench/live/?barrierlens=1';
         showSetupBanner(
-          '无法加载 <code>' + escapeHtml(path) + '</code>（' + escapeHtml(String(e.message || e)) + '）。' +
-          cwdHint +
-          ' 先试 <code>?demo=1</code> 或 <code>?barrierlens=1</code>（golden 已入库，不依赖 artifacts 目录）。' +
-          ' 本地 run 消失时请重新 <code>./scripts/audit-run-init.sh URL</code>。'
+          '无法通过 HTTP 加载 <code>' + escapeHtml(path) + '</code>（' + escapeHtml(String(e.message || e)) + '）。' +
+          '请在本仓库根目录运行 <code>./scripts/serve-workbench.sh</code>（会自动停掉错误的 8765 进程）。' +
+          (altBase
+            ? ' 若 workspace 在上级 <strong>cursorskils</strong>，请改用：<a href="' + altLive + '">' + altLive + '</a>'
+            : '') +
+          ' 或刷新本页（已内置 embedded 数据，应能离线显示）。'
         );
         $('annotationBox').innerHTML = '看板未连上数据 — 请按顶部红条说明操作，或点「演示模式」先确认页面正常。';
         $('liveIndicator').style.background = '#b42318';
@@ -278,9 +352,9 @@
     let demoState = null;
     async function runDemo() {
       stopDemo();
-      const r = await fetch('validation/golden/audit-run.example.json');
-      demoState = await r.json();
-      $('statePath').value = 'validation/golden/audit-run.example.json';
+      const loaded = await fetchStateJson('data/demo-run-state.json');
+      demoState = loaded.state;
+      $('statePath').value = loaded.resolvedPath;
       eventsPath = 'validation/golden/audit-run-events.example.ndjson';
       const steps = demoState.stages.find((s) => s.id === 'live-functional')?.steps || [];
       let si = 0;
@@ -304,9 +378,8 @@
     $('btnDemo').onclick = () => { stopPoll(); runDemo(); };
     $('pollEnabled').onchange = () => { stopDemo(); startPoll(); loadState(); };
 
-    if (!params.get('state') && params.get('demo') !== '1' && !$('statePath').value.trim()) {
-      $('statePath').value = 'validation/golden/audit-run.example.json';
-      showSetupBanner('已自动加载演示数据。真实审计请用 <code>./scripts/open-live-workbench.sh</code> 或粘贴 <code>audit-run-init.sh</code> 输出的 STATE_HTTP_URL。');
+    if (!params.get('state') && params.get('demo') !== '1' && params.get('barrierlens') !== '1' && !$('statePath').value.trim()) {
+      $('statePath').value = 'data/demo-run-state.json';
     }
 
     loadState();
