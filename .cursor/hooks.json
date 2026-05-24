@@ -1,0 +1,22 @@
+{
+  "version": 1,
+  "hooks": {
+    "beforeSubmitPrompt": [
+      {
+        "command": ".cursor/hooks/on-audit-prompt.sh"
+      }
+    ],
+    "afterShellExecution": [
+      {
+        "command": ".cursor/hooks/after-audit-run-init.sh",
+        "matcher": "audit-run-init"
+      }
+    ],
+    "postToolUse": [
+      {
+        "command": ".cursor/hooks/post-audit-shell.sh",
+        "matcher": "Shell"
+      }
+    ]
+  }
+}

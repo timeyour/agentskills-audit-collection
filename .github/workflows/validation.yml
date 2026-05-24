@@ -1,0 +1,39 @@
+name: validation
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dev dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Validate skills
+        run: python3 scripts/validate_skills.py
+
+      - name: Validate audit report schema (golden)
+        run: |
+          python3 scripts/validate_audit_report.py \
+            validation/golden/audit-report.example.json \
+            validation/golden/audit-report.merged.example.json
+
+      - name: Verify public report export
+        run: |
+          python3 scripts/export_public_report.py
+          test -f reports/demo-site-audit.html
+
+      - name: Run validation tests
+        run: python3 -m unittest discover -s tests

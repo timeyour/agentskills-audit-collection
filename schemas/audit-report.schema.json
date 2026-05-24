@@ -1,0 +1,453 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/timeyour/agentskills-audit-collection/schemas/audit-report.schema.json",
+  "title": "AgentSkills Audit Report",
+  "description": "Unified delivery-acceptance report for AI-built websites and products. Aligns with REQUIREMENTS.md unified output and docs/severity-standard.md.",
+  "type": "object",
+  "required": [
+    "schemaVersion",
+    "scope",
+    "target",
+    "evidence",
+    "featureInventory",
+    "flowExecutionLog",
+    "visualFindings",
+    "deploymentReadiness",
+    "issueCards",
+    "copyableFixPack",
+    "regressionChecks",
+    "lessons",
+    "finalVerdict"
+  ],
+  "properties": {
+    "schemaVersion": {
+      "type": "string",
+      "const": "0.1.0"
+    },
+    "generatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "scope": { "$ref": "#/$defs/scope" },
+    "target": { "$ref": "#/$defs/target" },
+    "evidence": { "$ref": "#/$defs/evidenceSummary" },
+    "featureInventory": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/featureItem" }
+    },
+    "flowExecutionLog": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/flowLogEntry" }
+    },
+    "visualFindings": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/visualFinding" }
+    },
+    "deploymentReadiness": { "$ref": "#/$defs/deploymentReadiness" },
+    "securityReadiness": { "$ref": "#/$defs/readinessChecklist" },
+    "dataReadiness": { "$ref": "#/$defs/readinessChecklist" },
+    "auditProgress": { "$ref": "#/$defs/auditProgress" },
+    "benchmarkRefs": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/benchmarkRef" },
+      "description": "Excellent sites shown to target users as comparison"
+    },
+    "issueCards": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/issueCard" }
+    },
+    "copyableFixPack": { "$ref": "#/$defs/copyableFixPack" },
+    "regressionChecks": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/regressionCheck" }
+    },
+    "lessons": { "$ref": "#/$defs/lessons" },
+    "finalVerdict": { "$ref": "#/$defs/finalVerdict" }
+  },
+  "$defs": {
+    "gapMarker": {
+      "type": "string",
+      "enum": ["UNKNOWN", "NOT_APPLICABLE", "SKIPPED-SAFE"]
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["S0", "S1", "S2", "S3", "S4"]
+    },
+    "evidenceLevel": {
+      "type": "string",
+      "enum": ["SOURCE", "LIVE", "PHYSICAL", "INFERRED", "UNKNOWN"]
+    },
+    "flowStatus": {
+      "type": "string",
+      "enum": ["PASS", "PARTIAL", "FAIL", "UNKNOWN", "SKIPPED-SAFE"]
+    },
+    "areaTag": {
+      "type": "string",
+      "enum": [
+        "layout",
+        "copy",
+        "interaction",
+        "workflow",
+        "data",
+        "deployment",
+        "seo",
+        "performance",
+        "accessibility",
+        "trust"
+      ]
+    },
+    "scope": {
+      "type": "object",
+      "required": ["summary", "inspected", "skipped"],
+      "properties": {
+        "summary": { "type": "string" },
+        "inspected": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "skipped": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["item", "reason"],
+            "properties": {
+              "item": { "type": "string" },
+              "reason": {
+                "type": "string",
+                "description": "Use UNKNOWN, NOT_APPLICABLE, SKIPPED-SAFE, or a short human reason"
+              }
+            }
+          }
+        },
+        "auditPass": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5,
+          "description": "Current five-pass number if applicable"
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "required": ["url", "productType"],
+      "properties": {
+        "url": { "type": "string" },
+        "productType": { "type": "string" },
+        "platform": { "type": "string" },
+        "source": { "type": "string" },
+        "auditor": { "type": "string" },
+        "auditMode": {
+          "type": "string",
+          "enum": ["source", "live", "physical-browser", "mixed"]
+        }
+      }
+    },
+    "evidenceSummary": {
+      "type": "object",
+      "required": ["overallGrade", "items"],
+      "properties": {
+        "overallGrade": {
+          "type": "string",
+          "enum": ["HIGH", "MEDIUM", "LOW", "UNKNOWN"]
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "status"],
+            "properties": {
+              "type": { "$ref": "#/$defs/evidenceLevel" },
+              "status": {
+                "type": "string",
+                "enum": ["available", "partial", "missing"]
+              },
+              "notes": { "type": "string" },
+              "artifactPaths": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "featureItem": {
+      "type": "object",
+      "required": ["name", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "startUrl": { "type": "string" },
+        "livePosition": { "type": "string" },
+        "locator": { "type": "string" },
+        "dependency": { "type": "string" },
+        "safeToExecute": { "type": "boolean" },
+        "status": { "$ref": "#/$defs/flowStatus" }
+      }
+    },
+    "flowLogEntry": {
+      "type": "object",
+      "required": ["feature", "steps", "expected", "actual", "status"],
+      "properties": {
+        "feature": { "type": "string" },
+        "steps": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "expected": { "type": "string" },
+        "actual": { "type": "string" },
+        "evidenceLevel": { "$ref": "#/$defs/evidenceLevel" },
+        "evidenceSummary": { "type": "string" },
+        "artifacts": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "severity": { "$ref": "#/$defs/severity" },
+        "status": { "$ref": "#/$defs/flowStatus" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      }
+    },
+    "visualFinding": {
+      "type": "object",
+      "required": ["area", "issue", "severity"],
+      "properties": {
+        "area": { "type": "string" },
+        "position": { "type": "string" },
+        "issue": { "type": "string" },
+        "severity": { "$ref": "#/$defs/severity" },
+        "evidenceLevel": { "$ref": "#/$defs/evidenceLevel" },
+        "fix": { "type": "string" },
+        "benchmarkCaseId": {
+          "type": "string",
+          "description": "Matches benchmarkRefs[].caseId or validation/cases/index.json"
+        }
+      }
+    },
+    "benchmarkRef": {
+      "type": "object",
+      "required": ["caseId", "title", "summary"],
+      "properties": {
+        "caseId": { "type": "string" },
+        "title": { "type": "string" },
+        "url": { "type": "string" },
+        "summary": { "type": "string" },
+        "doc": { "type": "string" },
+        "tags": { "type": "array", "items": { "type": "string" } },
+        "relevance": {
+          "type": "string",
+          "description": "Why this case is shown for this audit"
+        }
+      }
+    },
+    "auditProgress": {
+      "type": "object",
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["pending", "running", "completed", "failed", "partial"]
+        },
+        "label": { "type": "string", "description": "e.g. 5/9 — Live functional audit" },
+        "completedSteps": { "type": "array", "items": { "type": "string" } },
+        "currentStep": { "type": ["string", "null"] },
+        "runId": { "type": "string" },
+        "artifactsPath": { "type": "string" },
+        "liveWorkbenchHint": {
+          "type": "string",
+          "description": "Relative URL to workbench/live for builders"
+        }
+      }
+    },
+    "readinessChecklist": {
+      "type": "object",
+      "required": ["status", "checklist"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["READY", "PARTIAL", "NOT_READY", "UNKNOWN"]
+        },
+        "checklist": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["item", "status"],
+            "properties": {
+              "item": { "type": "string" },
+              "status": {
+                "type": "string",
+                "enum": ["PASS", "WARN", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "blockers": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "deploymentReadiness": {
+      "type": "object",
+      "required": ["status", "checklist"],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": ["READY", "PARTIAL", "NOT_READY", "UNKNOWN"]
+        },
+        "checklist": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["item", "status"],
+            "properties": {
+              "item": { "type": "string" },
+              "status": {
+                "type": "string",
+                "enum": ["PASS", "WARN", "FAIL", "UNKNOWN", "NOT_APPLICABLE"]
+              },
+              "notes": { "type": "string" }
+            }
+          }
+        },
+        "blockers": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "issueCard": {
+      "type": "object",
+      "required": [
+        "id",
+        "title",
+        "severity",
+        "area",
+        "evidence",
+        "problem",
+        "impact",
+        "fix",
+        "reproduction",
+        "regressionCheck"
+      ],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "severity": { "$ref": "#/$defs/severity" },
+        "area": { "$ref": "#/$defs/areaTag" },
+        "evidence": {
+          "type": "object",
+          "required": ["level", "summary"],
+          "properties": {
+            "level": { "$ref": "#/$defs/evidenceLevel" },
+            "summary": { "type": "string" },
+            "artifacts": {
+              "type": "array",
+              "items": { "type": "string" }
+            }
+          }
+        },
+        "problem": { "type": "string" },
+        "likelyCause": { "type": "string" },
+        "impact": { "type": "string" },
+        "fix": { "type": "string" },
+        "copyPrompt": { "type": "string" },
+        "reproduction": { "type": "string" },
+        "regressionCheck": { "type": "string" },
+        "benchmarkCaseId": {
+          "type": "string",
+          "description": "Reference site for fix direction; see benchmarkRefs"
+        }
+      }
+    },
+    "copyableFixPack": {
+      "type": "object",
+      "required": ["priorityOrder", "prompts"],
+      "properties": {
+        "priorityOrder": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Issue ids in fix-first order"
+        },
+        "prompts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["issueId", "prompt"],
+            "properties": {
+              "issueId": { "type": "string" },
+              "prompt": { "type": "string" },
+              "targetTool": {
+                "type": "string",
+                "description": "e.g. Claude Code, Lovable, v0, Replit"
+              }
+            }
+          }
+        },
+        "combinedPrompt": {
+          "type": "string",
+          "description": "Single prompt for batch fix"
+        }
+      }
+    },
+    "regressionCheck": {
+      "type": "object",
+      "required": ["issueId", "check"],
+      "properties": {
+        "issueId": { "type": "string" },
+        "check": { "type": "string" },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "passed", "failed", "skipped"]
+        }
+      }
+    },
+    "lessons": {
+      "type": "object",
+      "properties": {
+        "patterns": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "falsePositives": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "guardrailUpdates": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "benchmarkLabels": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "finalVerdict": {
+      "type": "object",
+      "required": ["overallRisk", "deliveryReady", "summary"],
+      "properties": {
+        "overallRisk": { "$ref": "#/$defs/severity" },
+        "deliveryReady": { "type": "boolean" },
+        "summary": { "type": "string" },
+        "functionalScore": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "visualScore": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "securityScore": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "dataScore": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "maximum": 100
+        },
+        "fixFirst": { "type": "string" }
+      }
+    }
+  }
+}

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Workbench live wireframe">
+  <rect width="960" height="540" fill="#F6F8FA"/>
+  <rect width="960" height="88" fill="#12324A"/>
+  <circle cx="40" cy="44" r="6" fill="#22c55e"/>
+  <text x="56" y="48" fill="#fff" font-family="system-ui" font-size="18" font-weight="600">AgentSkills Live Audit</text>
+  <rect x="24" y="64" width="912" height="6" rx="3" fill="rgba(255,255,255,.2)"/>
+  <rect x="24" y="64" width="420" height="6" rx="3" fill="#2F7D68"/>
+  <rect x="220" y="100" width="520" height="48" rx="6" fill="#12324A"/>
+  <text x="240" y="130" fill="#fff" font-size="14" font-family="system-ui">c(ÀKPrimary CTA ï¹û'&</text>
+  <rect x="0" y="168" width="200" height="372" fill="#fff" stroke="#D8E0E7"/>
+  <rect x="200" y="168" width="480" height="372" fill="#fff" stroke="#D8E0E7"/>
+  <rect x="680" y="168" width="280" height="372" fill="#EEF3F7"/>
+</svg>

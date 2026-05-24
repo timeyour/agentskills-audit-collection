@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>http://localhost:5000 — Delivery Audit</title>
+  <style>
+    .asw-public {
+      --primary:#12324A; --accent:#2F7D68; --accent-soft:#DDF2EA;
+      --canvas:#F6F8FA; --surface:#fff; --ink:#17202A; --body:#344054;
+      --muted:#667085; --border:#D8E0E7;
+      --s0:#7A1E1E; --s1:#B42318; --s2:#92400E; --s3:#3B5B73; --s4:#475467;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      font-size: 16px; line-height: 1.6; color: var(--ink); background: var(--canvas); margin: 0;
+    }
+    .asw-public * { box-sizing: border-box; }
+    .asw-public .asw-wrap { max-width: 960px; margin: 0 auto; padding: 40px 24px 64px; }
+    .asw-public .asw-hero {
+      background: var(--primary); color: #fff; margin: -40px -24px 32px; padding: 40px 24px 32px;
+    }
+    .asw-public .asw-eyebrow { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--accent-soft); }
+    .asw-public h1.asw-title { margin: 8px 0 12px; font-size: clamp(28px, 4vw, 40px); font-weight: 650; line-height: 1.15; }
+    .asw-public .asw-meta { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 20px; font-size: 14px; }
+    .asw-public .asw-meta div { background: rgba(255,255,255,.1); padding: 10px 12px; border-radius: 6px; }
+    .asw-public h2 { font-size: 22px; font-weight: 650; margin: 36px 0 14px; }
+    .asw-public p { color: var(--body); margin: 0 0 12px; }
+    .asw-public .asw-sev { display: inline-block; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 999px; color: #fff; }
+    .asw-public .asw-sev-S0 { background: var(--s0); }
+    .asw-public .asw-sev-S1 { background: var(--s1); }
+    .asw-public .asw-sev-S2 { background: var(--s2); }
+    .asw-public .asw-sev-S3 { background: var(--s3); }
+    .asw-public .asw-sev-S4 { background: var(--s4); }
+    .asw-public .asw-pill { font-size: 12px; padding: 2px 8px; border-radius: 999px; background: var(--surface-soft); color: var(--body); font-weight: 600; }
+    .asw-public .asw-issue-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 8px;
+      padding: 20px; margin-bottom: 16px;
+    }
+    .asw-public .asw-issue-card h3 { margin: 10px 0 8px; font-size: 18px; }
+    .asw-public .asw-issue-meta { display: flex; gap: 8px; align-items: center; }
+    .asw-public table.asw-kv { width: 100%; border-collapse: collapse; font-size: 14px; }
+    .asw-public table.asw-kv th { text-align: left; width: 120px; color: var(--muted); font-weight: 600; padding: 6px 8px 6px 0; vertical-align: top; }
+    .asw-public table.asw-kv td { padding: 6px 0; }
+    .asw-public table.asw-data { width: 100%; border-collapse: collapse; font-size: 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .asw-public table.asw-data th, .asw-public table.asw-data td { padding: 10px 12px; border-bottom: 1px solid var(--border); text-align: left; }
+    .asw-public table.asw-data th { background: var(--surface-soft); color: var(--muted); font-size: 12px; text-transform: uppercase; }
+    .asw-public .asw-prompt {
+      background: #101828; color: #EAECF0; padding: 16px; border-radius: 8px;
+      font-family: ui-monospace, monospace; font-size: 13px; white-space: pre-wrap;
+    }
+    .asw-public ul { padding-left: 20px; }
+    .asw-public .asw-muted { color: var(--muted); font-size: 14px; }
+    .asw-public a { color: var(--accent); }
+    .asw-public .asw-benchmark { font-size: 14px; margin-top: 10px; padding: 10px 12px; background: var(--accent-soft); border-radius: 6px; }
+    .asw-public .asw-pillars { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .asw-public .asw-pillars div { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 14px; text-align: center; }
+    .asw-public .asw-pillars span { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+    .asw-public .asw-pillars strong { font-size: 22px; }
+    .asw-public footer { margin-top: 48px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 13px; color: var(--muted); }
+  </style>
+</head>
+<body class="asw-public">
+  <div class="asw-wrap">
+    <header class="asw-hero">
+      <p class="asw-eyebrow">Delivery acceptance report</p>
+      <h1 class="asw-title">Suitable as report-format and workflow demo; not client-ready until artifacts and public hosting exist.</h1>
+      <div class="asw-meta">
+        <div><strong>Target</strong><br>http://localhost:5000</div>
+        <div><strong>Risk</strong><br><span class="asw-sev asw-sev-S2">S2</span></div>
+        <div><strong>Evidence</strong><br>MEDIUM</div>
+        <div><strong>Delivery ready</strong><br>No</div>
+      </div>
+    </header>
+
+    <section>
+      <h2>Executive summary</h2>
+      <p>Suitable as report-format and workflow demo; not client-ready until artifacts and public hosting exist.</p>
+      <p class="asw-muted">Fix first: ISSUE-001 — add physical browser evidence</p>
+    </section>
+
+    
+    <section>
+      <h2>检测过程摘要</h2>
+      <p><strong>8/9 — Report synthesis (demo)</strong>
+         <span class="asw-pill">completed</span></p>
+      <p class="asw-muted">已完成步骤：</p>
+      <ul><li>Intake &amp; permissions</li><li>Web surface map</li><li>Feature inventory</li><li>Homepage load (HTTP)</li><li>Visual QA (source)</li><li>Deployment check</li><li>Issue cards</li></ul>
+    </section>
+    
+    <section>
+      <h2>四维验收概览</h2>
+      <div class="asw-pillars">
+        <div><span>审美</span><strong>60</strong></div>
+        <div><span>功能</span><strong>75</strong></div>
+        <div><span>安全</span><strong>55</strong></div>
+        <div><span>数据</span><strong>None</strong></div>
+      </div>
+    </section>
+    
+    <section>
+      <h2>优秀网站对照</h2>
+      <p class="asw-muted">供目标用户理解「好的交付大概长什么样」。</p>
+      <ul><li><a href='https://apichecker.com' rel='noopener' target='_blank'>API Checker</a> — Compare CTA and workflow clarity on tool-style pages</li><li><a href='https://impeccable.style' rel='noopener' target='_blank'>impeccable.style</a> — Compare visual craft and evidence depth</li></ul>
+    </section>
+
+    <section>
+      <h2>Deployment readiness</h2>
+      <p>Status: <span class="asw-pill">NOT_READY</span></p>
+      <table class="asw-data"><thead><tr><th>Check</th><th>Status</th><th>Notes</th></tr></thead><tbody><tr><td>Production host</td><td><span class='asw-pill'>FAIL</span></td><td>localhost only</td></tr><tr><td>Environment variables</td><td><span class='asw-pill'>UNKNOWN</span></td><td>Not documented for demo</td></tr><tr><td>Auth/session store</td><td><span class='asw-pill'>WARN</span></td><td>Demo session only</td></tr><tr><td>Analytics</td><td><span class='asw-pill'>NOT_APPLICABLE</span></td><td></td></tr></tbody></table>
+    </section>
+
+    <section>
+      <h2>Evidence quality</h2>
+      <table class="asw-data"><thead><tr><th>Type</th><th>Status</th><th>Notes</th></tr></thead><tbody><tr><td>SOURCE</td><td>available</td><td>Demo app source under examples/physical-flow-demo/</td></tr><tr><td>LIVE</td><td>partial</td><td>Local smoke checks passed</td></tr><tr><td>PHYSICAL</td><td>missing</td><td>No trace, HAR, or screenshots attached</td></tr><tr><td>INFERRED</td><td>partial</td><td>Visual comments from report shape only</td></tr><tr><td>UNKNOWN</td><td>partial</td><td>Mobile, a11y, performance not run</td></tr></tbody></table>
+    </section>
+
+    
+    <section>
+      <h2>Security readiness</h2>
+      <p>Status: <span class="asw-pill">PARTIAL</span></p>
+      <table class="asw-data"><thead><tr><th>Check</th><th>Status</th><th>Notes</th></tr></thead>
+      <tbody><tr><td>HTTPS / transport</td><td><span class='asw-pill'>UNKNOWN</span></td><td>localhost demo</td></tr><tr><td>Auth boundary documented</td><td><span class='asw-pill'>WARN</span></td><td>Demo session only</td></tr><tr><td>Form CSRF / unsafe methods</td><td><span class='asw-pill'>UNKNOWN</span></td><td>Not exercised live</td></tr><tr><td>Secrets in client bundle</td><td><span class='asw-pill'>PASS</span></td><td>No keys in static demo</td></tr></tbody></table>
+    </section>
+    
+    <section>
+      <h2>Data &amp; privacy readiness</h2>
+      <p>Status: <span class="asw-pill">UNKNOWN</span></p>
+      <table class="asw-data"><thead><tr><th>Check</th><th>Status</th><th>Notes</th></tr></thead>
+      <tbody><tr><td>Privacy policy present</td><td><span class='asw-pill'>NOT_APPLICABLE</span></td><td>Local demo app</td></tr><tr><td>PII collection disclosed</td><td><span class='asw-pill'>UNKNOWN</span></td><td>Not reviewed</td></tr><tr><td>Third-party data processors</td><td><span class='asw-pill'>UNKNOWN</span></td><td>Not reviewed</td></tr><tr><td>Export / delete user data</td><td><span class='asw-pill'>NOT_APPLICABLE</span></td><td></td></tr></tbody></table>
+    </section>
+
+    <section>
+      <h2>Top findings</h2>
+      
+        <article class="asw-issue-card">
+          <div class="asw-issue-meta">
+            <span class="asw-sev asw-sev-S2">S2</span>
+            <span class="asw-pill">ISSUE-001</span>
+          </div>
+          <h3>Physical browser artifacts are missing</h3>
+          <table class="asw-kv">
+            <tr><th>Evidence</th><td>Source and smoke exist; no trace, HAR, video, or screenshots <em>(UNKNOWN)</em></td></tr>
+            <tr><th>Impact</th><td>Report credibility capped at MEDIUM evidence grade</td></tr>
+            <tr><th>Fix</th><td>Run /physical-flow-test; attach redacted trace, screenshots, console log, result.json</td></tr>
+            <tr><th>Regression</th><td>Re-open workbench or HTML report; artifact links resolve and match flow steps</td></tr>
+          </table>
+          <p class='asw-benchmark'>参考案例：<a href='https://apichecker.com' rel='noopener' target='_blank'>API Checker</a> — Clear testable workflow positions for functional mapping.</p>
+        </article>
+        <article class="asw-issue-card">
+          <div class="asw-issue-meta">
+            <span class="asw-sev asw-sev-S2">S2</span>
+            <span class="asw-pill">ISSUE-002</span>
+          </div>
+          <h3>Report is local-only</h3>
+          <table class="asw-kv">
+            <tr><th>Evidence</th><td>Target URL is localhost; static report stored in repo <em>(SOURCE)</em></td></tr>
+            <tr><th>Impact</th><td>Cannot use as customer acceptance deliverable</td></tr>
+            <tr><th>Fix</th><td>Publish via GitHub Pages or static host; update target.url</td></tr>
+            <tr><th>Regression</th><td>Open hosted URL in private session without local files</td></tr>
+          </table>
+          
+        </article>
+    </section>
+
+    <section>
+      <h2>Regression checklist</h2>
+      <ul><li><input type='checkbox' disabled /> <strong>ISSUE-001</strong> — Artifact folder contains result.json and at least one screenshot <span class='asw-muted'>(pending)</span></li><li><input type='checkbox' disabled /> <strong>ISSUE-002</strong> — Hosted report URL loads without local file dependencies <span class='asw-muted'>(pending)</span></li></ul>
+    </section>
+
+    <section>
+      <h2>Copyable fix prompt</h2>
+      <div class="asw-prompt">Turn this local demo audit into a shareable public website audit: run physical browser tests, attach artifacts, publish static HTML report, apply DESIGN.md severity cards.</div>
+    </section>
+
+    <footer>
+      Generated by AgentSkills Audit Workbench · schema 0.1.0
+      · 2026-05-22T12:00:00Z
+    </footer>
+  </div>
+</body>
+</html>

@@ -1,0 +1,6 @@
+# Optional dev/CI dependencies for AgentSkills Audit Collection
+jsonschema>=4.21,<5
+
+# M3 browser capture (optional — audit_capture.py falls back to HTTP-only)
+# playwright>=1.40
+# After install: playwright install chromium

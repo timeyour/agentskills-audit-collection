@@ -1,0 +1,154 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/timeyour/agentskills-audit-collection/schemas/audit-run.schema.json",
+  "title": "AgentSkills Audit Run (live state)",
+  "description": "Mutable run state for real-time workbench UI. Final output merges into audit-report.schema.json.",
+  "type": "object",
+  "required": [
+    "runVersion",
+    "runId",
+    "target",
+    "workflow",
+    "progress",
+    "stages",
+    "updatedAt"
+  ],
+  "properties": {
+    "runVersion": { "type": "string", "const": "0.1.0" },
+    "runId": { "type": "string" },
+    "target": {
+      "type": "object",
+      "required": ["url"],
+      "properties": {
+        "url": { "type": "string" },
+        "label": { "type": "string" }
+      }
+    },
+    "workflow": {
+      "type": "object",
+      "required": ["id", "label"],
+      "properties": {
+        "id": { "type": "string", "const": "audit-default-v1" },
+        "label": { "type": "string" }
+      }
+    },
+    "progress": {
+      "type": "object",
+      "required": ["current", "total", "label"],
+      "properties": {
+        "current": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 1 },
+        "label": {
+          "type": "string",
+          "description": "Human label e.g. 5/9 — Live functional audit"
+        }
+      }
+    },
+    "currentStageId": { "type": ["string", "null"] },
+    "currentStepId": { "type": ["string", "null"] },
+    "activeAnnotation": {
+      "type": "string",
+      "description": "Side-panel caption: what is being checked right now"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "running",
+        "paused",
+        "blocked",
+        "needs_confirmation",
+        "completed",
+        "failed"
+      ]
+    },
+    "stages": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/stage" }
+    },
+    "findingsPreview": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/findingPreview" }
+    },
+    "eventsPath": {
+      "type": "string",
+      "description": "Relative path to append-only NDJSON log"
+    },
+    "reportPath": {
+      "type": "string",
+      "description": "Final audit-report.json when completed"
+    },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  },
+  "$defs": {
+    "stepStatus": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "issue_found",
+        "blocked",
+        "skipped_safe",
+        "needs_confirmation"
+      ]
+    },
+    "stageStatus": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "in_progress",
+        "completed",
+        "blocked",
+        "skipped"
+      ]
+    },
+    "step": {
+      "type": "object",
+      "required": ["id", "label", "status"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "status": { "$ref": "#/$defs/stepStatus" },
+        "annotation": { "type": "string" },
+        "evidenceLevel": {
+          "type": "string",
+          "enum": ["SOURCE", "LIVE", "PHYSICAL", "INFERRED", "UNKNOWN"]
+        },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "finishedAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "stage": {
+      "type": "object",
+      "required": ["id", "label", "order", "status", "steps"],
+      "properties": {
+        "id": { "type": "string" },
+        "label": { "type": "string" },
+        "order": { "type": "integer", "minimum": 1 },
+        "status": { "$ref": "#/$defs/stageStatus" },
+        "skill": {
+          "type": "string",
+          "description": "Optional sub-skill e.g. flow-test"
+        },
+        "steps": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/step" }
+        }
+      }
+    },
+    "findingPreview": {
+      "type": "object",
+      "required": ["title", "severity"],
+      "properties": {
+        "title": { "type": "string" },
+        "severity": {
+          "type": "string",
+          "enum": ["S0", "S1", "S2", "S3", "S4"]
+        },
+        "stageId": { "type": "string" },
+        "evidenceLevel": { "type": "string" }
+      }
+    }
+  }
+}

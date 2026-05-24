@@ -1,0 +1,38 @@
+{
+  "version": "0.1.0",
+  "description": "Canonical benchmark cases for report benchmarkRefs and issueCard.benchmarkCaseId",
+  "cases": [
+    {
+      "caseId": "api-checker",
+      "title": "API Checker",
+      "url": "https://apichecker.com",
+      "summary": "Best benchmark for feature inventory and workflow position mapping.",
+      "doc": "validation/cases/api-checker.md",
+      "tags": ["devtools", "workflow", "interactive"]
+    },
+    {
+      "caseId": "phonevalidation",
+      "title": "PhoneValidation.app",
+      "url": "https://phonevalidation.app",
+      "summary": "Micro-SaaS with pricing, credits, upload, and data/privacy surfaces.",
+      "doc": "validation/cases/phonevalidation.md",
+      "tags": ["monetization", "credits", "upload", "micro-saas"]
+    },
+    {
+      "caseId": "committed-citizens",
+      "title": "Committed Citizens",
+      "url": "https://committedcitizens.com",
+      "summary": "Consulting site with CMS/deployment gap on /insights.",
+      "doc": "validation/cases/committed-citizens.md",
+      "tags": ["cms", "deployment", "consulting"]
+    },
+    {
+      "caseId": "impeccable-style",
+      "title": "impeccable.style",
+      "url": "https://impeccable.style",
+      "summary": "Five-pass acceptance; source vs runtime evidence separation.",
+      "doc": "validation/cases/impeccable-style.md",
+      "tags": ["design-tooling", "five-pass", "source-live"]
+    }
+  ]
+}

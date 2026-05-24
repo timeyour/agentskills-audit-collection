@@ -1,0 +1,14 @@
+{"ts":"2026-05-24T12:00:00Z","type":"run_started","runId":"20260524T120000Z-demo","targetUrl":"https://example.com"}
+{"ts":"2026-05-24T12:00:15Z","type":"stage_start","stageId":"intake","label":"Intake & permissions"}
+{"ts":"2026-05-24T12:00:45Z","type":"stage_complete","stageId":"intake","status":"completed"}
+{"ts":"2026-05-24T12:01:00Z","type":"stage_start","stageId":"surface-discovery","label":"Web surface map"}
+{"ts":"2026-05-24T12:02:10Z","type":"stage_complete","stageId":"surface-discovery","status":"completed"}
+{"ts":"2026-05-24T12:02:20Z","type":"stage_start","stageId":"source-pass","label":"Source evidence"}
+{"ts":"2026-05-24T12:03:00Z","type":"stage_complete","stageId":"source-pass","status":"completed"}
+{"ts":"2026-05-24T12:03:10Z","type":"stage_start","stageId":"feature-inventory","label":"Feature inventory"}
+{"ts":"2026-05-24T12:04:00Z","type":"stage_complete","stageId":"feature-inventory","status":"completed"}
+{"ts":"2026-05-24T12:04:10Z","type":"stage_start","stageId":"live-functional","label":"Live functional test"}
+{"ts":"2026-05-24T12:04:30Z","type":"step_complete","stageId":"live-functional","stepId":"homepage-load","status":"completed","evidenceLevel":"LIVE"}
+{"ts":"2026-05-24T12:05:00Z","type":"step_start","stageId":"live-functional","stepId":"cta-primary","status":"in_progress"}
+{"ts":"2026-05-24T12:05:30Z","type":"step_update","stageId":"live-functional","stepId":"cta-primary","status":"in_progress","annotation":"正在检测首页 Primary CTA：点击后是否进入承诺的 workflow"}
+{"ts":"2026-05-24T12:05:30Z","type":"finding_added","severity":"S2","title":"CTA may route to waitlist instead of demo","stageId":"live-functional"}

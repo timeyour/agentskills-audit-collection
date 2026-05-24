@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="540" viewBox="0 0 960 540" role="img" aria-label="Public report wireframe">
+  <rect width="960" height="540" fill="#F6F8FA"/>
+  <rect width="960" height="160" fill="#12324A"/>
+  <text x="48" y="72" fill="#DDF2EA" font-size="12" font-family="system-ui" font-weight="700">DELIVERY ACCEPTANCE REPORT</text>
+  <text x="48" y="108" fill="#fff" font-size="28" font-family="system-ui" font-weight="650">Executive summary</text>
+  <rect x="48" y="124" width="120" height="48" rx="6" fill="rgba(255,255,255,.12)"/>
+  <rect x="180" y="124" width="120" height="48" rx="6" fill="rgba(255,255,255,.12)"/>
+  <rect x="48" y="200" width="864" height="80" rx="8" fill="#fff" stroke="#D8E0E7"/>
+  <rect x="64" y="220" width="48" height="20" rx="10" fill="#92400E"/>
+  <rect x="48" y="300" width="864" height="200" rx="8" fill="#fff" stroke="#D8E0E7"/>
+</svg>

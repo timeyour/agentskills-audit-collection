@@ -1,0 +1,135 @@
+{
+  "runVersion": "0.1.0",
+  "runId": "20260524T120000Z-demo",
+  "target": {
+    "url": "https://example.com",
+    "label": "Example SaaS landing (demo run)"
+  },
+  "workflow": {
+    "id": "audit-default-v1",
+    "label": "Standard website delivery audit"
+  },
+  "progress": {
+    "current": 5,
+    "total": 9,
+    "label": "5/9 — Live functional audit"
+  },
+  "currentStageId": "live-functional",
+  "currentStepId": "cta-primary",
+  "activeAnnotation": "正在检测首页 Primary CTA：点击后是否进入承诺的 workflow（非 waitlist 替身）",
+  "status": "running",
+  "stages": [
+    {
+      "id": "intake",
+      "label": "Intake & permissions",
+      "order": 1,
+      "status": "completed",
+      "skill": "audit",
+      "steps": [
+        { "id": "target", "label": "Confirm target URL", "status": "completed", "evidenceLevel": "SOURCE" },
+        { "id": "permission", "label": "Set permission boundary", "status": "completed", "evidenceLevel": "SOURCE" }
+      ]
+    },
+    {
+      "id": "surface-discovery",
+      "label": "Web surface map",
+      "order": 2,
+      "status": "completed",
+      "skill": "audit",
+      "steps": [
+        { "id": "routes", "label": "List routes & CTAs", "status": "completed", "evidenceLevel": "LIVE" }
+      ]
+    },
+    {
+      "id": "source-pass",
+      "label": "Source evidence",
+      "order": 3,
+      "status": "completed",
+      "skill": "audit",
+      "steps": [
+        { "id": "claims", "label": "Collect marketing claims", "status": "completed", "evidenceLevel": "SOURCE" }
+      ]
+    },
+    {
+      "id": "feature-inventory",
+      "label": "Feature inventory",
+      "order": 4,
+      "status": "completed",
+      "skill": "audit",
+      "steps": [
+        { "id": "inventory", "label": "Build feature table", "status": "completed", "evidenceLevel": "LIVE" }
+      ]
+    },
+    {
+      "id": "live-functional",
+      "label": "Live functional test",
+      "order": 5,
+      "status": "in_progress",
+      "skill": "flow-test",
+      "steps": [
+        { "id": "homepage-load", "label": "Homepage load", "status": "completed", "evidenceLevel": "LIVE", "annotation": "200 OK, title matches" },
+        {
+          "id": "cta-primary",
+          "label": "Primary CTA",
+          "status": "in_progress",
+          "evidenceLevel": "LIVE",
+          "annotation": "Clicking Get Started — recording destination URL"
+        },
+        { "id": "lead-form", "label": "Lead / signup form", "status": "pending" },
+        { "id": "auth-boundary", "label": "Auth boundary", "status": "pending" }
+      ]
+    },
+    {
+      "id": "visual-qa",
+      "label": "Visual QA",
+      "order": 6,
+      "status": "pending",
+      "skill": "visual-qa",
+      "steps": [
+        { "id": "viewport-desktop", "label": "Desktop viewport", "status": "pending" },
+        { "id": "viewport-mobile", "label": "Mobile viewport", "status": "pending" }
+      ]
+    },
+    {
+      "id": "deploy-check",
+      "label": "Deployment readiness",
+      "order": 7,
+      "status": "pending",
+      "skill": "deploy-check",
+      "steps": [
+        { "id": "env-deps", "label": "Env & backend deps", "status": "pending" }
+      ]
+    },
+    {
+      "id": "synthesis",
+      "label": "Report synthesis",
+      "order": 8,
+      "status": "pending",
+      "skill": "audit",
+      "steps": [
+        { "id": "issue-cards", "label": "Issue cards", "status": "pending" }
+      ]
+    },
+    {
+      "id": "accept-five",
+      "label": "Five-pass (optional)",
+      "order": 9,
+      "status": "pending",
+      "skill": "accept-five",
+      "steps": [
+        { "id": "pass-1", "label": "Baseline pass", "status": "pending" }
+      ]
+    }
+  ],
+  "findingsPreview": [
+    {
+      "title": "CTA may route to waitlist instead of demo",
+      "severity": "S2",
+      "stageId": "live-functional",
+      "evidenceLevel": "LIVE"
+    }
+  ],
+  "eventsPath": "validation/golden/audit-run-events.example.ndjson",
+  "reportPath": null,
+  "updatedAt": "2026-05-24T12:05:30Z"
+}

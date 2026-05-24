@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AgentSkills Live Audit</title>
+  <style>
+    .asw-live { --primary:#12324A; --primary-active:#0B2538; --accent:#2F7D68; --accent-soft:#DDF2EA;
+      --canvas:#F6F8FA; --surface:#fff; --surface-soft:#EEF3F7; --ink:#17202A; --body:#344054;
+      --muted:#667085; --border:#D8E0E7; --s0:#7A1E1E; --s1:#B42318; --s2:#92400E; --s3:#3B5B73; --s4:#475467;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif; color: var(--ink); background: var(--canvas);
+      min-height: 100vh; margin: 0; font-size: 14px; line-height: 1.5;
+    }
+    .asw-live * { box-sizing: border-box; }
+    .asw-live header { background: var(--primary); color: #fff; padding: 16px 24px; }
+    .asw-live header h1 { margin: 0 0 8px; font-size: 20px; font-weight: 650; }
+    .asw-live header .meta { display: flex; flex-wrap: wrap; gap: 16px; font-size: 13px; opacity: .92; }
+    .asw-live .progress-bar { height: 6px; background: rgba(255,255,255,.2); border-radius: 99px; margin-top: 12px; overflow: hidden; }
+    .asw-live .progress-fill { height: 100%; background: var(--accent); transition: width .4s ease; }
+    .asw-live main { display: grid; grid-template-columns: 220px 1fr 280px; gap: 0; min-height: calc(100vh - 120px); }
+    @media (max-width: 900px) { .asw-live main { grid-template-columns: 1fr; } }
+    .asw-live aside, .asw-live section, .asw-live .rail-right { padding: 16px; border-right: 1px solid var(--border); background: var(--surface); }
+    .asw-live .rail-right { border-right: none; background: var(--surface-soft); }
+    .asw-live h2 { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 12px; }
+    .asw-live .stage-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 8px; border-radius: 6px; cursor: default; border-left: 3px solid transparent; }
+    .asw-live .stage-item.active { background: var(--accent-soft); border-left-color: var(--accent); }
+    .asw-live .stage-item.done .dot { background: var(--accent); }
+    .asw-live .stage-item.running .dot { background: var(--primary); animation: pulse 1.2s infinite; }
+    .asw-live .stage-item.pending { opacity: .55; }
+    .asw-live .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--border); margin-top: 4px; flex-shrink: 0; }
+    @keyframes pulse { 50% { opacity: .4; } }
+    .asw-live .annotation { background: var(--primary); color: #fff; padding: 16px 20px; border-radius: 8px; margin-bottom: 20px; font-size: 15px; line-height: 1.55; }
+    .asw-live .annotation small { display: block; margin-top: 8px; opacity: .75; font-size: 12px; }
+    .asw-live .step { display: flex; align-items: center; gap: 12px; padding: 12px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; }
+    .asw-live .step.in_progress { border-color: var(--accent); background: #f8fffc; }
+    .asw-live .step.completed { opacity: .85; }
+    .asw-live .step.pending { opacity: .5; }
+    .asw-live .badge { display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 99px; color: #fff; }
+    .asw-live .badge-S0{background:var(--s0)} .asw-live .badge-S1{background:var(--s1)}
+    .asw-live .badge-S2{background:var(--s2)} .asw-live .badge-S3{background:var(--s3)} .asw-live .badge-S4{background:var(--s4)}
+    .asw-live .status-pill { font-size: 11px; padding: 2px 8px; border-radius: 99px; background: var(--surface-soft); color: var(--body); }
+    .asw-live .finding { padding: 10px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; }
+    .asw-live .event-log { font-family: ui-monospace, monospace; font-size: 11px; max-height: 200px; overflow-y: auto; color: var(--body); }
+    .asw-live .event-log div { padding: 4px 0; border-bottom: 1px solid var(--border); }
+    .asw-live .toolbar { padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+    .asw-live .toolbar input[type=text] { flex: 1; min-width: 200px; padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; }
+    .asw-live .asw-btn { background: var(--primary); color: #fff; border: none; padding: 8px 14px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 13px; }
+    .asw-live .asw-btn:hover { background: var(--primary-active); }
+    .asw-live .asw-btn.secondary { background: var(--surface); color: var(--ink); border: 1px solid var(--border); }
+    .asw-live .live-dot { width: 8px; height: 8px; border-radius: 50%; background: #22c55e; display: inline-block; margin-right: 6px; animation: pulse 1.5s infinite; }
+  </style>
+</head>
+<body class="asw-live">
+  <header>
+    <h1><span class="live-dot" id="liveIndicator"></span> AgentSkills Live Audit</h1>
+    <div class="meta">
+      <span id="targetUrl">—</span>
+      <span id="progressLabel">—</span>
+      <span id="runStatus">—</span>
+      <span id="updatedAt">—</span>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+  </header>
+  <div class="toolbar">
+    <label>run-state.json 路径
+      <input type="text" id="statePath" placeholder="validation/golden/audit-run.example.json" />
+    </label>
+    <button type="button" class="asw-btn" id="btnLoad">加载 / 刷新</button>
+    <button type="button" class="asw-btn secondary" id="btnDemo">演示模式</button>
+    <label><input type="checkbox" id="pollEnabled" checked /> 自动轮询 (1s)</label>
+  </div>
+  <main>
+    <aside>
+      <h2>工作流阶段</h2>
+      <div id="stageRail"></div>
+    </aside>
+    <section>
+      <h2 id="currentStageTitle">当前步骤</h2>
+      <div class="annotation" id="annotationBox">
+        等待加载 run-state…
+        <small>Agent 执行 /audit 时应更新 validation/artifacts/&lt;runId&gt;/run-state.json</small>
+      </div>
+      <div id="stepList"></div>
+    </section>
+    <div class="rail-right">
+      <h2>已发现问题</h2>
+      <div id="findingsList"></div>
+      <h2>事件流</h2>
+      <div class="event-log" id="eventLog"></div>
+    </div>
+  </main>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let pollTimer = null;
+    let demoTimer = null;
+    let eventsPath = null;
+
+    const params = new URLSearchParams(location.search);
+    if (params.get('state')) $('statePath').value = params.get('state');
+    if (params.get('demo') === '1') $('statePath').value = 'validation/golden/audit-run.example.json';
+
+    function stageClass(s) {
+      if (s.status === 'completed') return 'done';
+      if (s.status === 'in_progress') return 'running active';
+      return 'pending';
+    }
+
+    function stepClass(s) {
+      if (s.status === 'in_progress') return 'in_progress';
+      if (s.status === 'completed' || s.status === 'issue_found') return 'completed';
+      return 'pending';
+    }
+
+    function render(state) {
+      $('targetUrl').textContent = state.target?.url || '—';
+      $('progressLabel').textContent = state.progress?.label || '—';
+      $('runStatus').textContent = 'Status: ' + (state.status || '—');
+      $('updatedAt').textContent = 'Updated: ' + (state.updatedAt || '—');
+      const pct = state.progress ? Math.round((state.progress.current / state.progress.total) * 100) : 0;
+      $('progressFill').style.width = pct + '%';
+
+      eventsPath = state.eventsPath || null;
+
+      const rail = $('stageRail');
+      rail.innerHTML = '';
+      (state.stages || []).forEach((st) => {
+        const el = document.createElement('div');
+        el.className = 'stage-item ' + stageClass(st) + (st.id === state.currentStageId ? ' active' : '');
+        el.innerHTML = '<span class="dot"></span><div><strong>' + st.order + '. ' + escapeHtml(st.label) + '</strong><br><span class="status-pill">' + st.status + '</span></div>';
+        rail.appendChild(el);
+      });
+
+      const cur = (state.stages || []).find((s) => s.id === state.currentStageId) || state.stages?.[0];
+      $('currentStageTitle').textContent = cur ? cur.label : '当前步骤';
+      $('annotationBox').innerHTML = escapeHtml(state.activeAnnotation || '—') +
+        '<small>' + (state.currentStepId ? 'step: ' + state.currentStepId : '') + '</small>';
+
+      const steps = $('stepList');
+      steps.innerHTML = '';
+      (cur?.steps || []).forEach((step) => {
+        const row = document.createElement('div');
+        row.className = 'step ' + stepClass(step);
+        row.innerHTML = '<div style="flex:1"><strong>' + escapeHtml(step.label) + '</strong>' +
+          (step.annotation ? '<br><span style="color:var(--muted)">' + escapeHtml(step.annotation) + '</span>' : '') +
+          '</div><span class="status-pill">' + step.status + '</span>' +
+          (step.evidenceLevel ? ' <span class="status-pill">' + step.evidenceLevel + '</span>' : '');
+        steps.appendChild(row);
+      });
+
+      const findings = $('findingsList');
+      findings.innerHTML = '';
+      if (!(state.findingsPreview || []).length) {
+        findings.innerHTML = '<p style="color:var(--muted)">暂无</p>';
+      } else {
+        state.findingsPreview.forEach((f) => {
+          const d = document.createElement('div');
+          d.className = 'finding';
+          d.innerHTML = '<span class="badge badge-' + f.severity + '">' + f.severity + '</span> ' + escapeHtml(f.title);
+          findings.appendChild(d);
+        });
+      }
+    }
+
+    function escapeHtml(s) {
+      const d = document.createElement('div');
+      d.textContent = s;
+      return d.innerHTML;
+    }
+
+    async function loadEvents() {
+      if (!eventsPath) return;
+      try {
+        const r = await fetch(eventsPath + '?t=' + Date.now());
+        if (!r.ok) return;
+        const text = await r.text();
+        const lines = text.trim().split('\n').filter(Boolean);
+        const tail = lines.slice(-12);
+        const log = $('eventLog');
+        log.innerHTML = tail.map((line) => {
+          try {
+            const o = JSON.parse(line);
+            return '<div><span style="color:var(--muted)">' + (o.ts || '') + '</span> ' +
+              escapeHtml(o.type) + (o.annotation ? ': ' + escapeHtml(o.annotation) : '') + '</div>';
+          } catch { return '<div>' + escapeHtml(line) + '</div>'; }
+        }).join('');
+      } catch (_) {}
+    }
+
+    async function loadState() {
+      const path = $('statePath').value.trim();
+      if (!path) return;
+      try {
+        const r = await fetch(path + '?t=' + Date.now());
+        if (!r.ok) throw new Error(r.status);
+        const state = await r.json();
+        render(state);
+        await loadEvents();
+        $('liveIndicator').style.background = state.status === 'running' ? '#22c55e' : '#94a3b8';
+      } catch (e) {
+        $('annotationBox').innerHTML = '无法加载 <code>' + escapeHtml(path) + '</code>。请在本仓库根目录运行：<br><code>python3 -m http.server 8765</code><br>然后打开此页面。 (' + e.message + ')';
+      }
+    }
+
+    function startPoll() {
+      stopPoll();
+      if ($('pollEnabled').checked) {
+        pollTimer = setInterval(loadState, 1000);
+      }
+    }
+    function stopPoll() { if (pollTimer) clearInterval(pollTimer); pollTimer = null; }
+
+    // Demo: simulate step progression on golden file
+    let demoState = null;
+    async function runDemo() {
+      stopDemo();
+      const r = await fetch('validation/golden/audit-run.example.json');
+      demoState = await r.json();
+      $('statePath').value = 'validation/golden/audit-run.example.json';
+      eventsPath = 'validation/golden/audit-run-events.example.ndjson';
+      const steps = demoState.stages.find((s) => s.id === 'live-functional')?.steps || [];
+      let si = 0;
+      render(demoState);
+      loadEvents();
+      demoTimer = setInterval(() => {
+        steps.forEach((s, i) => {
+          s.status = i < si ? 'completed' : i === si ? 'in_progress' : 'pending';
+        });
+        demoState.progress.current = 5;
+        demoState.activeAnnotation = steps[si]?.annotation || '演示：' + (steps[si]?.label || '');
+        demoState.currentStepId = steps[si]?.id;
+        render(demoState);
+        si++;
+        if (si > steps.length) { stopDemo(); demoState.status = 'completed'; render(demoState); }
+      }, 2200);
+    }
+    function stopDemo() { if (demoTimer) clearInterval(demoTimer); demoTimer = null; }
+
+    $('btnLoad').onclick = () => { stopDemo(); loadState(); startPoll(); };
+    $('btnDemo').onclick = () => { stopPoll(); runDemo(); };
+    $('pollEnabled').onchange = () => { stopDemo(); startPoll(); loadState(); };
+
+    loadState();
+    startPoll();
+  </script>
+</body>
+</html>

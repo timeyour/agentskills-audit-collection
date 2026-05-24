@@ -1,0 +1,28 @@
+.DS_Store
+*.log
+*.tmp
+__pycache__/
+.pytest_cache/
+.coverage
+.venv/
+.env
+htmlcov/
+node_modules/
+dist/
+build/
+coverage/
+
+# Root-level runtime artifacts only (not validation/artifacts layout)
+/artifacts/
+
+# Per-run audit evidence — keep README, ignore run folders
+validation/artifacts/**/*
+!validation/artifacts/README.md
+
+# Claude Code local state — ship instruction-only skills
+.claude/*
+!.claude/skills/
+!.claude/skills/**
+
+.cursor/.audit-http-server.pid
+.cursor/last-audit-run.json

@@ -1,0 +1,16 @@
+---
+description: Live Audit Workbench — sync run-state.json while running /audit
+alwaysApply: false
+---
+
+# Live Audit Workbench (auto with hooks)
+
+When the user runs **`/audit`**, a website audit, or **交付验收**:
+
+1. **Initialize** (if not done): `./scripts/audit-run-init.sh "<target-url>"` — hooks open `workbench/live/` in the browser.
+2. **Update every stage**: write `validation/artifacts/<runId>/run-state.json` per `live-run-protocol.md` (`activeAnnotation`, step `in_progress` / `completed`).
+3. **Append events**: one JSON line per action to `run-events.ndjson`.
+4. **Chat sync**: emit `Progress Update [n/m]` matching the same stage/step (see `progressive-reporting.md`).
+5. **Finish**: write `audit-report.json` in the run folder; set `run-state.status` to `completed`.
+
+The user may be watching **http://127.0.0.1:8765/workbench/live/** — do not leave the UI frozen while only updating chat.

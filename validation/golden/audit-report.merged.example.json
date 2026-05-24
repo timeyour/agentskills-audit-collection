@@ -1,0 +1,350 @@
+{
+  "schemaVersion": "0.1.0",
+  "generatedAt": "2026-05-22T12:00:00Z",
+  "scope": {
+    "summary": "Mixed source and local smoke audit of physical-flow-demo; not production.",
+    "inspected": [
+      "Homepage CTA",
+      "Login flow",
+      "Dashboard route",
+      "Task form failure states"
+    ],
+    "skipped": [
+      {
+        "item": "Payment checkout",
+        "reason": "NOT_APPLICABLE"
+      },
+      {
+        "item": "Destructive delete-all",
+        "reason": "SKIPPED-SAFE"
+      }
+    ],
+    "auditPass": 1
+  },
+  "target": {
+    "url": "https://example.com",
+    "productType": "demo-web-app",
+    "platform": "local-flask",
+    "source": "examples/physical-flow-demo/",
+    "auditor": "AgentSkills /audit",
+    "auditMode": "mixed",
+    "label": "Example SaaS landing (demo run)"
+  },
+  "evidence": {
+    "overallGrade": "MEDIUM",
+    "items": [
+      {
+        "type": "SOURCE",
+        "status": "available",
+        "notes": "Demo app source under examples/physical-flow-demo/"
+      },
+      {
+        "type": "LIVE",
+        "status": "partial",
+        "notes": "Local smoke checks passed"
+      },
+      {
+        "type": "PHYSICAL",
+        "status": "missing",
+        "notes": "No trace, HAR, or screenshots attached"
+      },
+      {
+        "type": "INFERRED",
+        "status": "partial",
+        "notes": "Visual comments from report shape only"
+      },
+      {
+        "type": "UNKNOWN",
+        "status": "partial",
+        "notes": "Mobile, a11y, performance not run"
+      }
+    ]
+  },
+  "featureInventory": [
+    {
+      "id": "nav-home",
+      "name": "Navigation",
+      "startUrl": "http://localhost:5000/",
+      "livePosition": "header",
+      "locator": "nav a",
+      "dependency": "none",
+      "safeToExecute": true,
+      "status": "PASS"
+    },
+    {
+      "id": "cta-login",
+      "name": "Primary CTA",
+      "startUrl": "http://localhost:5000/",
+      "livePosition": "hero",
+      "locator": "text=Login",
+      "dependency": "none",
+      "safeToExecute": true,
+      "status": "PASS"
+    },
+    {
+      "id": "task-create",
+      "name": "Task form",
+      "startUrl": "http://localhost:5000/dashboard",
+      "livePosition": "main form",
+      "locator": "form#task-form",
+      "dependency": "session",
+      "safeToExecute": true,
+      "status": "PARTIAL"
+    }
+  ],
+  "flowExecutionLog": [
+    {
+      "feature": "Primary CTA",
+      "steps": [
+        "Open homepage",
+        "Click Login CTA"
+      ],
+      "expected": "Navigate to login page",
+      "actual": "Login page rendered",
+      "evidenceLevel": "LIVE",
+      "evidenceSummary": "Smoke navigation",
+      "severity": "S4",
+      "status": "PASS"
+    },
+    {
+      "feature": "Task form",
+      "steps": [
+        "Login",
+        "Open dashboard",
+        "Submit empty task"
+      ],
+      "expected": "Validation error shown",
+      "actual": "Failure state present in source; live not re-run with browser",
+      "evidenceLevel": "SOURCE",
+      "evidenceSummary": "Code review only",
+      "severity": "S2",
+      "status": "PARTIAL"
+    }
+  ],
+  "auditProgress": {
+    "status": "running",
+    "label": "5/9 — Live functional audit",
+    "completedSteps": [
+      "Intake & permissions",
+      "Confirm target URL",
+      "Set permission boundary",
+      "Web surface map",
+      "List routes & CTAs",
+      "Source evidence",
+      "Collect marketing claims",
+      "Feature inventory",
+      "Build feature table",
+      "Homepage load"
+    ],
+    "currentStep": "正在检测首页 Primary CTA：点击后是否进入承诺的 workflow（非 waitlist 替身）",
+    "runId": "20260524T120000Z-demo",
+    "artifactsPath": "validation/golden",
+    "liveWorkbenchHint": "workbench/live/?state=validation/golden/run-state.json"
+  },
+  "benchmarkRefs": [
+    {
+      "caseId": "api-checker",
+      "title": "API Checker",
+      "url": "https://apichecker.com",
+      "summary": "Clear testable workflow positions for functional mapping.",
+      "doc": "validation/cases/api-checker.md",
+      "tags": [
+        "devtools",
+        "workflow"
+      ],
+      "relevance": "Compare CTA and workflow clarity on tool-style pages"
+    },
+    {
+      "caseId": "impeccable-style",
+      "title": "impeccable.style",
+      "url": "https://impeccable.style",
+      "summary": "Source vs runtime evidence discipline.",
+      "doc": "validation/cases/impeccable-style.md",
+      "tags": [
+        "design-tooling",
+        "five-pass"
+      ],
+      "relevance": "Compare visual craft and evidence depth"
+    }
+  ],
+  "visualFindings": [
+    {
+      "area": "global",
+      "position": "all pages",
+      "issue": "Generic Bootstrap-style demo styling",
+      "severity": "S3",
+      "evidenceLevel": "INFERRED",
+      "fix": "Apply DESIGN.md tokens to demo and report surfaces",
+      "benchmarkCaseId": "impeccable-style"
+    }
+  ],
+  "securityReadiness": {
+    "status": "PARTIAL",
+    "checklist": [
+      {
+        "item": "HTTPS / transport",
+        "status": "UNKNOWN",
+        "notes": "localhost demo"
+      },
+      {
+        "item": "Auth boundary documented",
+        "status": "WARN",
+        "notes": "Demo session only"
+      },
+      {
+        "item": "Form CSRF / unsafe methods",
+        "status": "UNKNOWN",
+        "notes": "Not exercised live"
+      },
+      {
+        "item": "Secrets in client bundle",
+        "status": "PASS",
+        "notes": "No keys in static demo"
+      }
+    ],
+    "blockers": []
+  },
+  "dataReadiness": {
+    "status": "UNKNOWN",
+    "checklist": [
+      {
+        "item": "Privacy policy present",
+        "status": "NOT_APPLICABLE",
+        "notes": "Local demo app"
+      },
+      {
+        "item": "PII collection disclosed",
+        "status": "UNKNOWN",
+        "notes": "Not reviewed"
+      },
+      {
+        "item": "Third-party data processors",
+        "status": "UNKNOWN",
+        "notes": "Not reviewed"
+      },
+      {
+        "item": "Export / delete user data",
+        "status": "NOT_APPLICABLE"
+      }
+    ],
+    "blockers": []
+  },
+  "deploymentReadiness": {
+    "status": "NOT_READY",
+    "checklist": [
+      {
+        "item": "Production host",
+        "status": "FAIL",
+        "notes": "localhost only"
+      },
+      {
+        "item": "Environment variables",
+        "status": "UNKNOWN",
+        "notes": "Not documented for demo"
+      },
+      {
+        "item": "Auth/session store",
+        "status": "WARN",
+        "notes": "Demo session only"
+      },
+      {
+        "item": "Analytics",
+        "status": "NOT_APPLICABLE"
+      }
+    ],
+    "blockers": [
+      "Not deployable as public product without hosting plan"
+    ]
+  },
+  "issueCards": [
+    {
+      "id": "ISSUE-001",
+      "title": "Physical browser artifacts are missing",
+      "severity": "S2",
+      "area": "workflow",
+      "evidence": {
+        "level": "UNKNOWN",
+        "summary": "Source and smoke exist; no trace, HAR, video, or screenshots",
+        "artifacts": []
+      },
+      "problem": "Reviewers cannot independently verify runtime behavior",
+      "likelyCause": "Physical-flow-test not run against demo",
+      "impact": "Report credibility capped at MEDIUM evidence grade",
+      "fix": "Run /physical-flow-test; attach redacted trace, screenshots, console log, result.json",
+      "copyPrompt": "Run Playwright against the demo app login and dashboard flows. Attach trace.zip, failure.png if any, network.redacted.har, console.log, and result.json under validation/artifacts/.",
+      "reproduction": "Open reports/demo-site-audit.md; confirm no artifact links",
+      "regressionCheck": "Re-open workbench or HTML report; artifact links resolve and match flow steps",
+      "benchmarkCaseId": "api-checker"
+    },
+    {
+      "id": "ISSUE-002",
+      "title": "Report is local-only",
+      "severity": "S2",
+      "area": "deployment",
+      "evidence": {
+        "level": "SOURCE",
+        "summary": "Target URL is localhost; static report stored in repo"
+      },
+      "problem": "Not shareable with external website owner",
+      "impact": "Cannot use as customer acceptance deliverable",
+      "fix": "Publish via GitHub Pages or static host; update target.url",
+      "copyPrompt": "Publish demo-site-audit as static HTML on GitHub Pages. Replace localhost URLs with staging URL. Verify private-browser load.",
+      "reproduction": "Open reports/demo-site-audit.html from file:// or localhost",
+      "regressionCheck": "Open hosted URL in private session without local files"
+    }
+  ],
+  "copyableFixPack": {
+    "priorityOrder": [
+      "ISSUE-001",
+      "ISSUE-002"
+    ],
+    "prompts": [
+      {
+        "issueId": "ISSUE-001",
+        "prompt": "Run Playwright physical-flow-test on the demo app; attach redacted artifacts to validation/artifacts/.",
+        "targetTool": "Claude Code"
+      },
+      {
+        "issueId": "ISSUE-002",
+        "prompt": "Publish the audit report as static HTML with public URL and DESIGN.md styling.",
+        "targetTool": "Claude Code"
+      }
+    ],
+    "combinedPrompt": "Turn this local demo audit into a shareable public website audit: run physical browser tests, attach artifacts, publish static HTML report, apply DESIGN.md severity cards."
+  },
+  "regressionChecks": [
+    {
+      "issueId": "ISSUE-001",
+      "check": "Artifact folder contains result.json and at least one screenshot",
+      "status": "pending"
+    },
+    {
+      "issueId": "ISSUE-002",
+      "check": "Hosted report URL loads without local file dependencies",
+      "status": "pending"
+    }
+  ],
+  "lessons": {
+    "patterns": [
+      "Demo apps need physical artifacts to escape MEDIUM evidence grade"
+    ],
+    "falsePositives": [],
+    "guardrailUpdates": [
+      "Do not mark deliveryReady true without PHYSICAL on critical paths"
+    ],
+    "benchmarkLabels": [
+      "demo",
+      "physical-flow-template"
+    ]
+  },
+  "finalVerdict": {
+    "overallRisk": "S2",
+    "deliveryReady": false,
+    "summary": "Suitable as report-format and workflow demo; not client-ready until artifacts and public hosting exist.",
+    "functionalScore": 75,
+    "visualScore": 60,
+    "securityScore": 55,
+    "dataScore": null,
+    "fixFirst": "ISSUE-001 — add physical browser evidence"
+  }
+}

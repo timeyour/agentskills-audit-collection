@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AgentSkills Audit Workbench — Report</title>
+  <style>
+    /* Scoped to .asw-workbench — no global element overrides */
+    .asw-workbench {
+      --primary: #12324A; --primary-active: #0B2538; --accent: #2F7D68; --accent-soft: #DDF2EA;
+      --canvas: #F6F8FA; --surface: #fff; --surface-soft: #EEF3F7; --ink: #17202A; --body: #344054;
+      --muted: #667085; --border: #D8E0E7; --code-bg: #101828; --code-text: #EAECF0;
+      --success: #1F8F4D; --warn: #B7791F; --error: #B42318;
+      --s0: #7A1E1E; --s1: #B42318; --s2: #92400E; --s3: #3B5B73; --s4: #475467;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif; font-size: 14px; line-height: 1.5;
+      color: var(--ink); background: var(--canvas); min-height: 100vh; margin: 0;
+    }
+    .asw-workbench * { box-sizing: border-box; }
+    .asw-workbench .asw-header {
+      background: var(--primary); color: #fff; padding: 20px 24px 16px;
+    }
+    .asw-workbench .asw-header h1.asw-title {
+      margin: 0 0 10px; font-size: 20px; font-weight: 650; letter-spacing: 0;
+    }
+    .asw-workbench .asw-header-meta {
+      display: flex; flex-wrap: wrap; gap: 16px 24px; font-size: 13px; opacity: .92;
+    }
+    .asw-workbench .asw-summary { margin-top: 14px; font-size: 14px; max-width: 72ch; line-height: 1.55; }
+    .asw-workbench .asw-toolbar {
+      padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+    }
+    .asw-workbench .asw-toolbar input[type=text] {
+      flex: 1; min-width: 220px; padding: 8px 12px; border: 1px solid var(--border);
+      border-radius: 6px; font-size: 13px;
+    }
+    .asw-workbench .asw-btn {
+      background: var(--primary); color: #fff; border: none; padding: 8px 14px;
+      border-radius: 6px; font-weight: 600; font-size: 13px; cursor: pointer;
+    }
+    .asw-workbench .asw-btn:hover { background: var(--primary-active); }
+    .asw-workbench .asw-btn.asw-secondary {
+      background: var(--surface); color: var(--ink); border: 1px solid var(--border);
+    }
+    .asw-workbench main.asw-grid {
+      display: grid; grid-template-columns: minmax(200px, 240px) 1fr minmax(260px, 320px);
+      gap: 0; min-height: calc(100vh - 200px);
+    }
+    @media (max-width: 960px) {
+      .asw-workbench main.asw-grid { grid-template-columns: 1fr; }
+    }
+    .asw-workbench .asw-panel {
+      padding: 16px; border-right: 1px solid var(--border); background: var(--surface);
+    }
+    .asw-workbench .asw-panel.asw-rail { background: var(--surface-soft); border-right: none; }
+    .asw-workbench .asw-section-title {
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em;
+      color: var(--muted); margin: 0 0 12px;
+    }
+    .asw-workbench .asw-sev {
+      display: inline-block; font-size: 11px; font-weight: 600; padding: 3px 8px;
+      border-radius: 999px; color: #fff;
+    }
+    .asw-workbench .asw-sev-S0 { background: var(--s0); }
+    .asw-workbench .asw-sev-S1 { background: var(--s1); }
+    .asw-workbench .asw-sev-S2 { background: var(--s2); }
+    .asw-workbench .asw-sev-S3 { background: var(--s3); }
+    .asw-workbench .asw-sev-S4 { background: var(--s4); }
+    .asw-workbench .asw-pill {
+      font-size: 11px; padding: 2px 8px; border-radius: 999px;
+      background: var(--surface-soft); color: var(--body); font-weight: 600;
+    }
+    .asw-workbench .asw-pill.PASS { background: var(--accent-soft); color: var(--accent); }
+    .asw-workbench .asw-pill.FAIL, .asw-workbench .asw-pill.S0, .asw-workbench .asw-pill.S1 {
+      background: #FEE4E2; color: var(--s1);
+    }
+    .asw-workbench .asw-pill.PARTIAL, .asw-workbench .asw-pill.WARN { background: #FEF0C7; color: var(--s2); }
+    .asw-workbench .asw-table-wrap { overflow-x: auto; }
+    .asw-workbench table.asw-table {
+      width: 100%; border-collapse: collapse; font-size: 13px;
+    }
+    .asw-workbench table.asw-table th,
+    .asw-workbench table.asw-table td {
+      text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border);
+    }
+    .asw-workbench table.asw-table th { color: var(--muted); font-weight: 600; font-size: 11px; }
+    .asw-workbench .asw-timeline-item {
+      border-left: 3px solid var(--border); padding: 0 0 16px 14px; margin-left: 6px; position: relative;
+    }
+    .asw-workbench .asw-timeline-item::before {
+      content: ''; width: 10px; height: 10px; border-radius: 50%; background: var(--border);
+      position: absolute; left: -7px; top: 4px;
+    }
+    .asw-workbench .asw-timeline-item.PASS::before { background: var(--accent); }
+    .asw-workbench .asw-timeline-item.FAIL::before { background: var(--s1); }
+    .asw-workbench .asw-timeline-item.PARTIAL { border-left-color: var(--warn); }
+    .asw-workbench .asw-issue {
+      border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 12px;
+      background: var(--surface);
+    }
+    .asw-workbench .asw-issue h3.asw-issue-title { margin: 8px 0 6px; font-size: 15px; font-weight: 650; }
+    .asw-workbench .asw-issue p { margin: 0 0 8px; color: var(--body); font-size: 13px; }
+    .asw-workbench .asw-issue dt { font-size: 11px; font-weight: 600; color: var(--muted); margin-top: 8px; }
+    .asw-workbench .asw-issue dd { margin: 2px 0 0; font-size: 13px; }
+    .asw-workbench .asw-copy-box {
+      margin-top: 10px; background: var(--code-bg); color: var(--code-text);
+      border-radius: 6px; padding: 10px 12px; font-family: ui-monospace, monospace; font-size: 12px;
+      white-space: pre-wrap; word-break: break-word;
+    }
+    .asw-workbench .asw-copy-row { display: flex; gap: 8px; margin-top: 8px; }
+    .asw-workbench footer.asw-evidence {
+      padding: 16px 24px 24px; background: var(--surface); border-top: 1px solid var(--border);
+    }
+    .asw-workbench .asw-scorecard {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 10px; margin-top: 12px;
+    }
+    .asw-workbench .asw-score { background: rgba(255,255,255,.12); padding: 10px 12px; border-radius: 6px; }
+    .asw-workbench .asw-score strong { display: block; font-size: 18px; }
+    .asw-workbench .asw-check { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0;
+      border-bottom: 1px solid var(--border); font-size: 13px;
+    }
+    .asw-workbench .asw-empty { color: var(--muted); font-size: 13px; }
+    .asw-workbench .asw-risk-ready { font-weight: 600; }
+    .asw-workbench .asw-risk-ready.no { color: #FCA5A5; }
+    .asw-workbench .asw-risk-ready.yes { color: #86EFAC; }
+  </style>
+</head>
+<body class="asw-workbench">
+  <header class="asw-header" id="auditHeader">
+    <h1 class="asw-title">AgentSkills Audit Workbench</h1>
+    <div class="asw-header-meta" id="headerMeta"></div>
+    <div class="asw-scorecard" id="scorecard"></div>
+    <p class="asw-summary" id="headerSummary">Load an audit report JSON to render.</p>
+  </header>
+  <div class="asw-toolbar">
+    <label style="flex:1;display:flex;gap:8px;align-items:center;min-width:280px">
+      <span style="white-space:nowrap;font-size:13px;color:var(--body)">Report JSON</span>
+      <input type="text" id="reportPath" placeholder="validation/golden/audit-report.example.json" />
+    </label>
+    <button type="button" class="asw-btn" id="btnLoad">Load</button>
+    <button type="button" class="asw-btn asw-secondary" id="btnDemo">Golden example</button>
+  </div>
+  <main class="asw-grid">
+    <div class="asw-panel">
+      <p class="asw-section-title">Feature inventory</p>
+      <div class="asw-table-wrap" id="featureInventory"></div>
+      <p class="asw-section-title" style="margin-top:20px">Deployment</p>
+      <div id="deploymentBlock"></div>
+    </div>
+    <div class="asw-panel">
+      <p class="asw-section-title">Flow execution</p>
+      <div id="flowTimeline"></div>
+      <p class="asw-section-title" style="margin-top:20px">Visual findings</p>
+      <div id="visualFindings"></div>
+    </div>
+    <div class="asw-panel asw-rail">
+      <p class="asw-section-title">Issue cards</p>
+      <div id="issueCards"></div>
+      <p class="asw-section-title" style="margin-top:16px">Fix pack</p>
+      <div id="fixPack"></div>
+      <p class="asw-section-title" style="margin-top:16px">Regression</p>
+      <div id="regressionList"></div>
+    </div>
+  </main>
+  <footer class="asw-evidence">
+    <p class="asw-section-title">Evidence summary</p>
+    <div class="asw-table-wrap" id="evidenceTable"></div>
+    <p class="asw-section-title" style="margin-top:16px">Lessons</p>
+    <div id="lessonsBlock" style="font-size:13px;color:var(--body)"></div>
+  </footer>
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function escapeHtml(s) {
+      if (s == null) return '';
+      const d = document.createElement('div');
+      d.textContent = String(s);
+      return d.innerHTML;
+    }
+
+    function sevBadge(sev) {
+      if (!sev) return '';
+      return '<span class="asw-sev asw-sev-' + escapeHtml(sev) + '">' + escapeHtml(sev) + '</span>';
+    }
+
+    function statusPill(st) {
+      if (!st) return '';
+      const cls = ['PASS', 'FAIL', 'PARTIAL', 'WARN', 'S0', 'S1'].includes(st) ? st : '';
+      return '<span class="asw-pill ' + escapeHtml(cls) + '">' + escapeHtml(st) + '</span>';
+    }
+
+    function evChip(level) {
+      return level ? ' <span class="asw-pill">' + escapeHtml(level) + '</span>' : '';
+    }
+
+    function renderHeader(d) {
+      const t = d.target || {};
+      const v = d.finalVerdict || {};
+      const e = d.evidence || {};
+      $('headerMeta').innerHTML = [
+        '<span><strong>URL</strong> ' + escapeHtml(t.url || '—') + '</span>',
+        '<span><strong>Mode</strong> ' + escapeHtml(t.auditMode || '—') + '</span>',
+        '<span><strong>Evidence</strong> ' + escapeHtml(e.overallGrade || '—') + '</span>',
+        '<span><strong>Pass</strong> ' + escapeHtml(String(d.scope?.auditPass ?? '—')) + '</span>',
+        '<span>' + sevBadge(v.overallRisk) + ' overall</span>',
+        '<span class="asw-risk-ready ' + (v.deliveryReady ? 'yes' : 'no') + '">' +
+          (v.deliveryReady ? 'Delivery ready' : 'Not delivery ready') + '</span>'
+      ].join('');
+      $('headerSummary').textContent = v.summary || d.scope?.summary || '—';
+      $('scorecard').innerHTML = [
+        scoreCell('Functional', v.functionalScore),
+        scoreCell('Visual', v.visualScore),
+        scoreCell('Fix first', v.fixFirst, true)
+      ].join('');
+    }
+
+    function scoreCell(label, val, raw) {
+      return '<div class="asw-score"><span style="font-size:11px;opacity:.8">' + escapeHtml(label) +
+        '</span><strong>' + escapeHtml(raw ? (val || '—') : (val != null ? val : '—')) + '</strong></div>';
+    }
+
+    function renderFeatures(items) {
+      if (!items?.length) return '<p class="asw-empty">No features</p>';
+      const rows = items.map((f) =>
+        '<tr><td>' + escapeHtml(f.name) + '</td><td>' + statusPill(f.status) +
+        '</td><td>' + escapeHtml(f.locator || '—') + '</td><td>' +
+        (f.safeToExecute ? 'yes' : 'no') + '</td></tr>'
+      ).join('');
+      return '<table class="asw-table"><thead><tr><th>Feature</th><th>Status</th><th>Locator</th><th>Safe</th></tr></thead><tbody>' +
+        rows + '</tbody></table>';
+    }
+
+    function renderDeployment(dep) {
+      if (!dep) return '<p class="asw-empty">—</p>';
+      let html = '<p>' + statusPill(dep.status) + '</p><ul style="margin:8px 0;padding-left:18px;font-size:13px">';
+      (dep.checklist || []).forEach((c) => {
+        html += '<li>' + escapeHtml(c.item) + ' ' + statusPill(c.status) +
+          (c.notes ? ' <span style="color:var(--muted)">— ' + escapeHtml(c.notes) + '</span>' : '') + '</li>';
+      });
+      html += '</ul>';
+      if (dep.blockers?.length) {
+        html += '<p style="font-size:12px;color:var(--s1)"><strong>Blockers:</strong> ' +
+          dep.blockers.map(escapeHtml).join('; ') + '</p>';
+      }
+      return html;
+    }
+
+    function renderFlow(log) {
+      if (!log?.length) return '<p class="asw-empty">No flow log</p>';
+      return log.map((e) =>
+        '<div class="asw-timeline-item ' + escapeHtml(e.status || '') + '">' +
+        '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">' +
+        '<strong>' + escapeHtml(e.feature) + '</strong> ' + statusPill(e.status) + sevBadge(e.severity) + evChip(e.evidenceLevel) +
+        '</div><p style="margin:6px 0 4px;font-size:12px;color:var(--muted)">' +
+        (e.steps || []).map(escapeHtml).join(' → ') + '</p>' +
+        '<p style="margin:0;font-size:13px"><strong>Expected:</strong> ' + escapeHtml(e.expected) + '</p>' +
+        '<p style="margin:4px 0 0;font-size:13px"><strong>Actual:</strong> ' + escapeHtml(e.actual) + '</p>' +
+        (e.evidenceSummary ? '<p style="margin:4px 0 0;font-size:12px;color:var(--muted)">' + escapeHtml(e.evidenceSummary) + '</p>' : '') +
+        '</div>'
+      ).join('');
+    }
+
+    function renderVisual(findings) {
+      if (!findings?.length) return '<p class="asw-empty">None</p>';
+      return findings.map((f) =>
+        '<div style="padding:8px 0;border-bottom:1px solid var(--border)">' +
+        sevBadge(f.severity) + evChip(f.evidenceLevel) +
+        ' <strong>' + escapeHtml(f.area) + '</strong> — ' + escapeHtml(f.issue) +
+        (f.fix ? '<br><span style="font-size:12px;color:var(--muted)">Fix: ' + escapeHtml(f.fix) + '</span>' : '') +
+        '</div>'
+      ).join('');
+    }
+
+    function renderIssues(cards) {
+      if (!cards?.length) return '<p class="asw-empty">No issues</p>';
+      return cards.map((c) => {
+        const ev = c.evidence || {};
+        return '<article class="asw-issue">' +
+          '<div style="display:flex;gap:8px;align-items:center">' + sevBadge(c.severity) +
+          '<span class="asw-pill">' + escapeHtml(c.id) + '</span></div>' +
+          '<h3 class="asw-issue-title">' + escapeHtml(c.title) + '</h3>' +
+          '<p>' + escapeHtml(c.problem) + '</p>' +
+          '<dl><dt>Evidence</dt><dd>' + escapeHtml(ev.summary || '—') + evChip(ev.level) + '</dd>' +
+          '<dt>Impact</dt><dd>' + escapeHtml(c.impact || '—') + '</dd>' +
+          '<dt>Fix</dt><dd>' + escapeHtml(c.fix || '—') + '</dd>' +
+          '<dt>Reproduction</dt><dd style="font-family:ui-monospace,monospace;font-size:12px">' + escapeHtml(c.reproduction || '—') + '</dd>' +
+          '<dt>Regression</dt><dd>' + escapeHtml(c.regressionCheck || '—') + '</dd></dl>' +
+          (c.copyPrompt ? copyBox(c.copyPrompt, 'Copy issue prompt') : '') +
+          '</article>';
+      }).join('');
+    }
+
+    function copyBox(text, label) {
+      const id = 'cp-' + Math.random().toString(36).slice(2, 9);
+      return '<div class="asw-copy-box" id="' + id + '">' + escapeHtml(text) + '</div>' +
+        '<div class="asw-copy-row"><button type="button" class="asw-btn asw-secondary asw-copy-btn" data-target="' + id + '">' +
+        escapeHtml(label || 'Copy') + '</button></div>';
+    }
+
+    function renderFixPack(pack) {
+      if (!pack) return '<p class="asw-empty">—</p>';
+      let html = '';
+      if (pack.combinedPrompt) html += copyBox(pack.combinedPrompt, 'Copy combined prompt');
+      (pack.prompts || []).forEach((p) => {
+        html += '<p style="font-size:12px;margin:12px 0 4px"><strong>' + escapeHtml(p.issueId) + '</strong>' +
+          (p.targetTool ? ' · ' + escapeHtml(p.targetTool) : '') + '</p>';
+        html += copyBox(p.prompt, 'Copy');
+      });
+      return html || '<p class="asw-empty">—</p>';
+    }
+
+    function renderRegression(checks) {
+      if (!checks?.length) return '<p class="asw-empty">—</p>';
+      return checks.map((c) =>
+        '<div class="asw-check"><input type="checkbox" disabled ' + (c.status === 'passed' ? 'checked' : '') + ' />' +
+        '<div><span class="asw-pill">' + escapeHtml(c.issueId) + '</span> ' + escapeHtml(c.check) +
+        ' <span style="color:var(--muted)">(' + escapeHtml(c.status || 'pending') + ')</span></div></div>'
+      ).join('');
+    }
+
+    function renderEvidence(ev) {
+      if (!ev?.items?.length) return '<p class="asw-empty">—</p>';
+      const rows = ev.items.map((i) =>
+        '<tr><td>' + escapeHtml(i.type) + '</td><td>' + statusPill(i.status) +
+        '</td><td>' + escapeHtml(i.notes || '—') + '</td></tr>'
+      ).join('');
+      return '<p style="margin:0 0 8px">Overall: <strong>' + escapeHtml(ev.overallGrade || '—') + '</strong></p>' +
+        '<table class="asw-table"><thead><tr><th>Type</th><th>Status</th><th>Notes</th></tr></thead><tbody>' +
+        rows + '</tbody></table>';
+    }
+
+    function renderLessons(lessons) {
+      if (!lessons) return '<p class="asw-empty">—</p>';
+      const parts = [];
+      if (lessons.patterns?.length) parts.push('<p><strong>Patterns:</strong> ' + lessons.patterns.map(escapeHtml).join('; ') + '</p>');
+      if (lessons.benchmarkLabels?.length) parts.push('<p><strong>Labels:</strong> ' + lessons.benchmarkLabels.map(escapeHtml).join(', ') + '</p>');
+      if (lessons.guardrailUpdates?.length) parts.push('<p><strong>Guardrails:</strong> ' + lessons.guardrailUpdates.map(escapeHtml).join('; ') + '</p>');
+      return parts.join('') || '<p class="asw-empty">—</p>';
+    }
+
+    function renderReport(d) {
+      renderHeader(d);
+      $('featureInventory').innerHTML = renderFeatures(d.featureInventory);
+      $('deploymentBlock').innerHTML = renderDeployment(d.deploymentReadiness);
+      $('flowTimeline').innerHTML = renderFlow(d.flowExecutionLog);
+      $('visualFindings').innerHTML = renderVisual(d.visualFindings);
+      $('issueCards').innerHTML = renderIssues(d.issueCards);
+      $('fixPack').innerHTML = renderFixPack(d.copyableFixPack);
+      $('regressionList').innerHTML = renderRegression(d.regressionChecks);
+      $('evidenceTable').innerHTML = renderEvidence(d.evidence);
+      $('lessonsBlock').innerHTML = renderLessons(d.lessons);
+      document.querySelectorAll('.asw-copy-btn').forEach((btn) => {
+        btn.onclick = () => {
+          const el = document.getElementById(btn.dataset.target);
+          const text = el?.textContent || '';
+          navigator.clipboard?.writeText(text).then(() => {
+            const orig = btn.textContent;
+            btn.textContent = 'Copied';
+            setTimeout(() => { btn.textContent = orig; }, 1200);
+          });
+        };
+      });
+    }
+
+    async function loadReport() {
+      const path = $('reportPath').value.trim();
+      if (!path) return;
+      try {
+        const r = await fetch(path + '?t=' + Date.now());
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        renderReport(await r.json());
+      } catch (e) {
+        $('headerSummary').innerHTML = 'Cannot load <code>' + escapeHtml(path) + '</code>. Run from repo root:<br><code>python3 -m http.server 8765</code><br>Then open <code>http://localhost:8765/workbench/report/</code> (' + escapeHtml(e.message) + ')';
+      }
+    }
+
+    const params = new URLSearchParams(location.search);
+    if (params.get('report')) $('reportPath').value = params.get('report');
+    if (params.get('demo') === '1') $('reportPath').value = 'validation/golden/audit-report.example.json';
+
+    $('btnLoad').onclick = loadReport;
+    $('btnDemo').onclick = () => {
+      $('reportPath').value = 'validation/golden/audit-report.example.json';
+      loadReport();
+    };
+
+    if ($('reportPath').value) loadReport();
+    else $('btnDemo').click();
+  </script>
+</body>
+</html>
