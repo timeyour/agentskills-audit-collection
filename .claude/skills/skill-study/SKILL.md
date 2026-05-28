@@ -28,6 +28,7 @@ external source -> evidence split -> pattern extraction -> workflow upgrade -> v
 - Treat every external skill as inspiration, not authority.
 - Avoid copying another repository's text, structure, or prompts verbatim.
 - Use `S0-S4` severity if the external pattern exposes delivery or agent-reliability risk.
+- When external research suggests editing a skill, use `references/skill-optimization-protocol.md`: propose bounded edits, preserve protected policy sections, and require a validation gate before acceptance.
 
 ## Workflow
 
@@ -72,6 +73,8 @@ external source -> evidence split -> pattern extraction -> workflow upgrade -> v
      - add an anti-pattern;
      - add a benchmark label;
      - add an ADR if it changes project governance.
+   - If the change edits a `SKILL.md` description or body, include a routing test and an execution test.
+   - Reject ties: do not accept a skill edit unless the validation gate shows a strict improvement or fixes a concrete breakage.
 
 7. Output
    - Produce a learning brief with scope, source evidence, extracted patterns, adoption decisions, rejection reasons, regression checks, lessons, and exact file updates.
@@ -124,3 +127,5 @@ external source -> evidence split -> pattern extraction -> workflow upgrade -> v
 - Copying another skill's instructions verbatim.
 - Confusing "what humans should learn" with "what this audit agent should do."
 - Accepting trend reports without source/date/confidence.
+- Rewriting skills wholesale when a bounded edit would preserve more validated behavior.
+- Promoting source-reported benchmark results as local results without repository evidence.

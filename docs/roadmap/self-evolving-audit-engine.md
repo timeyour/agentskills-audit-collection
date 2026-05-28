@@ -84,6 +84,47 @@ Where to store:
 Retest:
 ```
 
+## Skill Optimization Gate
+
+Recent source-linked research on SkillOpt frames a skill document as trainable external state for a frozen agent. This roadmap can borrow the discipline without claiming that the repository implements the full optimizer.
+
+Use the local protocol in `.claude/skills/skill-study/references/skill-optimization-protocol.md` before changing a skill because of an audit lesson.
+
+Minimum rules:
+
+- bounded edits beat wholesale rewrites;
+- four to eight small edits is a normal optimization budget, not a requirement;
+- the description and the body need separate tests;
+- reject ties and style-only edits;
+- accept only changes that improve a held-out task, fix a concrete breakage, or reduce a proven routing/execution failure;
+- rejected edits become negative feedback for the next proposal;
+- fast examples and lessons must not overwrite slow policy invariants.
+
+Skill optimization loop:
+
+```text
+audit trace
+  ->
+skill failure hypothesis
+  ->
+bounded skill edit
+  ->
+routing test + execution test + held-out task
+  ->
+accept only strict improvement
+  ->
+store accepted lesson or rejected edit
+```
+
+Protected slow-state invariants:
+
+- source/live/physical evidence separation;
+- `S0-S4` delivery severity;
+- progressive reporting for long audits;
+- permission boundary and `SKIPPED-SAFE` handling;
+- candidate materials are not case studies until audited;
+- skills remain instruction-only unless a future runtime layer is deliberately added.
+
 ## HOT/WARM/COLD Memory Pattern
 
 The user-provided research described a memory tiering pattern. Use it as an inspiration, not as a repository guarantee.

@@ -9,6 +9,7 @@ It is a source index, not a claims database. Unverified figures, candidate websi
 | Status | Meaning |
 | --- | --- |
 | `verified` | Confirmed inside this repository or through direct local evidence. |
+| `source-linked` | External source exists and was checked for title/abstract or release page; reported metrics still need replication before becoming repo claims. |
 | `user-provided` | Provided by the user in chat, Feishu output, or zip materials. Useful as research input, not independently verified here. |
 | `needs-verification` | Plausible external claim that needs source checking before public use. |
 | `candidate-only` | Possible sample, site, tool, or benchmark candidate. Not a case study. |
@@ -24,6 +25,8 @@ It is a source index, not a claims database. Unverified figures, candidate websi
 | `Master_Evolution_Plan_v2.0.md` from zip | `user-provided` | Visual metrics, failure pattern JSON, Queen/Specialist model. |
 | `Project_Context_for_CodeX.md` from zip | `user-provided` | Concise product identity and AI acceptance positioning. |
 | `Project_Master_Archive_Full_History.md` from zip | `user-provided` | Conversation history and candidate implementation prompts. |
+| [SkillOpt: Executive Strategy for Self-Evolving Agent Skills](https://arxiv.org/abs/2605.23904), arXiv:2605.23904 | `source-linked` | Treats skill documents as optimizable external state; useful for bounded skill edits, strict validation gates, rejected-edit memory, and fast/slow state protection. Source-reported benchmark numbers are not local repository results. |
+| [Agent-Skills-for-Context-Engineering v2.3.0 release notes](https://github.com/muratcankoylan/Agent-Skills-for-Context-Engineering/releases/tag/v2.3.0) | `needs-verification` | User-provided ecosystem reference for skill description/body routing differences and per-skill effect sizes. Useful as a candidate comparison source, not a repository claim. |
 
 ## What Was Promoted Into Repository Rules
 
@@ -32,6 +35,7 @@ It is a source index, not a claims database. Unverified figures, candidate websi
 | Field validation, concurrency, N+1, swallowed exceptions, memory pagination, hallucinated APIs, hardcoded secrets | `.claude/skills/audit/references/failure-modes.md` | Repeated AI delivery failures can become evidence-backed audit checks. |
 | AI slop, spacing drift, hierarchy, visual weight, component consistency, Figma vs code comparison | `.claude/skills/visual-qa/references/aesthetic-metrics.md` | Useful for visual QA when framed as heuristics and evidence requirements. |
 | Generator/Critic, Queen/Specialist, lessons ledger, HOT/WARM/COLD memory | `docs/roadmap/self-evolving-audit-engine.md` | Useful roadmap material, but not yet implemented runtime behavior. |
+| Skill document optimization, bounded edits, held-out gates, routing/body tests, protected slow state | `.claude/skills/skill-study/references/skill-optimization-protocol.md` and `docs/roadmap/self-evolving-audit-engine.md` | Useful for improving skills from evidence without accepting every self-proposed edit. |
 
 ## What Was Not Promoted As Fact
 
@@ -40,6 +44,7 @@ It is a source index, not a claims database. Unverified figures, candidate websi
 | 300 vibe-coded site examples | `candidate-only` | The list mixes real domains, templates, generated names, and patterns. |
 | 1000 global websites | `candidate-only` | Useful as a sampling idea, but not an audited case library. |
 | Tool star counts, download counts, and marketplace rankings | `needs-verification` | Popularity numbers change and need direct source checks. |
+| SkillOpt benchmark improvements and cross-harness transfer numbers | `source-linked` | The paper reports these figures, but this repository has not reproduced them. Use them as research context, not marketing claims. |
 | OpenClaw, ClawHub, Capability Evolver ecosystem claims | `needs-verification` | Potentially relevant to positioning, but not required for current skill behavior. |
 | MCP/A2A/web dashboard implementation claims | `needs-verification` | Roadmap only; this repository remains instruction-only today. |
 

@@ -121,6 +121,7 @@ The collection now separates research input from shipped rules:
 
 - Failure mode library: `.claude/skills/audit/references/failure-modes.md`
 - Aesthetic metrics: `.claude/skills/visual-qa/references/aesthetic-metrics.md`
+- Skill optimization protocol: `.claude/skills/skill-study/references/skill-optimization-protocol.md`
 - Self-evolution roadmap: `docs/roadmap/self-evolving-audit-engine.md`
 - Research source index: `docs/research/ai-product-audit-research-index.md`
 
@@ -240,6 +241,7 @@ Start with [CASE_STUDIES.md](CASE_STUDIES.md) for a short, readable summary of t
   skill-study/SKILL.md
   skill-study/references/skill-benchmark-rubric.md
   skill-study/references/market-skill-radar.md
+  skill-study/references/skill-optimization-protocol.md
   harness/SKILL.md
   harness/references/business-decomposition.md
   harness/references/execution-router.md
@@ -297,6 +299,7 @@ validation/public-website-audit-report-template.md # legacy path; see templates/
 - Multi-step audits should show progress, evidence checkpoints, blockers, and next actions before the final report.
 - Website audits should discover the web surface before detailed testing, then apply least privilege before live actions.
 - External skills and trend reports are converted into audit checks, workflow triggers, benchmark labels, and guardrails, not copied as topic lists.
+- Skill edits should be bounded, evidence-gated, and validated with routing plus execution tests before acceptance.
 - Research materials must become evidence rules, candidate pools, or roadmap notes; unverified claims must not become case studies.
 - Every skill must produce evidence that another person can understand, reproduce, fix, and retest.
 - The public product surface is a report page; the skill files are the internal engine behind that report.
