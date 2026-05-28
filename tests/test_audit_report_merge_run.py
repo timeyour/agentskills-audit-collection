@@ -20,9 +20,13 @@ from audit_report_merge_run import (  # noqa: E402
 )
 
 
+def _read_json(path: Path) -> dict:
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
 class TestAuditReportMergeRun(unittest.TestCase):
     def test_audit_progress_from_golden_run(self) -> None:
-        run = json.loads((ROOT / "validation/golden/audit-run.example.json").read_text())
+        run = _read_json(ROOT / "validation/golden/audit-run.example.json")
         progress = audit_progress_from_run(run, "validation/artifacts/demo")
         self.assertEqual(progress["status"], "running")
         self.assertIn("Intake & permissions", progress["completedSteps"])
@@ -41,7 +45,7 @@ class TestAuditReportMergeRun(unittest.TestCase):
         self.assertEqual(phys["status"], "available")
 
     def test_main_writes_report(self) -> None:
-        run = json.loads((ROOT / "validation/golden/audit-run.example.json").read_text())
+        run = _read_json(ROOT / "validation/golden/audit-run.example.json")
         with tempfile.TemporaryDirectory() as tmp:
             run_dir = Path(tmp)
             (run_dir / "run-state.json").write_text(json.dumps(run), encoding="utf-8")
@@ -49,7 +53,7 @@ class TestAuditReportMergeRun(unittest.TestCase):
             self.assertEqual(code, 0)
             out = run_dir / "audit-report.json"
             self.assertTrue(out.is_file())
-            data = json.loads(out.read_text())
+            data = json.loads(out.read_text(encoding="utf-8"))
             self.assertIn("auditProgress", data)
             self.assertEqual(data["target"]["url"], run["target"]["url"])
 

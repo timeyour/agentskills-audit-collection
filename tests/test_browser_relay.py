@@ -5,12 +5,12 @@ from __future__ import annotations
 import base64
 import importlib.util
 import json
+import tempfile
 import threading
+import unittest
 import urllib.request
 from http.server import HTTPServer
 from pathlib import Path
-
-import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -31,60 +31,66 @@ def _tiny_png_data_url() -> str:
     return "data:image/png;base64," + base64.b64encode(raw).decode("ascii")
 
 
-@pytest.fixture
-def relay_server(tmp_path, monkeypatch):
-    browser_relay = _load_relay_module()
-    monkeypatch.setattr(browser_relay, "ARTIFACTS", tmp_path / "artifacts")
-    server = HTTPServer(("127.0.0.1", 0), browser_relay.RelayHandler)
-    thread = threading.Thread(target=server.serve_forever, daemon=True)
-    thread.start()
-    yield f"http://127.0.0.1:{server.server_address[1]}", browser_relay
-    server.shutdown()
+class TestBrowserRelay(unittest.TestCase):
+    def setUp(self) -> None:
+        self.tmp = tempfile.TemporaryDirectory()
+        self.browser_relay = _load_relay_module()
+        self.browser_relay.ARTIFACTS = Path(self.tmp.name) / "artifacts"
+        self.server = HTTPServer(("127.0.0.1", 0), self.browser_relay.RelayHandler)
+        self.thread = threading.Thread(target=self.server.serve_forever, daemon=True)
+        self.thread.start()
+        self.base_url = f"http://127.0.0.1:{self.server.server_address[1]}"
+
+    def tearDown(self) -> None:
+        self.server.shutdown()
+        self.server.server_close()
+        self.thread.join(timeout=5)
+        self.tmp.cleanup()
+
+    def test_evidence_upload(self) -> None:
+        run_id = "test-run-001"
+        body = json.dumps(
+            {
+                "runId": run_id,
+                "note": "test",
+                "url": "https://example.com",
+                "pngDataUrl": _tiny_png_data_url(),
+            }
+        ).encode("utf-8")
+        req = urllib.request.Request(
+            f"{self.base_url}/api/evidence",
+            data=body,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        self.assertTrue(data["ok"])
+        pngs = list((self.browser_relay.ARTIFACTS / run_id / "screenshots").glob("ext-*.png"))
+        self.assertEqual(len(pngs), 1)
+        metas = list((self.browser_relay.ARTIFACTS / run_id / "screenshots").glob("ext-*.meta.json"))
+        self.assertEqual(len(metas), 1)
+
+    def test_narrate_passthrough(self) -> None:
+        body = json.dumps(
+            {
+                "text": "Checking primary CTA",
+                "task": "translate",
+                "targetLocale": "zh",
+            }
+        ).encode("utf-8")
+        req = urllib.request.Request(
+            f"{self.base_url}/api/narrate",
+            data=body,
+            headers={"Content-Type": "application/json"},
+            method="POST",
+        )
+        with urllib.request.urlopen(req, timeout=5) as resp:
+            data = json.loads(resp.read().decode("utf-8"))
+        self.assertTrue(data["ok"])
+        self.assertEqual(data["mode"], "passthrough")
+        self.assertEqual(data["text"], "Checking primary CTA")
 
 
-def test_evidence_upload(relay_server):
-    base_url, browser_relay = relay_server
-    run_id = "test-run-001"
-    body = json.dumps(
-        {
-            "runId": run_id,
-            "note": "test",
-            "url": "https://example.com",
-            "pngDataUrl": _tiny_png_data_url(),
-        }
-    ).encode("utf-8")
-    req = urllib.request.Request(
-        f"{base_url}/api/evidence",
-        data=body,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    with urllib.request.urlopen(req, timeout=5) as resp:
-        data = json.loads(resp.read().decode())
-    assert data["ok"] is True
-    pngs = list((browser_relay.ARTIFACTS / run_id / "screenshots").glob("ext-*.png"))
-    assert len(pngs) == 1
-    metas = list((browser_relay.ARTIFACTS / run_id / "screenshots").glob("ext-*.meta.json"))
-    assert len(metas) == 1
-
-
-def test_narrate_passthrough(relay_server):
-    base_url, _browser_relay = relay_server
-    body = json.dumps(
-        {
-            "text": "Checking primary CTA",
-            "task": "translate",
-            "targetLocale": "zh",
-        }
-    ).encode("utf-8")
-    req = urllib.request.Request(
-        f"{base_url}/api/narrate",
-        data=body,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
-    with urllib.request.urlopen(req, timeout=5) as resp:
-        data = json.loads(resp.read().decode())
-    assert data["ok"] is True
-    assert data["mode"] == "passthrough"
-    assert data["text"] == "Checking primary CTA"
+if __name__ == "__main__":
+    unittest.main()
